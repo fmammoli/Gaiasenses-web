@@ -14,9 +14,12 @@ export default async function getData(
   // You can return Date, Map, Set, etc.
 
   if (!res.ok) {
-    console.log(res);
     // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+    throw new Error(
+      `Failed to fetch data: https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
+        dist ? `&dist=${dist}` : ""
+      }`
+    );
   }
 
   return res.json();

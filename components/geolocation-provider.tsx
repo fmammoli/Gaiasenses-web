@@ -28,7 +28,6 @@ export function GeolocationProvider({ children }: { children: ReactNode }) {
         ];
         if (searchParams.size > 0) {
           searchParams.forEach((value, key) => {
-            console.log(`${key}=${value}`);
             if (key !== "lat" && key !== "lon") {
               newSearchParams.push(`${key}=${value}`);
             }

@@ -48,6 +48,6 @@ export default async function Zigzag({
       </ClientWrapper>
     );
   } catch (error) {
-    console.log(error);
+    
   }
 }
