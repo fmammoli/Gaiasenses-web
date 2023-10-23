@@ -22,32 +22,45 @@ export default async function Zigzag({
   lat,
   lon,
   debug = false,
+  rain,
+  lightningCount,
+  today = false,
 }: {
   lat: string;
   lon: string;
   debug?: boolean;
+  rain?: number;
+  lightningCount?: number;
+  today?: boolean;
 }) {
-  try {
-    const [weatherData, lightningData] = await Promise.all([
-      getWeather(lat, lon),
-      getLightning(lat, lon, 50),
-    ]);
-    const rain = weatherData.rain.hasOwnProperty("1h")
-      ? (weatherData.rain as { "1h": number })["1h"]
-      : 0;
+  let rainData = 0;
+  let lightningCountData = 0;
 
-    const lightningCount = lightningData.count;
+  if (rain && lightningCount) {
+    rainData = rain;
+    lightningCountData = lightningCount;
+  } else {
+    if (today) {
+      const [weatherData, lightningData] = await Promise.all([
+        getWeather(lat, lon),
+        getLightning(lat, lon, 50),
+      ]);
+      rainData = weatherData.rain.hasOwnProperty("1h")
+        ? (weatherData.rain as { "1h": number })["1h"]
+        : 0;
 
-    return (
-      <ClientWrapper debug={debug}>
-        <ZigzagSketch
-          rain={rain}
-          lightningCount={lightningCount}
-          containerHeight={0}
-        ></ZigzagSketch>
-      </ClientWrapper>
-    );
-  } catch (error) {
-    
+      lightningCountData = lightningData.count;
+    }
   }
+
+  return (
+    <ClientWrapper debug={debug}>
+      <ZigzagSketch
+        rain={rainData}
+        lightningCount={lightningCountData}
+        containerHeight={0}
+        play={false}
+      ></ZigzagSketch>
+    </ClientWrapper>
+  );
 }

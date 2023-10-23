@@ -1,16 +1,14 @@
-#N canvas 0 69 1366 674 12;
-#X obj 780 267 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000
-#000000 0 1;
+#N canvas 175 126 1366 674 12;
+#X obj 780 267 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 780 291 metro 100;
 #X obj 780 314 random;
 #X obj 780 337 sel 0;
-#X floatatom 862 297 5 0 0 0 - - -, f 5;
+#X floatatom 862 297 5 0 0 0 - - - 0;
 #X obj 334 329 f;
 #X obj 255 329 f;
 #X obj 203 265 r bng_\$0;
 #X obj 703 355 s bng_\$0;
-#X obj 203 310 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 203 310 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 780 475 f;
 #X obj 780 360 random 100;
 #X obj 780 383 / 100;
@@ -21,7 +19,7 @@
 #X obj 496 467 osc~;
 #X obj 496 444 +~;
 #X obj 496 421 *~;
-#X floatatom 550 381 5 0 0 0 - - -, f 5;
+#X floatatom 550 381 5 0 0 0 - - - 0;
 #X obj 352 306 + 500;
 #X obj 352 283 random 800;
 #X obj 273 283 random 100;
@@ -43,17 +41,14 @@
 #X obj 709 273 loadbang;
 #X text 777 249 parar;
 #X text 200 240 define o envelope de frequência das gotas;
-#X text 872 364 randomiza a intensidade do envelope de amplitude das
-gotas, f 25;
-#X text 735 667 randomiza a posição da gota (esquerda - direita)
-, f 25;
+#X text 872 364 randomiza a intensidade do envelope de amplitude das gotas, f 25;
+#X text 735 667 randomiza a posição da gota (esquerda - direita), f 25;
 #X obj 780 584 line~;
 #X obj 496 375 line~;
 #X obj 460 724 *~;
 #X obj 509 693 -;
 #X msg 509 663 1;
-#X obj 647 668 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc
-#000000 #000000;
+#X obj 647 668 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
 #X obj 592 712 *~;
 #X msg 876 577 0 \$1;
 #X msg 780 521 \$1 10;

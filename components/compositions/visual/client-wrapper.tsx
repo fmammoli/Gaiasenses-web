@@ -10,15 +10,26 @@ import {
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import DebugPanel from "./debug-panel";
-import { SketchProps } from "@p5-wrapper/react";
+
+import useWebpd from "./use-webpd";
 
 type ClientWrapper = {
   debug?: boolean;
+  patchPath?: string;
   children: ReactElement;
+  messages?: {
+    nodeId: string;
+    portletId: string;
+    message: (string | number)[];
+    valueIndex: number;
+    name: string;
+  }[];
 };
 
 export default function ClientWrapper({
   debug = false,
+  patchPath,
+  messages,
   children,
 }: ClientWrapper) {
   const pathname = usePathname();
@@ -29,22 +40,30 @@ export default function ClientWrapper({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const newProps = { ...children.props };
+  const [play, setPlay] = useState(false);
 
-  for (const key in newProps) {
-    newProps[key] = searchParams.get(key);
-  }
+  const {
+    WebPdScript,
+    resume,
+    status,
+    suspend,
+    sendMsgToWebPd,
+    error,
+    ready,
+    start,
+  } = useWebpd(patchPath);
 
   const Component = cloneElement(children, {
-    ...newProps,
+    ...children.props,
     containerHeight: height,
+    play: play,
   });
 
   useLayoutEffect(() => {
     if (!ref.current) return;
 
     const observer = new ResizeObserver(() => {
-      if (ref.current) {
+      if (ref.current && ref.current.offsetHeight > 0) {
         setHeight(ref.current.offsetHeight);
       }
     });
@@ -56,7 +75,38 @@ export default function ClientWrapper({
     };
   }, [setHeight]);
 
-  function handleUpdate(newSketchProps: SketchProps) {
+  async function handlePlay() {
+    //play sound
+    if (status === "waiting" && patchPath) {
+      await start();
+      await resume();
+      console.log(messages);
+      messages?.forEach((item) => {
+        sendMsgToWebPd(item.nodeId, item.portletId, item.message);
+      });
+    }
+    if (status === "started" || status == "playing") {
+      console.log("já playing");
+      suspend();
+    }
+    if (status === "suspended") {
+      resume();
+      messages?.forEach((item) => {
+        sendMsgToWebPd(item.nodeId, item.portletId, item.message);
+      });
+    }
+    //Play animation
+    if (play) {
+      setPlay(false);
+    } else {
+      setPlay(true);
+    }
+  }
+
+  function handleUpdate(newSketchProps: { [key: string]: unknown }) {
+    setPlay(false);
+    if (status !== "waiting") suspend();
+
     const paramsString = Object.entries(newSketchProps)
       .map((entry) => `${entry[0]}=${entry[1]}`)
       .join("&");
@@ -70,14 +120,15 @@ export default function ClientWrapper({
 
   return (
     <div className="relative h-full" ref={ref}>
+      {WebPdScript}
       {debug && (
         <DebugPanel
-          sketchProps={children.props}
+          sketchProps={Component.props}
           handleUpdate={handleUpdate}
+          handlePlay={handlePlay}
         ></DebugPanel>
       )}
-
-      {Component}
+      {height > 0 && Component}
     </div>
   );
 }

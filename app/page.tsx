@@ -3,18 +3,35 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { getWeather } from "@/components/compositions/visual/lluvia/lluvia";
-import { getLightning } from "@/components/compositions/visual/zigzag/zigzag";
 import CompositionsInfo, {
   AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
-import { Button } from "@/components/ui/button";
+
+type CompositionHistoryItem = {
+  id: string;
+  date: Date;
+  composition: AvailableCompositionNames;
+  attributes: { [key: string]: string | number }[];
+};
+
+const compositionHistory: CompositionHistoryItem[] = [
+  {
+    id: "day 1",
+    date: new Date("10-23-2023"),
+    composition: "lluvia",
+    attributes: [{ rain: 6 }],
+  },
+  {
+    id: "day 2",
+    date: new Date("05-10-2023"),
+    composition: "zigzag",
+    attributes: [{ rain: 6 }, { lightningCount: 10 }],
+  },
+];
 
 export default async function Page({
-  params,
   searchParams,
 }: {
-  params: { composition: string };
   searchParams: { lat: string; lon: string } | {};
 }) {
   const lat = searchParams.hasOwnProperty("lat")
@@ -37,23 +54,25 @@ export default async function Page({
         <H1>Hi this is Home</H1>
         <p>Test some compositions:</p>
 
-        {(Object.keys(CompositionsInfo) as AvailableCompositionNames[]).map(
-          (key, index) => {
-            const attributesString = CompositionsInfo[key].attributes
-              .map((item) => `${item}=0`)
-              .join("&");
-            return (
-              <div key={index}>
-                <Card></Card>
-                <Link
-                  href={`/compositions/${CompositionsInfo[key].name}/?lat=${lat}&lon=${lon}&${attributesString}`}
-                >
-                  {CompositionsInfo[key].name}
-                </Link>
-              </div>
-            );
-          }
-        )}
+        {compositionHistory.map((item, index) => {
+          const attributesString = item.attributes
+            .map((attr) => {
+              console.log(attr);
+              return `${Object.keys(attr)[0]}=${attr[Object.keys(attr)[0]]}`;
+            })
+            .join("&");
+
+          return (
+            <div key={item.id}>
+              <Card></Card>
+              <Link
+                href={`/compositions/${item.composition}/?lat=${lat}&lon=${lon}&${attributesString}`}
+              >
+                {`${item.id}   ${item.date.toUTCString()}`}
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </main>
   );

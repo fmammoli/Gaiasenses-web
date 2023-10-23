@@ -7,11 +7,13 @@ import { FormEvent } from "react";
 type DebugPanelProps = {
   handleUpdate: (newSketchProps: SketchProps) => void;
   sketchProps: SketchProps;
+  handlePlay?: () => void;
 };
 
 export default function DebugPanel({
   sketchProps,
   handleUpdate,
+  handlePlay,
 }: DebugPanelProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,13 +21,13 @@ export default function DebugPanel({
 
     let newSketchProps = { ...sketchProps };
 
-    for (const key in sketchProps) {
+    for (const key in newSketchProps) {
       const newValue = formData.get(key) as string | null;
       if (newValue) {
         newSketchProps[key] = parseInt(newValue);
       }
     }
-    const { containerHeight, ...rest } = newSketchProps;
+    const { containerHeight, play, ...rest } = newSketchProps;
     handleUpdate(rest);
   }
 
@@ -38,7 +40,8 @@ export default function DebugPanel({
             const name = entry[0];
             const value = entry[1];
             return (
-              name !== "containerHeight" && (
+              name !== "containerHeight" &&
+              name !== "play" && (
                 <div key={index} className="my-4">
                   <Label
                     htmlFor={name}
@@ -61,6 +64,9 @@ export default function DebugPanel({
             Update
           </Button>
         </form>
+        <Button id="play-button" className="mt-4" onClick={handlePlay}>
+          {sketchProps.play ? "Stop" : "Play"}
+        </Button>
       </div>
       <p className="text-xs mt-4">* Click on canvas to pause animation.</p>
     </div>
