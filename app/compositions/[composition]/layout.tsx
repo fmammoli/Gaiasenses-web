@@ -20,7 +20,7 @@ export default function RootLayout({
         {children}
       </div>
       <div className="row-start-1 row-end-1 col-start-1 col-end- z-10">
-        <nav className="flex p-8 justify-between z-50">
+        <nav className="flex px-2 py-8 md:p8 justify-between z-50">
           <BackButton></BackButton>
           <H1>GaiaSensesWeb</H1>
           <ModeToggle></ModeToggle>

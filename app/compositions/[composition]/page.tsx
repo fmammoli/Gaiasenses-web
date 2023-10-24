@@ -1,9 +1,6 @@
-import { H1 } from "@/components/ui/h1";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import CompositionsInfo, {
   AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
-import BackButton from "./back-button";
 
 export type FireSpotsResponseData = {
   city: string;
