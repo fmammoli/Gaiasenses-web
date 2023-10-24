@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
-import { start } from "repl";
+import { useState } from "react";
 
 let audioContext: AudioContext | null = null;
 let webpdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null = null;

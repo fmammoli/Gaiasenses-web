@@ -32,7 +32,7 @@ export default function DebugPanel({
   }
 
   return (
-    <div className="absolute max-w-[10rem] bg-secondary p-4 rounded-lg right-2 top-2 opacity-60 hover:opacity-100">
+    <div className="absolute max-w-[10rem] bg-secondary p-4 rounded-lg right-2 top-1/4 opacity-60 hover:opacity-100">
       <p className="text-center mb-2">Debug Panel</p>
       <div>
         <form onSubmit={handleSubmit}>

@@ -2,7 +2,6 @@ import getData from "@/components/getData";
 
 import ClientWrapper from "../client-wrapper";
 import LluviaSketch from "./lluvia-sketch";
-import LluviaSound from "./lluvia-sound";
 
 export type RainfallResponseData = {
   city: string;

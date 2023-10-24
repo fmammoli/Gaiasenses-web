@@ -4,7 +4,6 @@ import CompositionsInfo, {
   AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
 import BackButton from "./back-button";
-import Script from "next/script";
 
 export type FireSpotsResponseData = {
   city: string;
@@ -40,30 +39,12 @@ export default async function Page({
       };
 
       return (
-        <main className="grid grid-rows-[120px_1fr] h-full">
-          <div className="">
-            <nav className="flex p-8 gap-8">
-              <BackButton></BackButton>
-              <H1>GaiaSensesWeb</H1>
-              <ModeToggle></ModeToggle>
-            </nav>
-          </div>
+        <div className="h-full">
           {<Component {...props}></Component> ?? <p>Not working Inside</p>}
-        </main>
+        </div>
       );
     }
   } else {
-    return (
-      <main className="grid grid-rows-[120px_1fr] h-full">
-        <div className="">
-          <nav className="flex p-8 gap-8">
-            <BackButton></BackButton>
-            <H1>GaiaSensesWeb</H1>
-            <ModeToggle></ModeToggle>
-          </nav>
-        </div>
-        {<p>Not working</p>}
-      </main>
-    );
+    return <>{<p>Not working</p>}</>;
   }
 }
