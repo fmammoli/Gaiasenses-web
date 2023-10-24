@@ -7,8 +7,12 @@ export default function BackButton() {
   const { suspend, close } = useWebpd();
   const router = useRouter();
   async function handleBack() {
-    await suspend();
-    await close();
+    try {
+      await suspend();
+      await close();
+    } catch (error) {
+      console.log("Cant suspend");
+    }
     router.back();
   }
   return <Button onClick={handleBack}>Back</Button>;
