@@ -1,5 +1,5 @@
 "use client";
-import useWebpd from "@/components/compositions/visual/use-webpd";
+import useWebpd from "@/hooks/use-webpd";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 

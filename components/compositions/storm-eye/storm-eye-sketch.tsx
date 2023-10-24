@@ -87,9 +87,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
   p5.setup = () => {
     if (!play) p5.noLoop();
     p5.createCanvas(p5.windowWidth, containerHeight);
-    for (let i = 0; i < n; i++) {
-      vents.push(new Vent());
-    }
+    // for (let i = 0; i < n; i++) {
+    //   vents.push(new Vent());
+    // }
   };
 
   p5.updateWithProps = (props) => {
@@ -97,13 +97,13 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
     temperature = props.temperature;
     speedFactor = props.windSpeed / 100;
     eyeVariance = props.windDeg / 1000;
-    vents = [];
-    p5.resizeCanvas(p5.windowWidth, containerHeight);
 
+    p5.resizeCanvas(p5.windowWidth, containerHeight);
+    vents = [];
     for (let i = 0; i < n; i++) {
       vents.push(new Vent());
     }
-
+    console.log(vents);
     if (props.play) {
       p5.loop();
     } else {
@@ -113,9 +113,11 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
 
   p5.draw = () => {
     p5.background(0);
-    for (let i = 0; i < n; i++) {
-      vents[i].show();
-      vents[i].move();
+    if (vents.length > 0) {
+      for (let i = 0; i < n; i++) {
+        vents[i].show();
+        vents[i].move();
+      }
     }
   };
 

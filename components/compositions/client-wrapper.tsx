@@ -9,9 +9,9 @@ import {
 } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import DebugPanel from "./debug-panel";
 
-import useWebpd from "./use-webpd";
+import useWebpd from "../../hooks/use-webpd";
+import DebugPanel from "./debug-panel";
 
 type ClientWrapper = {
   debug?: boolean;

@@ -1,13 +1,14 @@
-import ColorFlower from "./visual/color-flower/color-flower";
-import Lluvia from "./visual/lluvia/lluvia";
-import StormEye from "./visual/storm-eye/storm-eye";
-import Zigzag from "./visual/zigzag/zigzag";
+import ColorFlower from "./color-flower/color-flower";
+import Lluvia from "./lluvia/lluvia";
+import StormEye from "./storm-eye/storm-eye";
+import Zigzag from "./zigzag/zigzag";
 
 export type AvailableCompositionNames =
   | "lluvia"
   | "zigzag"
   | "colorFlower"
   | "stormEye";
+
 export type AvailableCompositionComponents = typeof Lluvia | typeof Zigzag;
 
 type CompositionsInfo = {

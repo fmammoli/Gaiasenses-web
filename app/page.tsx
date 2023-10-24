@@ -32,14 +32,14 @@ type CompositionHistoryItem = {
 };
 
 const compositionHistory: CompositionHistoryItem[] = [
-  // {
-  //   id: "day 4",
-  //   date: new Date("10-24-2023"),
-  //   description: "A warm day with clear sky and some wind.",
-  //   composition: "stormEye",
-  //   attributes: [{ temperature: 32 }, { windSpeed: 4 }, { windDeg: 45 }],
-  //   thumb: stormEyeThumb,
-  // },
+  {
+    id: "day 4",
+    date: new Date("10-24-2023"),
+    description: "A warm day with clear sky and some wind.",
+    composition: "stormEye",
+    attributes: [{ temperature: 32 }, { windSpeed: 4 }, { windDeg: 45 }],
+    thumb: stormEyeThumb,
+  },
   {
     id: "day 3",
     date: new Date("10-24-2023"),
