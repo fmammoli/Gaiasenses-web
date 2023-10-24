@@ -135,6 +135,13 @@ export default function useWebpd(patchPath?: string | null) {
     }
   }
 
+  async function close() {
+    webpdNode?.destroy();
+    patch = null;
+
+    audioContext?.close();
+  }
+
   return {
     WebPdScript: script,
     status: status,
@@ -143,6 +150,7 @@ export default function useWebpd(patchPath?: string | null) {
     resume: resume,
     suspend: suspend,
     sendMsgToWebPd: sendMsgToWebPd,
+    close: close,
     error: error,
   };
 }
