@@ -24,7 +24,7 @@ export default async function Page({
     if (compositionInfo) {
       const compositionProps: { [key: string]: number } = {};
       compositionInfo.attributes.forEach((attr) => {
-        compositionProps[attr] = parseInt(searchParams[attr]);
+        compositionProps[attr] = parseFloat(searchParams[attr]);
       });
 
       const Component = compositionInfo.Component;

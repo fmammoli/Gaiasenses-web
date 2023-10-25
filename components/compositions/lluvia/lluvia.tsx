@@ -100,7 +100,6 @@ export default async function Lluvia({
     ],
   };
 
-  console.log(patchData.messages);
   return (
     <ClientWrapper debug={debug} {...patchData}>
       <LluviaSketch

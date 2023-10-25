@@ -24,7 +24,7 @@ export default function DebugPanel({
     for (const key in newSketchProps) {
       const newValue = formData.get(key) as string | null;
       if (newValue) {
-        newSketchProps[key] = parseInt(newValue);
+        newSketchProps[key] = parseFloat(newValue);
       }
     }
     const { containerHeight, play, ...rest } = newSketchProps;
@@ -52,6 +52,8 @@ export default function DebugPanel({
                       id={name}
                       name={name}
                       type="number"
+                      inputMode="decimal"
+                      step={0.01}
                       defaultValue={value as unknown as string | number}
                       className="w-20 max-w-[5rem]"
                     />
