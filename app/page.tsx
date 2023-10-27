@@ -10,9 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CompositionsInfo, {
-  AvailableCompositionNames,
-} from "@/components/compositions/compositions-info";
+import { AvailableCompositionNames } from "@/components/compositions/compositions-info";
 
 import lluviaThumb from "/public/lluvia.png";
 import colorFlowerThumb from "/public/color-flower.png";
@@ -24,12 +22,7 @@ import {
 } from "@/components/compositions/lluvia/lluvia";
 import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { Button } from "@/components/ui/button";
-
-// const thumbs = {
-//   lluvia: lluviaThumb,
-//   colorFlower: colorFlowerThumb,
-//   zigzag: zigzagThumb,
-// };
+import AudioStopper from "./audio-stopper";
 
 type CompositionHistoryItem = {
   id: string;
@@ -96,7 +89,7 @@ export default async function Page({
   let windDegData = 0;
   try {
     weatherData = await getWeather(lat, lon);
-    console.log(weatherData);
+
     temperatureData = weatherData.main.temp;
 
     rainData = weatherData.rain.hasOwnProperty("1h")
@@ -113,6 +106,7 @@ export default async function Page({
 
   return (
     <main className="grid grid-rows-[120px_1fr] h-full justify-center">
+      <AudioStopper></AudioStopper>
       <nav className="flex p-8 justify-between">
         <div className="grow text-center">
           <H1>GaiaSensesWeb</H1>
@@ -173,7 +167,7 @@ export default async function Page({
               </Button>
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
-                  href={`/compositions/zigzag/?lat=${lat}&lon=${lon}&rain=${rainData}&lughtningCount=${lightningCountData}`}
+                  href={`/compositions/zigzag/?lat=${lat}&lon=${lon}&rain=${rainData}&lightningCount=${lightningCountData}`}
                 >
                   ZigZag
                 </Link>

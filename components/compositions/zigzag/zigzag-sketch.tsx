@@ -126,63 +126,49 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
     return colors[0];
   }
 
+  function initialize() {
+    nAgents = Math.floor(
+      p5.map(
+        lightningCount,
+        0,
+        CRITICAL_LIGHTNING,
+        AGENTS_MIN,
+        AGENTS_MAX,
+        true
+      )
+    );
+    fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX, true);
+
+    p5.background(0);
+    p5.frameRate(fps);
+
+    for (let i = 0; i < nAgents / 3; i++) {
+      agents.push(createAgent(p5.randomGaussian() * 200, 0));
+      agents.push(createAgent(width * 0.5 + p5.randomGaussian() * 200, 0));
+      agents.push(createAgent(width * 1.0 + p5.randomGaussian() * 200, 0));
+    }
+  }
   p5.setup = () => {
+    if (!play) p5.noLoop();
     p5.createCanvas(width, height);
     p5.colorMode(p5.HSB, 360, 100, 100);
     p5.rectMode(p5.CENTER);
     p5.strokeCap(p5.SQUARE);
-
-    nAgents = Math.floor(
-      p5.map(
-        lightningCount,
-        0,
-        CRITICAL_LIGHTNING,
-        AGENTS_MIN,
-        AGENTS_MAX,
-        true
-      )
-    );
-    fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX, true);
-
-    p5.background(0);
-    p5.frameRate(fps);
-
-    for (let i = 0; i < nAgents / 3; i++) {
-      agents.push(createAgent(p5.randomGaussian() * 200, 0));
-      agents.push(createAgent(width * 0.5 + p5.randomGaussian() * 200, 0));
-      agents.push(createAgent(width * 1.0 + p5.randomGaussian() * 200, 0));
-    }
+    initialize();
   };
 
   p5.updateWithProps = (props) => {
-    containerHeight = props.containerHeight;
-    height = props.containerHeight;
+    if (containerHeight !== props.containerHeight) {
+      containerHeight = props.containerHeight;
+      height = props.containerHeight;
+      p5.resizeCanvas(width, props.containerHeight);
+    }
+    console.log(props.rain);
     rain = props.rain;
     lightningCount = props.lightningCount;
     play = props.play;
-    console.log(props);
-    p5.resizeCanvas(width, props.containerHeight);
 
-    nAgents = Math.floor(
-      p5.map(
-        lightningCount,
-        0,
-        CRITICAL_LIGHTNING,
-        AGENTS_MIN,
-        AGENTS_MAX,
-        true
-      )
-    );
-    fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX, true);
-
-    p5.background(0);
-    p5.frameRate(fps);
-
-    for (let i = 0; i < nAgents / 3; i++) {
-      agents.push(createAgent(p5.randomGaussian() * 200, 0));
-      agents.push(createAgent(width * 0.5 + p5.randomGaussian() * 200, 0));
-      agents.push(createAgent(width * 1.0 + p5.randomGaussian() * 200, 0));
-    }
+    initialize();
 
     if (props.play) {
       p5.loop();
@@ -193,7 +179,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
   };
 
   p5.draw = () => {
-    console.log("draw");
     if (p5.frameCount > 10000) {
       p5.noLoop();
     }
@@ -223,7 +208,6 @@ export default function ZigZagSketch({
   canvas,
   play = false,
 }: ZigZagSketchProps) {
-  console.log("zigzag");
   return (
     <NextReactP5Wrapper
       sketch={sketch}

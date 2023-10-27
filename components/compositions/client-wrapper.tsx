@@ -16,7 +16,9 @@ import DebugPanel from "./debug-panel";
 type ClientWrapper = {
   debug?: boolean;
   patchPath?: string;
-  children: ReactElement;
+  children: ReactElement & {
+    props: { containerHeight: number; play: boolean };
+  };
   messages?: {
     nodeId: string;
     portletId: string;
@@ -75,25 +77,30 @@ export default function ClientWrapper({
     };
   }, [setHeight]);
 
+  if (status === "playing") {
+    messages?.forEach((item) => {
+      sendMsgToWebPd(item.nodeId, item.portletId, item.message);
+    });
+  }
+
+  async function handlePause() {
+    setPlay(false);
+    if (status === "started" || status == "playing") {
+      suspend();
+    }
+  }
+
   async function handlePlay() {
     //play sound
     if (status === "waiting" && patchPath) {
       await start();
       await resume();
-      console.log(messages);
       messages?.forEach((item) => {
         sendMsgToWebPd(item.nodeId, item.portletId, item.message);
       });
-    }
-    if (status === "started" || status == "playing") {
-      console.log("já playing");
-      suspend();
     }
     if (status === "suspended") {
       resume();
-      messages?.forEach((item) => {
-        sendMsgToWebPd(item.nodeId, item.portletId, item.message);
-      });
     }
     //Play animation
     if (play) {
@@ -103,11 +110,13 @@ export default function ClientWrapper({
     }
   }
 
-  function handleUpdate(newSketchProps: { [key: string]: unknown }) {
-    setPlay(false);
-    if (status !== "waiting") suspend();
+  async function handleChange(newSketchProp: { [key: string]: number }) {
+    const { containerHeight, play, ...sketchProps } = children.props;
 
-    const paramsString = Object.entries(newSketchProps)
+    const paramsString = Object.entries({
+      ...sketchProps,
+      ...newSketchProp,
+    })
       .map((entry) => `${entry[0]}=${entry[1]}`)
       .join("&");
 
@@ -118,14 +127,21 @@ export default function ClientWrapper({
     router.replace(`${pathname}?${geolocationParamsString}&${paramsString}`);
   }
 
+  function handleStop() {
+    handlePause();
+    router.refresh();
+  }
+
   return (
     <div className="relative h-full" ref={ref}>
       {WebPdScript}
       {debug && (
         <DebugPanel
           sketchProps={Component.props}
-          handleUpdate={handleUpdate}
           handlePlay={handlePlay}
+          handlePause={handlePause}
+          handleChange={handleChange}
+          handleStop={handleStop}
         ></DebugPanel>
       )}
       {height > 0 && Component}

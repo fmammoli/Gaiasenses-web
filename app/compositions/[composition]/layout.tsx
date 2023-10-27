@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import BackButton from "./back-button";
 import { H1 } from "@/components/ui/h1";
 import { ModeToggle } from "@/components/ui/mode-toggle";

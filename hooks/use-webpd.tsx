@@ -42,7 +42,6 @@ async function startAudio(patchPath: string) {
 
   // Setup filesystem management
   webpdNode.port.onmessage = (message: any) => {
-    console.log("alo");
     return window.WebPdRuntime.fsWeb(webpdNode.current, message, {
       rootUrl: window.WebPdRuntime.urlDirName(location.pathname),
     });
@@ -73,7 +72,6 @@ export default function useWebpd(patchPath?: string | null) {
     portletId: string,
     message: (string | number)[]
   ) => {
-    console.log(JSON.stringify([nodeId, portletId, message]));
     webpdNode.port.postMessage({
       type: "inletCaller",
       payload: {
@@ -83,10 +81,6 @@ export default function useWebpd(patchPath?: string | null) {
       },
     });
   };
-
-  function handleClick() {
-    sendMsgToWebPd("n_0_56", "0", [200]);
-  }
 
   async function resume() {
     if (audioContext) {
@@ -138,8 +132,9 @@ export default function useWebpd(patchPath?: string | null) {
   async function close() {
     webpdNode?.destroy();
     patch = null;
-
-    audioContext?.close();
+    if (audioContext?.state! !== "closed") {
+      audioContext?.close();
+    }
   }
 
   return {

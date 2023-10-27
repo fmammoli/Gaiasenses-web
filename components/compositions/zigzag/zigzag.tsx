@@ -33,24 +33,19 @@ export default async function Zigzag({
   lightningCount?: number;
   today?: boolean;
 }) {
-  let rainData = 0;
-  let lightningCountData = 0;
+  let rainData = rain ?? 0;
+  let lightningCountData = lightningCount ?? 0;
 
-  if (rain && lightningCount) {
-    rainData = rain;
-    lightningCountData = lightningCount;
-  } else {
-    if (today) {
-      const [weatherData, lightningData] = await Promise.all([
-        getWeather(lat, lon),
-        getLightning(lat, lon, 50),
-      ]);
-      rainData = weatherData.rain.hasOwnProperty("1h")
-        ? (weatherData.rain as { "1h": number })["1h"]
-        : 0;
+  if (today) {
+    const [weatherData, lightningData] = await Promise.all([
+      getWeather(lat, lon),
+      getLightning(lat, lon, 50),
+    ]);
+    rainData = weatherData.rain.hasOwnProperty("1h")
+      ? (weatherData.rain as { "1h": number })["1h"]
+      : 0;
 
-      lightningCountData = lightningData.count;
-    }
+    lightningCountData = lightningData.count;
   }
 
   return (

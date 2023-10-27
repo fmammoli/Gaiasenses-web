@@ -24,14 +24,11 @@ export default async function ColorFlower({
   today?: boolean;
   temperature?: number;
 }) {
-  let temperatureData = 0;
-  if (temperature) {
-    temperatureData = temperature;
-  } else {
-    if (today) {
-      const data = await getWeather(lat, lon);
-      temperatureData = data.main.temp && 0;
-    }
+  let temperatureData = temperature ?? 0;
+
+  if (today) {
+    const data = await getWeather(lat, lon);
+    temperatureData = data.main.temp && 0;
   }
 
   return (

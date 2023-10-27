@@ -115,16 +115,20 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
     p5.createCanvas(w, containerHeight);
 
     petalColors = decideColors(temperature);
-    console.log(petalColors);
+
     flowers.push(new Flower(p5.frameCount));
   };
 
   p5.updateWithProps = (props) => {
-    flowers = [];
-    containerHeight = props.containerHeight;
+    if (containerHeight !== props.containerHeight) {
+      containerHeight = props.containerHeight;
+      p5.resizeCanvas(w, containerHeight);
+      flowers = [];
+    }
+
     temperature = props.temperature;
     play = props.play;
-    p5.resizeCanvas(w, containerHeight);
+
     petalColors = decideColors(temperature);
 
     if (props.play) {

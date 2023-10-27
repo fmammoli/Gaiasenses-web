@@ -1,5 +1,3 @@
-import getData from "@/components/getData";
-
 import ClientWrapper from "../client-wrapper";
 import StormEyeSketch from "./storm-eye-sketch";
 
@@ -20,20 +18,13 @@ export default async function StormEye({
   windDeg?: number;
   windSpeed?: number;
 }) {
-  let temperatureData = 0;
-  let windDegData = 0;
-  let windSpeedData = 0;
-  if (temperature && windDeg && windSpeed) {
-    temperatureData = temperature;
-    windDegData = windDeg;
-    windSpeedData = windSpeed;
-  } else {
-    if (today) {
-      //   const data = await getWeather(lat, lon);
-      //   rainData = data.rain.hasOwnProperty("1h")
-      //     ? (data.rain as { "1h": number })["1h"]
-      //     : 0;
-    }
+  let temperatureData = temperature ?? 0;
+  let windDegData = windDeg ?? 0;
+  let windSpeedData = windSpeed ?? 0;
+
+  if (today) {
+    //TO-DO
+    //make the fetch here
   }
 
   return (

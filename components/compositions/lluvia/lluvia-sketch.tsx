@@ -44,11 +44,14 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
   };
 
   p5.updateWithProps = (props) => {
-    containerHeight = props.containerHeight;
-    h = props.containerHeight;
-    rain = props.rain;
+    if (containerHeight !== props.containerHeight) {
+      containerHeight = props.containerHeight;
+      h = props.containerHeight;
+      p5.resizeCanvas(w, props.containerHeight, false);
+    }
+    rain = Number.isNaN(props.rain) ? rain : props.rain;
     play = props.play;
-    p5.resizeCanvas(w, props.containerHeight);
+
     ellipseSize = p5.map(rain, 0, CRITICAL_RAIN, ELLIPSE_MIN, ELLIPSE_MAX);
     fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
 
@@ -77,8 +80,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
       p5.random(ellipseSize)
     );
   };
-
-  return false;
 }
 
 export default function LluviaSketch({

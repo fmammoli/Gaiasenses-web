@@ -93,17 +93,20 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
   };
 
   p5.updateWithProps = (props) => {
-    containerHeight = props.containerHeight;
+    if (containerHeight !== props.containerHeight) {
+      containerHeight = props.containerHeight;
+      p5.resizeCanvas(p5.windowWidth, containerHeight);
+      vents = [];
+    }
+
     temperature = props.temperature;
     speedFactor = props.windSpeed / 100;
     eyeVariance = props.windDeg / 1000;
 
-    p5.resizeCanvas(p5.windowWidth, containerHeight);
-    vents = [];
     for (let i = 0; i < n; i++) {
       vents.push(new Vent());
     }
-    console.log(vents);
+
     if (props.play) {
       p5.loop();
     } else {

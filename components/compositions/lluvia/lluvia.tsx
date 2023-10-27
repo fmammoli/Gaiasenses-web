@@ -75,25 +75,13 @@ export default async function Lluvia({
     }
   }
 
-  // const patchData: PatchData = {
-  //   patchPath: "/lluviaMessage.wasm",
-  //   messages: [
-  //     {
-  //       nodeId: "n_0_56",
-  //       portletId: "0",
-  //       message: [rainData],
-  //       valueIndex: 0,
-  //       name: "rain",
-  //     },
-  //   ],
-  // };
   const patchData: PatchData = {
     patchPath: "/lluviaSlider.wasm",
     messages: [
       {
         nodeId: "n_0_56",
         portletId: "0",
-        message: [0, 1000, 1, rainData, "", ""],
+        message: [0, 1000, 1, 1000 / (rainData == 0 ? 1 : rainData), "", ""],
         valueIndex: 3,
         name: "rain",
       },
