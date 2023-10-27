@@ -87,6 +87,7 @@ export default async function Page({
   let lightningCountData = 0;
   let windSpeedData = 0;
   let windDegData = 0;
+  let error = null;
   try {
     weatherData = await getWeather(lat, lon);
 
@@ -102,6 +103,7 @@ export default async function Page({
     lightningCountData = (await lightningData).count;
   } catch (error) {
     console.log("error fetching data");
+    error = error;
   }
 
   return (
@@ -122,7 +124,7 @@ export default async function Page({
           <Card className="shadow-sm hover:shadow-md hover:scale-[102%] transition-shadow">
             <CardHeader>
               <CardTitle>
-                Today - {weatherData?.city}, {weatherData?.state}
+                Today - {error} {weatherData?.city}, {weatherData?.state}
               </CardTitle>
               <CardDescription>
                 {new Date().toLocaleDateString("pt-Br", {
@@ -157,7 +159,7 @@ export default async function Page({
                 </p>
               </div>
             </CardContent>
-            <CardFooter className="gap-1">
+            <CardFooter className="gap-1 flex-wrap">
               <Button variant={"outline"} className="text-sm" asChild>
                 <Link
                   href={`/compositions/lluvia/?lat=${lat}&lon=${lon}&rain=${rainData}`}
