@@ -1,14 +1,33 @@
+"use client";
 import { P } from "@/components/ui/p";
 import GeolocationButton from "./geolocation-button";
 import { H2 } from "@/components/ui/h2";
+import { useEffect, useState } from "react";
 
-export default async function LocationBar({
+export default function LocationBar({
   city,
   state,
 }: {
   city: string | null;
   state: string | null;
 }) {
+  const [geoState, setGeoState] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function checkPermission() {
+      if (navigator && geoState === null) {
+        console.log("checking permission");
+        const res = await navigator.permissions.query({ name: "geolocation" });
+        setGeoState(res.state);
+      }
+    }
+    checkPermission();
+  }, [setGeoState, geoState]);
+
+  function handle(newState: string) {
+    console.log(newState);
+    setGeoState(newState);
+  }
   return (
     <div>
       {city && (
@@ -17,10 +36,12 @@ export default async function LocationBar({
             <H2>
               {city} - {state}
             </H2>
-            <GeolocationButton></GeolocationButton>
+
+            <GeolocationButton setGeoState={handle}></GeolocationButton>
           </div>
 
           <div className="text-sm font-light font-mono">
+            <P>{`This is your gps state: ${geoState}`}</P>
             <P>Cloudy, with a chance of meatballs</P>
           </div>
         </>
@@ -28,7 +49,7 @@ export default async function LocationBar({
       {!city && (
         <>
           <div className="flex items-center justify-between">
-            <GeolocationButton>
+            <GeolocationButton setGeoState={handle}>
               <H2>Click Here to Activate Your GPS</H2>
             </GeolocationButton>
           </div>

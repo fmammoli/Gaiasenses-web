@@ -7,8 +7,10 @@ import { ReactNode, useState } from "react";
 
 export default function GeolocationButton({
   children,
+  setGeoState,
 }: {
   children?: ReactNode;
+  setGeoState: (newState: any) => void;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -21,6 +23,7 @@ export default function GeolocationButton({
     newParams.set("lat", position.coords.latitude.toString());
     newParams.set("lon", position.coords.longitude.toString());
     setState("granted");
+    setGeoState("granted");
     router.replace(`${pathname}?${newParams.toString()}`);
     router.refresh();
   }
@@ -28,6 +31,7 @@ export default function GeolocationButton({
   function onError(positionError: GeolocationPositionError) {
     console.log(positionError);
     alert(positionError);
+    setGeoState("error: " + positionError);
   }
 
   async function onClick() {
@@ -44,11 +48,11 @@ export default function GeolocationButton({
         console.log("denid");
       }
       setState(result.state);
+      setGeoState(result.state);
     }
   }
   return (
     <Button size={"icon"} onClick={onClick}>
-      {`Geolocation state: ${state}`}
       {children}
       <SewingPinFilledIcon className=""></SewingPinFilledIcon>
     </Button>

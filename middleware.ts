@@ -13,18 +13,22 @@ export function middleware(request: NextRequest) {
   ) {
     const { geo } = request;
 
-    request.nextUrl.searchParams.set(
-      "lat",
-      geo?.latitude ?? defaultGeolocation.latitude
-    );
-    request.nextUrl.searchParams.set(
-      "lon",
-      geo?.longitude ?? defaultGeolocation.longitude
-    );
-    request.nextUrl.searchParams.set(
-      "city",
-      geo?.city ?? defaultGeolocation.city
-    );
+    if (geo) {
+      request.nextUrl.searchParams.set(
+        "lat",
+        geo?.latitude ?? defaultGeolocation.latitude
+      );
+      request.nextUrl.searchParams.set(
+        "lon",
+        geo?.longitude ?? defaultGeolocation.longitude
+      );
+      request.nextUrl.searchParams.set(
+        "city",
+        geo?.city ?? defaultGeolocation.city
+      );
+      request.nextUrl.searchParams.set("test", "has geo");
+    }
+    request.nextUrl.searchParams.set("test", "no geo");
     return NextResponse.redirect(new URL(request.nextUrl));
   }
 }

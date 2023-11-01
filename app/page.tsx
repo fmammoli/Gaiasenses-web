@@ -101,7 +101,6 @@ export default async function Page({
   let state = null;
 
   if (lat && lon) {
-    console.log("has lat lon");
     try {
       weatherData = await getWeather(lat, lon);
 
@@ -132,6 +131,7 @@ export default async function Page({
       </TopBar>
 
       <div className="p-8">
+        <p>{lat ? "has lat and lon" : "dont have lat and lon"}</p>
         <H1>My compositons</H1>
 
         <div className="my-4 max-w-sm">
