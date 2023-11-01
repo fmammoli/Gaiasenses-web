@@ -36,9 +36,6 @@ export default function LocationBar({
             <H2>
               {city} - {state}
             </H2>
-            <div>
-              <GeolocationButton setGeoState={handleButton}></GeolocationButton>
-            </div>
           </div>
 
           <div className="text-sm font-light font-mono">
