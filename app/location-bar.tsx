@@ -24,7 +24,7 @@ export default function LocationBar({
     checkPermission();
   }, [setGeoState, geoState]);
 
-  function handle(newState: string) {
+  function handleButton(newState: string) {
     console.log(newState);
     setGeoState(newState);
   }
@@ -37,7 +37,7 @@ export default function LocationBar({
               {city} - {state}
             </H2>
 
-            <GeolocationButton setGeoState={handle}></GeolocationButton>
+            <GeolocationButton setGeoState={handleButton}></GeolocationButton>
           </div>
 
           <div className="text-sm font-light font-mono">
@@ -49,7 +49,7 @@ export default function LocationBar({
       {!city && (
         <>
           <div className="flex items-center justify-between">
-            <GeolocationButton setGeoState={handle}>
+            <GeolocationButton setGeoState={handleButton}>
               <H2>Click Here to Activate Your GPS</H2>
             </GeolocationButton>
           </div>

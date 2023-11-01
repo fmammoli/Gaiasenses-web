@@ -10,7 +10,7 @@ export default function GeolocationButton({
   setGeoState,
 }: {
   children?: ReactNode;
-  setGeoState: (newState: any) => void;
+  setGeoState: (newState: string) => void;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,7 +31,7 @@ export default function GeolocationButton({
   function onError(positionError: GeolocationPositionError) {
     console.log(positionError);
     alert(positionError);
-    setGeoState("error: " + positionError);
+    setGeoState("error: " + positionError.message);
   }
 
   async function onClick() {
