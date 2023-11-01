@@ -30,8 +30,8 @@ export function middleware(request: NextRequest) {
     } else {
       request.nextUrl.searchParams.set("test", "no geo");
     }
+    return NextResponse.redirect(new URL(request.nextUrl));
   }
-  return NextResponse.redirect(new URL(request.nextUrl));
 }
 
 export const config = {
