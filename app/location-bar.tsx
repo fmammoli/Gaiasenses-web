@@ -28,8 +28,9 @@ export default async function LocationBar({
       {(!city || !state) && (
         <>
           <div className="flex items-center justify-between">
-            <H2>Please activate your gps</H2>
-            <GeolocationButton></GeolocationButton>
+            <GeolocationButton>
+              <H2>Click Here to Activate Your GPS</H2>
+            </GeolocationButton>
           </div>
         </>
       )}

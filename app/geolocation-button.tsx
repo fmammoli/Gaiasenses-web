@@ -3,8 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { SewingPinFilledIcon } from "@radix-ui/react-icons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ReactNode } from "react";
 
-export default function GeolocationButton() {
+export default function GeolocationButton({
+  children,
+}: {
+  children?: ReactNode;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -15,11 +20,12 @@ export default function GeolocationButton() {
     newParams.set("lat", position.coords.latitude.toString());
     newParams.set("lon", position.coords.longitude.toString());
 
-    router.replace(`${pathname}?${newParams.toString()}`);
+    router.push(`${pathname}?${newParams.toString()}`);
   }
 
   function onError(positionError: GeolocationPositionError) {
     console.log(positionError);
+    alert(positionError);
   }
 
   async function onClick() {
@@ -30,7 +36,7 @@ export default function GeolocationButton() {
         console.log("You already have permission");
       } else if (result.state === "prompt") {
         navigator.geolocation.getCurrentPosition(onSucess, onError, {
-          timeout: 3000,
+          timeout: 5000,
         });
       } else if (result.state === "denied") {
         console.log("denid");
@@ -39,6 +45,7 @@ export default function GeolocationButton() {
   }
   return (
     <Button size={"icon"} onClick={onClick}>
+      {children}
       <SewingPinFilledIcon className=""></SewingPinFilledIcon>
     </Button>
   );
