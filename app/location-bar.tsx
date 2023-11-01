@@ -48,7 +48,7 @@ export default function LocationBar({
         <>
           <div className="flex items-center justify-between">
             <GeolocationButton setGeoState={handleButton}>
-              <H2>Click Here to Activate Your GPS</H2>
+              <p>Click Here to Activate Your GPS</p>
             </GeolocationButton>
           </div>
         </>
