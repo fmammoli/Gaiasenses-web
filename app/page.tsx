@@ -131,8 +131,10 @@ export default async function Page({
       </TopBar>
 
       <div className="p-8">
-        {/* <p>{`Lat: ${lat} ____ Lon:${lon} ____ City:${city}`}</p>
-        <p>{JSON.stringify(searchParams)}</p> */}
+        <p>{`Lat: ${lat}City:${city}`}</p>
+        <p>{`Lon:${lon}`}</p>
+        <p>{`City:${city}`}</p>
+        {/* <p>{JSON.stringify(searchParams)}</p> */}
         <H1>My compositons</H1>
 
         <div className="my-4 max-w-sm">
