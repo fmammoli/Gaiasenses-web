@@ -25,7 +25,6 @@ export default function GeolocationButton({
     setState("granted");
     setGeoState("granted");
     router.replace(`${pathname}?${newParams.toString()}`);
-    //router.refresh();
   }
 
   function onError(positionError: GeolocationPositionError) {
@@ -37,7 +36,7 @@ export default function GeolocationButton({
   async function onClick() {
     if (navigator) {
       const result = await navigator.permissions.query({ name: "geolocation" });
-      alert(result.state);
+      //alert(result.state);
       if (result.state === "granted") {
         console.log("You already have permission");
       } else if (result.state === "prompt") {
@@ -52,7 +51,7 @@ export default function GeolocationButton({
     }
   }
   return (
-    <Button size={"icon"} onClick={onClick}>
+    <Button className="w-full" onClick={onClick}>
       {children}
       <SewingPinFilledIcon className=""></SewingPinFilledIcon>
     </Button>

@@ -3,6 +3,8 @@ import { P } from "@/components/ui/p";
 import GeolocationButton from "./geolocation-button";
 import { H2 } from "@/components/ui/h2";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { SewingPinFilledIcon } from "@radix-ui/react-icons";
 
 export default function LocationBar({
   city,
@@ -32,15 +34,26 @@ export default function LocationBar({
     <div>
       {city && (
         <>
-          <div className="flex items-center justify-between">
-            <H2>
-              {city} - {state}
-            </H2>
+          <div className="">
+            <H2>{city}</H2>
+            <h3>{state}</h3>
           </div>
 
           <div className="text-sm font-light font-mono">
-            <P>{`This is your gps state: ${geoState}`}</P>
-            <P>Cloudy, with a chance of meatballs</P>
+            {geoState !== "granted" && (
+              <>
+                <p className="my-4">Activate you GPS for better accurcy.</p>
+                <GeolocationButton setGeoState={handleButton}>
+                  <p>Activate GPS</p>
+                </GeolocationButton>
+              </>
+            )}
+            {geoState === "granted" && (
+              <Button variant={"outline"} className="w-full mt-4">
+                <p>You GPS data is activated.</p>
+                <SewingPinFilledIcon className=""></SewingPinFilledIcon>
+              </Button>
+            )}
           </div>
         </>
       )}

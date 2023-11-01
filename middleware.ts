@@ -26,9 +26,6 @@ export function middleware(request: NextRequest) {
         "city",
         geo?.city ?? defaultGeolocation.city
       );
-      request.nextUrl.searchParams.set("test", "has geo");
-    } else {
-      request.nextUrl.searchParams.set("test", "no geo");
     }
     return NextResponse.redirect(new URL(request.nextUrl));
   }

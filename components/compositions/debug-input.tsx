@@ -20,7 +20,9 @@ export default function DebugInput({
     handleChange({ [name]: parseFloat(event.target.value) });
   }
   function handleSpin(spinValue: number) {
-    handleChange({ [name]: value + spinValue });
+    handleChange({
+      [name]: Math.round(((value + spinValue) * 1) / 0.5) / (1 / 0.5),
+    });
   }
   return (
     <div className={`my-2`}>
