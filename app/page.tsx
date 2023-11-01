@@ -78,7 +78,7 @@ export default async function Page({
   const newSearchParams = new URLSearchParams(searchParams);
   const lat = newSearchParams.has("lat") ? newSearchParams.get("lat") : null;
   const lon = newSearchParams.has("lon") ? newSearchParams.get("lon") : null;
-
+  let city = newSearchParams.has("city") ? newSearchParams.get("city") : null;
   // if (lat && lon) {
   //   try {
   //     const weatherData = await getWeather(lat, lon);
@@ -98,9 +98,10 @@ export default async function Page({
   let windSpeedData = 0;
   let windDegData = 0;
   let error = null;
-  let city = null;
   let state = null;
+
   if (lat && lon) {
+    console.log("has lat lon");
     try {
       weatherData = await getWeather(lat, lon);
 
@@ -119,6 +120,7 @@ export default async function Page({
     } catch (error) {
       console.log(error);
       error = error;
+      alert(error);
     }
   }
 

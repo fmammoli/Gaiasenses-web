@@ -11,7 +11,7 @@ export default async function LocationBar({
 }) {
   return (
     <div>
-      {city && state && (
+      {city && (
         <>
           <div className="flex items-center justify-between">
             <H2>
@@ -25,7 +25,7 @@ export default async function LocationBar({
           </div>
         </>
       )}
-      {(!city || !state) && (
+      {!city && (
         <>
           <div className="flex items-center justify-between">
             <GeolocationButton>

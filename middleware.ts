@@ -25,8 +25,6 @@ export function middleware(request: NextRequest) {
       "city",
       geo?.city ?? defaultGeolocation.city
     );
-
-    console.log(request.nextUrl.toString());
     return NextResponse.redirect(new URL(request.nextUrl));
   }
 }
