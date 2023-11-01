@@ -1,6 +1,5 @@
 "use client";
 
-import Script from "next/script";
 import { useState } from "react";
 
 let audioContext: AudioContext | null = null;
@@ -14,20 +13,11 @@ async function startAudio(patchPath: string) {
 
   patch = await response.arrayBuffer();
 
-  // Get audio input
-  // stream = await navigator.mediaDevices.getUserMedia({
-  //   audio: true,
-  // });
-
   audioContext = new AudioContext();
   const r = await window.WebPdRuntime.registerWebPdWorkletNode(audioContext);
 
   let node = audioContext.createMediaStreamDestination();
   stream = node.stream;
-
-  // if (audioContext.state === "suspended") {
-  //   audioContext.resume();
-  // }
 
   if (audioContext.state === "running") {
     audioContext.suspend();
@@ -65,7 +55,6 @@ export default function useWebpd(patchPath?: string | null) {
     "waiting" | "loading" | "error" | "playing" | "suspended" | "started"
   >("waiting");
   const [error, setError] = useState(null);
-  const [ready, setReady] = useState(false);
 
   const sendMsgToWebPd = (
     nodeId: string,
@@ -100,21 +89,6 @@ export default function useWebpd(patchPath?: string | null) {
     }
   }
 
-  function handleReady() {
-    if (window.WebPdRuntime) {
-      //setStatus("waiting");
-      setReady(true);
-    }
-  }
-
-  const script = (
-    <Script
-      src="/webpd-runtime.js"
-      onReady={handleReady}
-      onError={(error) => setError(error)}
-    ></Script>
-  );
-
   async function start(latePath?: string) {
     //setStatus("loading");
     if (window.WebPdRuntime) {
@@ -122,9 +96,8 @@ export default function useWebpd(patchPath?: string | null) {
         await startAudio(path ?? latePath ?? "");
         setStatus("started");
       } catch (error: any) {
-        //setStatus("error");
         setError(error);
-        throw new Error("Error starting audio worklet: ", error);
+        //throw new Error("Error starting audio worklet: ", error);
       }
     }
   }
@@ -138,14 +111,11 @@ export default function useWebpd(patchPath?: string | null) {
   }
 
   return {
-    WebPdScript: script,
     status: status,
-    ready: ready,
     start: start,
     resume: resume,
     suspend: suspend,
     sendMsgToWebPd: sendMsgToWebPd,
     close: close,
-    error: error,
   };
 }

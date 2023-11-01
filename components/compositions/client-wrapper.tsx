@@ -1,17 +1,29 @@
 "use client";
 
-import {
-  ReactElement,
-  cloneElement,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { ReactElement, cloneElement } from "react";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  ReadonlyURLSearchParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 import useWebpd from "../../hooks/use-webpd";
 import DebugPanel from "./debug-panel";
+import TogglePlayButton from "./toggle-play-button";
+
+//From nextjs ecommerce example
+//https://github.com/vercel/commerce/blob/main/lib/utils.ts
+export const createUrl = (
+  pathname: string,
+  params: URLSearchParams | ReadonlyURLSearchParams
+) => {
+  const paramsString = params.toString();
+  const queryString = `${paramsString.length ? "?" : ""}${paramsString}`;
+
+  return `${pathname}${queryString}`;
+};
 
 type ClientWrapper = {
   debug?: boolean;
@@ -28,6 +40,10 @@ type ClientWrapper = {
   }[];
 };
 
+//TO-DO
+//There are a bunch of stuff here that should probably be at the debug panel,
+//they shouldonly exist in debug state. This will probably reduce re-renders.
+
 export default function ClientWrapper({
   debug = false,
   patchPath,
@@ -38,44 +54,14 @@ export default function ClientWrapper({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [height, setHeight] = useState(0);
+  const newParams = new URLSearchParams(searchParams.toString());
 
-  const ref = useRef<HTMLDivElement>(null);
-
-  const [play, setPlay] = useState(false);
-
-  const {
-    WebPdScript,
-    resume,
-    status,
-    suspend,
-    sendMsgToWebPd,
-    error,
-    ready,
-    start,
-  } = useWebpd(patchPath);
+  const { resume, status, suspend, sendMsgToWebPd, start } =
+    useWebpd(patchPath);
 
   const Component = cloneElement(children, {
     ...children.props,
-    containerHeight: height,
-    play: play,
   });
-
-  useLayoutEffect(() => {
-    if (!ref.current) return;
-
-    const observer = new ResizeObserver(() => {
-      if (ref.current && ref.current.offsetHeight > 0) {
-        setHeight(ref.current.offsetHeight);
-      }
-    });
-
-    observer.observe(ref.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [setHeight]);
 
   if (status === "playing") {
     messages?.forEach((item) => {
@@ -84,7 +70,8 @@ export default function ClientWrapper({
   }
 
   async function handlePause() {
-    setPlay(false);
+    newParams.set("play", false.toString());
+    router.replace(`${pathname}?${newParams.toString()}`);
     if (status === "started" || status == "playing") {
       suspend();
     }
@@ -103,15 +90,13 @@ export default function ClientWrapper({
       resume();
     }
     //Play animation
-    if (play) {
-      setPlay(false);
-    } else {
-      setPlay(true);
-    }
+
+    newParams.set("play", true.toString());
+    router.replace(`${pathname}?${newParams.toString()}`);
   }
 
   async function handleChange(newSketchProp: { [key: string]: number }) {
-    const { containerHeight, play, ...sketchProps } = children.props;
+    const sketchProps = { ...children.props };
 
     const paramsString = Object.entries({
       ...sketchProps,
@@ -133,18 +118,26 @@ export default function ClientWrapper({
   }
 
   return (
-    <div className="relative h-full" ref={ref}>
-      {WebPdScript}
-      {debug && (
-        <DebugPanel
-          sketchProps={Component.props}
-          handlePlay={handlePlay}
-          handlePause={handlePause}
-          handleChange={handleChange}
-          handleStop={handleStop}
-        ></DebugPanel>
-      )}
-      {height > 0 && Component}
-    </div>
+    <>
+      <div className="relative h-full">
+        {debug && (
+          <DebugPanel
+            sketchProps={Component.props}
+            handlePlay={handlePlay}
+            handlePause={handlePause}
+            handleChange={handleChange}
+            handleStop={handleStop}
+          ></DebugPanel>
+        )}
+
+        <TogglePlayButton
+          play={newParams.get("play") === "false" ? false : true}
+          onPlay={handlePlay}
+          onPause={handlePause}
+        ></TogglePlayButton>
+
+        {Component}
+      </div>
+    </>
   );
 }

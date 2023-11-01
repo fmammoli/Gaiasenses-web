@@ -5,8 +5,6 @@ import { Color } from "p5";
 
 export type ColorFlowerSketchProps = {
   temperature: number;
-  containerHeight: number;
-  canvas?: HTMLCanvasElement;
   play: boolean;
 };
 
@@ -15,7 +13,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
   let flowers: Flower[] = [];
   let w = p5.windowWidth;
-  let containerHeight = 0;
+  let h = p5.windowHeight;
   let play = false;
   let temperature = 0;
 
@@ -112,7 +110,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
   p5.setup = () => {
     if (!play) p5.noLoop();
-    p5.createCanvas(w, containerHeight);
+    p5.createCanvas(w, h);
 
     petalColors = decideColors(temperature);
 
@@ -120,12 +118,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
   };
 
   p5.updateWithProps = (props) => {
-    if (containerHeight !== props.containerHeight) {
-      containerHeight = props.containerHeight;
-      p5.resizeCanvas(w, containerHeight);
-      flowers = [];
-    }
-
     temperature = props.temperature;
     play = props.play;
 
@@ -236,16 +228,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
 export default function ColorFlowerSketch({
   temperature,
-  containerHeight = 400,
-  canvas,
+
   play,
 }: ColorFlowerSketchProps) {
   return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      temperature={temperature}
-      containerHeight={containerHeight}
-      play={play}
-    />
+    <NextReactP5Wrapper sketch={sketch} temperature={temperature} play={play} />
   );
 }

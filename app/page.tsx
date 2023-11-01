@@ -1,5 +1,4 @@
 import { H1 } from "@/components/ui/h1";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import {
@@ -12,10 +11,11 @@ import {
 } from "@/components/ui/card";
 import { AvailableCompositionNames } from "@/components/compositions/compositions-info";
 
-import lluviaThumb from "/public/lluvia.png";
-import colorFlowerThumb from "/public/color-flower.png";
-import zigzagThumb from "/public/zig-zag.png";
-import stormEyeThumb from "/public/storm-eye.png";
+import lluviaThumb from "../public/lluvia.png";
+import colorFlowerThumb from "../public/color-flower.png";
+import zigzagThumb from "../public/zig-zag.png";
+import stormEyeThumb from "../public/storm-eye.png";
+
 import {
   RainfallResponseData,
   getWeather,
@@ -23,6 +23,8 @@ import {
 import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { Button } from "@/components/ui/button";
 import AudioStopper from "./audio-stopper";
+import TopBar from "./top-bar";
+import LocationBar from "./location-bar";
 
 type CompositionHistoryItem = {
   id: string;
@@ -71,15 +73,23 @@ const compositionHistory: CompositionHistoryItem[] = [
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { lat: string; lon: string } | {};
+  searchParams: { [key: string]: string };
 }) {
-  const lat = searchParams.hasOwnProperty("lat")
-    ? (searchParams as { lat: string; lon: string }).lat
-    : "0";
+  const newSearchParams = new URLSearchParams(searchParams);
+  const lat = newSearchParams.has("lat") ? newSearchParams.get("lat") : null;
+  const lon = newSearchParams.has("lon") ? newSearchParams.get("lon") : null;
 
-  const lon = searchParams.hasOwnProperty("lon")
-    ? (searchParams as { lat: string; lon: string }).lon
-    : "0";
+  // if (lat && lon) {
+  //   try {
+  //     const weatherData = await getWeather(lat, lon);
+  //     const lightningData = await getLightning(lat, lon, 50);
+
+  //     return;
+  //   } catch (error) {
+  //     console.log("Error fetching data");
+  //     console.log(error);
+  //   }
+  // }
 
   let weatherData: RainfallResponseData | null = null;
   let temperatureData = 0;
@@ -88,34 +98,36 @@ export default async function Page({
   let windSpeedData = 0;
   let windDegData = 0;
   let error = null;
-  try {
-    weatherData = await getWeather(lat, lon);
+  let city = null;
+  let state = null;
+  if (lat && lon) {
+    try {
+      weatherData = await getWeather(lat, lon);
 
-    temperatureData = weatherData.main.temp;
+      temperatureData = weatherData.main.temp;
 
-    rainData = weatherData.rain.hasOwnProperty("1h")
-      ? (weatherData.rain as { "1h": number })["1h"]
-      : 0;
+      rainData = weatherData.rain.hasOwnProperty("1h")
+        ? (weatherData.rain as { "1h": number })["1h"]
+        : 0;
 
-    windSpeedData = weatherData.wind.speed;
-    windDegData = weatherData.wind.deg;
-    const lightningData = getLightning(lat, lon, 50);
-    lightningCountData = (await lightningData).count;
-  } catch (error) {
-    console.log("error fetching data");
-    error = error;
+      windSpeedData = weatherData.wind.speed;
+      windDegData = weatherData.wind.deg;
+      city = weatherData.city;
+      state = weatherData.state;
+      const lightningData = getLightning(lat, lon, 50);
+      lightningCountData = (await lightningData).count;
+    } catch (error) {
+      console.log(error);
+      error = error;
+    }
   }
 
   return (
-    <main className="grid grid-rows-[120px_1fr] h-full justify-center">
+    <main className="grid grid-rows-[auto_1fr] h-full justify-center">
       <AudioStopper></AudioStopper>
-      <nav className="flex p-8 justify-between">
-        <div className="grow text-center">
-          <H1>GaiaSensesWeb</H1>
-        </div>
-
-        <ModeToggle></ModeToggle>
-      </nav>
+      <TopBar>
+        <LocationBar city={city} state={state}></LocationBar>
+      </TopBar>
 
       <div className="p-8">
         <H1>My compositons</H1>
@@ -162,14 +174,14 @@ export default async function Page({
             <CardFooter className="gap-1 flex-wrap">
               <Button variant={"outline"} className="text-sm" asChild>
                 <Link
-                  href={`/compositions/lluvia/?lat=${lat}&lon=${lon}&rain=${rainData}`}
+                  href={`/compositions/lluvia/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
                 >
                   Lluvia
                 </Link>
               </Button>
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
-                  href={`/compositions/zigzag/?lat=${lat}&lon=${lon}&rain=${rainData}&lightningCount=${lightningCountData}`}
+                  href={`/compositions/zigzag/?lat=${lat}&lon=${lon}&rain=${rainData}&lightningCount=${lightningCountData}&play=false`}
                 >
                   ZigZag
                 </Link>
@@ -177,7 +189,7 @@ export default async function Page({
 
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
-                  href={`/compositions/colorFlower/?lat=${lat}&lon=${lon}&temperature=${temperatureData}`}
+                  href={`/compositions/colorFlower/?lat=${lat}&lon=${lon}&temperature=${temperatureData}&play=false`}
                 >
                   Color Flower
                 </Link>
@@ -185,7 +197,7 @@ export default async function Page({
 
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
-                  href={`/compositions/stormEye/?lat=${lat}&lon=${lon}&windSpeed=${windSpeedData}&windDeg=${windDegData}&temperature=${temperatureData}`}
+                  href={`/compositions/stormEye/?lat=${lat}&lon=${lon}&windSpeed=${windSpeedData}&windDeg=${windDegData}&temperature=${temperatureData}&play=false`}
                 >
                   Storm Eye
                 </Link>
@@ -204,7 +216,7 @@ export default async function Page({
           return (
             <div key={item.id} className="my-4 max-w-sm">
               <Link
-                href={`/compositions/${item.composition}/?lat=${lat}&lon=${lon}&${attributesString}`}
+                href={`/compositions/${item.composition}/?lat=${lat}&lon=${lon}&${attributesString}&play=false`}
               >
                 <Card className="shadow-sm hover:shadow-md hover:scale-[102%] transition-shadow">
                   <CardHeader>

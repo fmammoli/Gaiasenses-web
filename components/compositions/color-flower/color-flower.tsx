@@ -16,12 +16,14 @@ export default async function ColorFlower({
   lon,
   debug = false,
   today = false,
+  play,
   temperature,
 }: {
   lat: string;
   lon: string;
   debug?: boolean;
   today?: boolean;
+  play: boolean;
   temperature?: number;
 }) {
   let temperatureData = temperature ?? 0;
@@ -35,8 +37,7 @@ export default async function ColorFlower({
     <ClientWrapper debug={debug}>
       <ColorFlowerSketch
         temperature={temperatureData}
-        containerHeight={0}
-        play={false}
+        play={play}
       ></ColorFlowerSketch>
     </ClientWrapper>
   );

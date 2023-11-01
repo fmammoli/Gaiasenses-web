@@ -55,12 +55,14 @@ export default async function Lluvia({
   lon,
   debug = false,
   today = false,
+  play,
   rain,
 }: {
   lat: string;
   lon: string;
   debug?: boolean;
   today?: boolean;
+  play: boolean;
   rain?: number;
 }) {
   let rainData = 0;
@@ -90,11 +92,7 @@ export default async function Lluvia({
 
   return (
     <ClientWrapper debug={debug} {...patchData}>
-      <LluviaSketch
-        rain={rainData}
-        containerHeight={0}
-        play={false}
-      ></LluviaSketch>
+      <LluviaSketch rain={rainData} play={play}></LluviaSketch>
     </ClientWrapper>
   );
 }

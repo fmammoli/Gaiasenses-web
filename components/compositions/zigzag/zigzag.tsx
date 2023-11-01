@@ -25,6 +25,7 @@ export default async function Zigzag({
   rain,
   lightningCount,
   today = false,
+  play,
 }: {
   lat: string;
   lon: string;
@@ -32,6 +33,7 @@ export default async function Zigzag({
   rain?: number;
   lightningCount?: number;
   today?: boolean;
+  play: boolean;
 }) {
   let rainData = rain ?? 0;
   let lightningCountData = lightningCount ?? 0;
@@ -53,8 +55,7 @@ export default async function Zigzag({
       <ZigzagSketch
         rain={rainData}
         lightningCount={lightningCountData}
-        containerHeight={0}
-        play={false}
+        play={play}
       ></ZigzagSketch>
     </ClientWrapper>
   );

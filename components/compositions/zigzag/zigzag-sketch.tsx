@@ -7,8 +7,6 @@ import * as p5 from "p5";
 export type ZigZagSketchProps = {
   rain: number;
   lightningCount: number;
-  containerHeight: number;
-  canvas?: HTMLCanvasElement;
   play: boolean;
 };
 
@@ -44,10 +42,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
 
   let lightningCount = 0;
   let rain = 0;
-  let containerHeight = 400;
+
   let play = false;
 
-  let [width, height] = [p5.windowWidth, containerHeight];
+  let [width, height] = [p5.windowWidth, p5.windowHeight];
 
   function createAgent(x: number, y: number): Agent {
     return {
@@ -158,12 +156,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
   };
 
   p5.updateWithProps = (props) => {
-    if (containerHeight !== props.containerHeight) {
-      containerHeight = props.containerHeight;
-      height = props.containerHeight;
-      p5.resizeCanvas(width, props.containerHeight);
-    }
-    console.log(props.rain);
     rain = props.rain;
     lightningCount = props.lightningCount;
     play = props.play;
@@ -194,7 +186,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
 
   p5.windowResized = () => {
     width = p5.windowWidth;
-    height = containerHeight;
+    height = p5.windowHeight;
     p5.resizeCanvas(width, height);
   };
 
@@ -204,8 +196,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
 export default function ZigZagSketch({
   rain,
   lightningCount,
-  containerHeight = 400,
-  canvas,
   play = false,
 }: ZigZagSketchProps) {
   return (
@@ -213,7 +203,6 @@ export default function ZigZagSketch({
       sketch={sketch}
       rain={rain}
       lightningCount={lightningCount}
-      containerHeight={containerHeight}
       play={play}
     />
   );

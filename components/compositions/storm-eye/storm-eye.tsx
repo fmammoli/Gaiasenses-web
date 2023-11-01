@@ -9,6 +9,7 @@ export default async function StormEye({
   temperature,
   windDeg,
   windSpeed,
+  play,
 }: {
   lat: string;
   lon: string;
@@ -17,6 +18,7 @@ export default async function StormEye({
   temperature?: number;
   windDeg?: number;
   windSpeed?: number;
+  play: boolean;
 }) {
   let temperatureData = temperature ?? 0;
   let windDegData = windDeg ?? 0;
@@ -33,8 +35,7 @@ export default async function StormEye({
         temperature={temperatureData}
         windDeg={windDegData}
         windSpeed={windSpeedData}
-        containerHeight={0}
-        play={false}
+        play={play}
       ></StormEyeSketch>
     </ClientWrapper>
   );

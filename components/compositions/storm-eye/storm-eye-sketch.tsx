@@ -6,8 +6,6 @@ export type StormEyeSketchProps = {
   temperature: number;
   windDeg: number;
   windSpeed: number;
-  containerHeight: number;
-  canvas?: HTMLCanvasElement;
   play: boolean;
 };
 
@@ -86,19 +84,13 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
 
   p5.setup = () => {
     if (!play) p5.noLoop();
-    p5.createCanvas(p5.windowWidth, containerHeight);
+    p5.createCanvas(p5.windowWidth, p5.windowHeight);
     // for (let i = 0; i < n; i++) {
     //   vents.push(new Vent());
     // }
   };
 
   p5.updateWithProps = (props) => {
-    if (containerHeight !== props.containerHeight) {
-      containerHeight = props.containerHeight;
-      p5.resizeCanvas(p5.windowWidth, containerHeight);
-      vents = [];
-    }
-
     temperature = props.temperature;
     speedFactor = props.windSpeed / 100;
     eyeVariance = props.windDeg / 1000;
@@ -219,8 +211,7 @@ export default function StormEyeSketchProps({
   windDeg,
   windSpeed,
   temperature,
-  containerHeight = 400,
-  canvas,
+
   play,
 }: StormEyeSketchProps) {
   return (
@@ -229,7 +220,6 @@ export default function StormEyeSketchProps({
       windSpeed={windSpeed}
       windDeg={windDeg}
       temperature={temperature}
-      containerHeight={containerHeight}
       play={play}
     />
   );

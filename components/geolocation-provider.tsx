@@ -6,6 +6,8 @@ import { useGeolocated } from "react-geolocated";
 export const GeolocationContext = createContext({});
 
 export function GeolocationProvider({ children }: { children: ReactNode }) {
+  //navigator.geolocation.getCurrentPosition((p) => console.log(p));
+  //console.log(navigator);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();

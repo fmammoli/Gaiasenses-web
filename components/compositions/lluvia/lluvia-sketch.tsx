@@ -1,11 +1,10 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { Renderer } from "p5";
 
 export type LluviaSketchProps = {
   rain: number;
-  containerHeight: number;
-  canvas?: HTMLCanvasElement;
   play: boolean;
 };
 const CRITICAL_RAIN = 10;
@@ -25,18 +24,16 @@ let fps = 0;
 
 function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
   // inspired by: https://openprocessing.org/sketch/386391
-
-  let containerHeight = 0;
   let rain = 0;
 
   let play = false;
 
-  let [w, h] = [p5.windowWidth, containerHeight];
-
+  let [w, h] = [p5.windowWidth, p5.windowHeight];
+  let canvas: Renderer | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
-    const canvas = p5.createCanvas(w, h, p5.P2D);
-
+    canvas = p5.createCanvas(w, h, p5.P2D);
+    canvas.style("");
     ellipseSize = p5.map(rain, 0, CRITICAL_RAIN, ELLIPSE_MIN, ELLIPSE_MAX);
     fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
 
@@ -44,13 +41,20 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
   };
 
   p5.updateWithProps = (props) => {
-    if (containerHeight !== props.containerHeight) {
-      containerHeight = props.containerHeight;
-      h = props.containerHeight;
-      p5.resizeCanvas(w, props.containerHeight, false);
-    }
     rain = Number.isNaN(props.rain) ? rain : props.rain;
     play = props.play;
+
+    if (canvas) {
+      if (!play) {
+        canvas.style(
+          "transition-delay:500ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
+        );
+      } else {
+        canvas.style(
+          "transition-delay:0ms;transition-property:border-radius;border-radius:0px"
+        );
+      }
+    }
 
     ellipseSize = p5.map(rain, 0, CRITICAL_RAIN, ELLIPSE_MIN, ELLIPSE_MAX);
     fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
@@ -66,7 +70,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
 
   p5.windowResized = () => {
     w = p5.windowWidth;
-    h = containerHeight;
+    h = p5.windowHeight;
     p5.resizeCanvas(w, h);
   };
 
@@ -82,18 +86,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
   };
 }
 
-export default function LluviaSketch({
-  rain,
-  containerHeight = 400,
-  canvas,
-  play,
-}: LluviaSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      rain={rain}
-      containerHeight={containerHeight}
-      play={play}
-    />
-  );
+export default function LluviaSketch({ rain, play }: LluviaSketchProps) {
+  return <NextReactP5Wrapper sketch={sketch} rain={rain} play={play} />;
 }
