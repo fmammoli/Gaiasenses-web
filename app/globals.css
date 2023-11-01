@@ -7,7 +7,7 @@
     --background: 0 0% 100%;
     --foreground: 0 2% 26%;
 
-    --background-opacity: 0 0% 100% 0.8;
+    --background-opacity: 255 255 255 0.75;
 
     --kandinsky-blue: 229 84% 33%;
 
@@ -43,6 +43,8 @@
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
 
+    --background-opacity: 0 0 0 0.75;
+
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
 
@@ -67,8 +69,6 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
-  }
-  canvas {
   }
 }
 

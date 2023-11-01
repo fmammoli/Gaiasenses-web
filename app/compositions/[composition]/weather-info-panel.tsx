@@ -14,7 +14,7 @@ export default async function WeatherInfoPanel() {
   //  const chunks = splitToNChunks<(typeof wInfo)[0]>(wInfo, wInfo.length / 3);
 
   return (
-    <div className="p-4 mx-auto h-full backdrop-blur-md bg-[rgba(255,255,255,0.75)] flex items-end">
+    <div className="p-4 mx-auto h-full backdrop-blur-md flex items-end bg-[rgba(255,255,255,0.75)]">
       <div className="w-full max-w-2xl mx-auto">
         <h2 className="font-semibold text-lg uppercase">Campinas - SP</h2>
         <div className="flex justify-between">

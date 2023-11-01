@@ -43,7 +43,9 @@ export default async function Page({
       };
 
       return (
-        <div className="grid grid-rows-1 grid-cols-1 bg-[url(/lluvia.png)] isolate">
+        <div
+          className={`grid grid-rows-1 grid-cols-1 bg-[url(/lluvia.png)] isolate`}
+        >
           <div className="row-start-1 row-end-2 col-start-1 col-end-[-1]">
             <WeatherInfoPanel></WeatherInfoPanel>
           </div>

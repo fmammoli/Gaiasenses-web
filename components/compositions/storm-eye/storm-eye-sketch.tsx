@@ -1,6 +1,7 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { Renderer } from "p5";
 
 export type StormEyeSketchProps = {
   temperature: number;
@@ -82,9 +83,11 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
   let speedFactor = 0;
   let eyeVariance = 0;
 
+  let canvas: Renderer | null = null;
+
   p5.setup = () => {
     if (!play) p5.noLoop();
-    p5.createCanvas(p5.windowWidth, p5.windowHeight);
+    canvas = p5.createCanvas(p5.windowWidth, p5.windowHeight);
     // for (let i = 0; i < n; i++) {
     //   vents.push(new Vent());
     // }
@@ -94,6 +97,18 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
     temperature = props.temperature;
     speedFactor = props.windSpeed / 100;
     eyeVariance = props.windDeg / 1000;
+    play = props.play;
+    if (canvas) {
+      if (!play) {
+        canvas.style(
+          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
+        );
+      } else {
+        canvas.style(
+          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
+        );
+      }
+    }
 
     for (let i = 0; i < n; i++) {
       vents.push(new Vent());

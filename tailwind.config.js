@@ -26,7 +26,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        backgroundOpacity: "hsl(var(--background-opacity))",
+        backgroundOpacity: "rgba(var(--background-opacity))",
         kandinsky: {
           blue: "hsl(var(--kandinsky-blue))",
         },

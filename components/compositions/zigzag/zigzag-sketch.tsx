@@ -3,6 +3,7 @@ import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
 import * as p5 from "p5";
+import { Renderer } from "p5";
 
 export type ZigZagSketchProps = {
   rain: number;
@@ -146,9 +147,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
       agents.push(createAgent(width * 1.0 + p5.randomGaussian() * 200, 0));
     }
   }
+  let canvas: Renderer | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
-    p5.createCanvas(width, height);
+    canvas = p5.createCanvas(width, height);
     p5.colorMode(p5.HSB, 360, 100, 100);
     p5.rectMode(p5.CENTER);
     p5.strokeCap(p5.SQUARE);
@@ -160,6 +162,17 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
     lightningCount = props.lightningCount;
     play = props.play;
 
+    if (canvas) {
+      if (!play) {
+        canvas.style(
+          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
+        );
+      } else {
+        canvas.style(
+          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
+        );
+      }
+    }
     initialize();
 
     if (props.play) {

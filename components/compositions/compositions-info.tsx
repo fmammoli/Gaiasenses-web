@@ -17,6 +17,7 @@ type CompositionsInfo = {
     attributes: string[];
     Component: AvailableCompositionComponents;
     endpoints: string[];
+    thumb: string;
   };
 };
 
@@ -26,24 +27,28 @@ const CompositionsInfo: CompositionsInfo = {
     attributes: ["rain"],
     Component: Lluvia,
     endpoints: ["rainfall"],
+    thumb: "lluvia.png",
   },
   zigzag: {
     name: "zigzag",
     attributes: ["rain", "lightningCount"],
     Component: Zigzag,
     endpoints: ["rainfall", "lightning"],
+    thumb: "zig-zag.png",
   },
   colorFlower: {
     name: "colorFlower",
     attributes: ["temperature"],
     Component: ColorFlower,
     endpoints: [""],
+    thumb: "color-flower.png",
   },
   stormEye: {
     name: "stormEye",
     attributes: ["temperature", "windSpeed", "windDeg"],
     Component: StormEye,
     endpoints: [""],
+    thumb: "storm-eye.png",
   },
 };
 

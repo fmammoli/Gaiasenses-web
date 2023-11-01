@@ -1,7 +1,7 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Color } from "p5";
+import { Color, Renderer } from "p5";
 
 export type ColorFlowerSketchProps = {
   temperature: number;
@@ -107,10 +107,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
     return colors;
   }
-
+  let canvas: Renderer | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
-    p5.createCanvas(w, h);
+    canvas = p5.createCanvas(w, h);
 
     petalColors = decideColors(temperature);
 
@@ -120,6 +120,18 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
   p5.updateWithProps = (props) => {
     temperature = props.temperature;
     play = props.play;
+
+    if (canvas) {
+      if (!play) {
+        canvas.style(
+          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
+        );
+      } else {
+        canvas.style(
+          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
+        );
+      }
+    }
 
     petalColors = decideColors(temperature);
 
