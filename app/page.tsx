@@ -134,6 +134,7 @@ export default async function Page({
         <p>{`Lat: ${lat}City:${city}`}</p>
         <p>{`Lon:${lon}`}</p>
         <p>{`City:${city}`}</p>
+        <p>{`Geo Middle:${newSearchParams.get("geo")}`}</p>
         {/* <p>{JSON.stringify(searchParams)}</p> */}
         <H1>My compositons</H1>
 
