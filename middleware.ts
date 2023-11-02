@@ -7,10 +7,21 @@ export function middleware(request: NextRequest) {
     longitude: "-47.0771057",
     city: "Campinas",
   };
+  console.log("running middleware");
+  if (
+    request.nextUrl.searchParams.has("geo") ||
+    request.nextUrl.searchParams.has("lat") ||
+    request.nextUrl.searchParams.has("lon")
+  ) {
+    console.log("running middleware already with data");
+    return NextResponse.next();
+  }
+
   if (
     !request.nextUrl.searchParams.has("lat") ||
     !request.nextUrl.searchParams.has("lon")
   ) {
+    console.log("running middleware without lat lon");
     const { geo } = request;
 
     if (geo) {
@@ -26,11 +37,13 @@ export function middleware(request: NextRequest) {
         "city",
         geo?.city ?? defaultGeolocation.city
       );
-      request.nextUrl.searchParams.set("geo", "true");
-    } else {
-      request.nextUrl.searchParams.set("geo", "false");
+      if (Object.keys(geo).length > 0) {
+        request.nextUrl.searchParams.set("geo", "true");
+      } else {
+        request.nextUrl.searchParams.set("geo", "false");
+      }
     }
-    return NextResponse.redirect(new URL(request.nextUrl));
+    return NextResponse.rewrite(new URL(request.nextUrl.toString()));
   }
 }
 

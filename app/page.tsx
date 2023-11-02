@@ -70,6 +70,8 @@ const compositionHistory: CompositionHistoryItem[] = [
   },
 ];
 
+let a = 0;
+
 export default async function Page({
   searchParams,
 }: {
@@ -123,6 +125,7 @@ export default async function Page({
     }
   }
 
+  console.log("Running page: " + JSON.stringify(searchParams));
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
       <AudioStopper></AudioStopper>
@@ -135,6 +138,7 @@ export default async function Page({
         <p>{`Lon:${lon}`}</p>
         <p>{`City:${city}`}</p>
         <p>{`Geo Middle:${newSearchParams.get("geo")}`}</p>
+        <p>{`Render: ${a}`}</p>
         {/* <p>{JSON.stringify(searchParams)}</p> */}
         <H1>My compositons</H1>
 
