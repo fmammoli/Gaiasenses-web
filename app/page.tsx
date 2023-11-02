@@ -125,7 +125,6 @@ export default async function Page({
     }
   }
 
-  console.log("Running page: " + JSON.stringify(searchParams));
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
       <AudioStopper></AudioStopper>
