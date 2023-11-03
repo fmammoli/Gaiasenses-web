@@ -162,17 +162,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
     lightningCount = props.lightningCount;
     play = props.play;
 
-    if (canvas) {
-      if (!play) {
-        canvas.style(
-          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
-        );
-      } else {
-        canvas.style(
-          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
-        );
-      }
-    }
     initialize();
 
     if (props.play) {

@@ -44,18 +44,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
     rain = Number.isNaN(props.rain) ? rain : props.rain;
     play = props.play;
 
-    if (canvas) {
-      if (!play) {
-        canvas.style(
-          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
-        );
-      } else {
-        canvas.style(
-          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
-        );
-      }
-    }
-
     ellipseSize = p5.map(rain, 0, CRITICAL_RAIN, ELLIPSE_MIN, ELLIPSE_MAX);
     fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
 

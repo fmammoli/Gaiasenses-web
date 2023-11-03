@@ -121,18 +121,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
     temperature = props.temperature;
     play = props.play;
 
-    if (canvas) {
-      if (!play) {
-        canvas.style(
-          "transition-delay:0ms;transition-property:border-radius;border-bottom-right-radius:50px;border-bottom-left-radius:50px"
-        );
-      } else {
-        canvas.style(
-          "transition-delay:100ms;transition-property:border-radius;border-radius:0px"
-        );
-      }
-    }
-
     petalColors = decideColors(temperature);
 
     if (props.play) {

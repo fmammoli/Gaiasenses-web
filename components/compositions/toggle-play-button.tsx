@@ -26,10 +26,8 @@ export default function TogglePlayButton({
       <Button
         variant={"outline"}
         size={"icon"}
-        className={`rounded-full w-[100px] h-[100px] border-4 hover:opacity-80 transition-transform ${
-          !play
-            ? "opacity-100 bg-[rgba(255,255,255,0.5)] translate-y-60"
-            : "opacity-0"
+        className={`rounded-full w-[100px] h-[100px] border-4 hover:opacity-80 transition-transform  ${
+          !play ? "opacity-100 bg-[rgba(255,255,255,0.5)]" : "opacity-0"
         }`}
         onClick={onClick}
       >

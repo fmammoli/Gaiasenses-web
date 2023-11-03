@@ -70,8 +70,6 @@ const compositionHistory: CompositionHistoryItem[] = [
   },
 ];
 
-let a = 0;
-
 export default async function Page({
   searchParams,
 }: {
@@ -81,17 +79,6 @@ export default async function Page({
   const lat = newSearchParams.has("lat") ? newSearchParams.get("lat") : null;
   const lon = newSearchParams.has("lon") ? newSearchParams.get("lon") : null;
   let city = newSearchParams.has("city") ? newSearchParams.get("city") : null;
-  // if (lat && lon) {
-  //   try {
-  //     const weatherData = await getWeather(lat, lon);
-  //     const lightningData = await getLightning(lat, lon, 50);
-
-  //     return;
-  //   } catch (error) {
-  //     console.log("Error fetching data");
-  //     console.log(error);
-  //   }
-  // }
 
   let weatherData: RainfallResponseData | null = null;
   let temperatureData = 0;
@@ -131,14 +118,14 @@ export default async function Page({
       <TopBar>
         <LocationBar city={city} state={state}></LocationBar>
       </TopBar>
-      <p>{`searh params:${JSON.stringify(searchParams)}`}</p>
+
       <div className="p-8">
-        <p>{`Lat: ${lat}City:${city}`}</p>
+        {/* <p>{`Lat: ${lat}City:${city}`}</p>
         <p>{`Lon:${lon}`}</p>
         <p>{`City:${city}`}</p>
         <p>{`Geo Middle:${newSearchParams.get("geo")}`}</p>
-        <p>{`Render: ${a}`}</p>
-        {/* <p>{JSON.stringify(searchParams)}</p> */}
+
+        <p>{`searh params:${JSON.stringify(searchParams)}`}</p> */}
         <H1>My compositons</H1>
 
         <div className="my-4 max-w-sm">
@@ -184,6 +171,7 @@ export default async function Page({
               <Button variant={"outline"} className="text-sm" asChild>
                 <Link
                   href={`/compositions/lluvia/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
+                  scroll={false}
                 >
                   Lluvia
                 </Link>
@@ -191,6 +179,7 @@ export default async function Page({
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
                   href={`/compositions/zigzag/?lat=${lat}&lon=${lon}&rain=${rainData}&lightningCount=${lightningCountData}&play=false`}
+                  scroll={false}
                 >
                   ZigZag
                 </Link>
@@ -199,6 +188,7 @@ export default async function Page({
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
                   href={`/compositions/colorFlower/?lat=${lat}&lon=${lon}&temperature=${temperatureData}&play=false`}
+                  scroll={false}
                 >
                   Color Flower
                 </Link>
@@ -207,6 +197,7 @@ export default async function Page({
               <Button className="text-sm" variant={"outline"} asChild>
                 <Link
                   href={`/compositions/stormEye/?lat=${lat}&lon=${lon}&windSpeed=${windSpeedData}&windDeg=${windDegData}&temperature=${temperatureData}&play=false`}
+                  scroll={false}
                 >
                   Storm Eye
                 </Link>
@@ -226,6 +217,7 @@ export default async function Page({
             <div key={item.id} className="my-4 max-w-sm">
               <Link
                 href={`/compositions/${item.composition}/?lat=${lat}&lon=${lon}&${attributesString}&play=false`}
+                scroll={false}
               >
                 <Card className="shadow-sm hover:shadow-md hover:scale-[102%] transition-shadow">
                   <CardHeader>

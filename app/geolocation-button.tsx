@@ -25,7 +25,6 @@ export default function GeolocationButton({
     setState("granted");
     setGeoState("granted");
     router.replace(`${pathname}?${newParams.toString()}`);
-    router.refresh();
   }
 
   function onError(positionError: GeolocationPositionError) {

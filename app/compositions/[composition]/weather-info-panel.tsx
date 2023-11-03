@@ -17,6 +17,7 @@ export default async function WeatherInfoPanel() {
     <div className="p-4 mx-auto h-full backdrop-blur-md flex items-end bg-[rgba(255,255,255,0.75)]">
       <div className="w-full max-w-2xl mx-auto">
         <h2 className="font-semibold text-lg uppercase">Campinas - SP</h2>
+
         <div className="flex justify-between">
           <div>
             <h3 className="font-pop text-[67px] leading-none font-[900] tracking-wider">
