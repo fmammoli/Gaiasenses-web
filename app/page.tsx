@@ -120,12 +120,13 @@ export default async function Page({
       </TopBar>
 
       <div className="p-8">
-        {/* <p>{`Lat: ${lat}City:${city}`}</p>
+        <p>{`Lat: ${lat}City:${city}`}</p>
         <p>{`Lon:${lon}`}</p>
         <p>{`City:${city}`}</p>
         <p>{`Geo Middle:${newSearchParams.get("geo")}`}</p>
-
-        <p>{`searh params:${JSON.stringify(searchParams)}`}</p> */}
+        <p className="max-w-xs break-words">{`searh params:${JSON.stringify(
+          searchParams
+        )}`}</p>
         <H1>My compositons</H1>
 
         <div className="my-4 max-w-sm">
