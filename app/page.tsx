@@ -110,7 +110,9 @@ export default async function Page({
       error = error;
     }
   }
-  console.log("Page: ", searchParams.toString());
+  console.log(
+    `Page: lat:${searchParams["lat"]} lon:${searchParams["lon"]} city:${searchParams["city"]}`
+  );
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
       <AudioStopper></AudioStopper>
