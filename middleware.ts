@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  console.log("Middleware run ");
+  console.log("Middleware start");
   const defaultGeolocation = {
     latitude: "-22.8258628",
     longitude: "-47.0771057",
@@ -14,6 +14,7 @@ export function middleware(request: NextRequest) {
     request.nextUrl.searchParams.has("lat") ||
     request.nextUrl.searchParams.has("lon")
   ) {
+    console.log("Middleware: has lat or lon or city");
     return NextResponse.next();
   }
 
@@ -22,7 +23,7 @@ export function middleware(request: NextRequest) {
     !request.nextUrl.searchParams.has("lon")
   ) {
     const { geo } = request;
-
+    console.log("Middleware: dont have lat lon");
     if (geo) {
       request.nextUrl.searchParams.set(
         "lat",
@@ -41,6 +42,7 @@ export function middleware(request: NextRequest) {
       } else {
         request.nextUrl.searchParams.set("geo", "false");
       }
+      console.log("Middleware: ", request.nextUrl.searchParams.toString());
     }
     const response = NextResponse.rewrite(new URL(request.nextUrl.toString()));
     //response.headers.set("x-middleware-cache", "no-cache");
