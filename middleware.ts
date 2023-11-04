@@ -44,9 +44,9 @@ export function middleware(request: NextRequest) {
       }
       console.log("Middleware: ", request.nextUrl.searchParams.toString());
     }
-    const response = NextResponse.redirect(new URL(request.nextUrl.toString()));
+    const response = NextResponse.rewrite(new URL(request.nextUrl.toString()));
     //response.headers.set("x-middleware-cache", "no-cache");
-    response.headers.set("x-hello-from-middleware2", "went through middleware");
+    //response.headers.set("x-hello-from-middleware2", "went through middleware");
     return response;
   }
 }
