@@ -110,7 +110,7 @@ export default async function Page({
       error = error;
     }
   }
-
+  console.log("Page: ", searchParams.toString());
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
       <AudioStopper></AudioStopper>
