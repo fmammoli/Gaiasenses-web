@@ -41,7 +41,9 @@ export function middleware(request: NextRequest) {
         request.nextUrl.searchParams.set("geo", "false");
       }
     }
-    return NextResponse.rewrite(new URL(request.nextUrl.toString()));
+    const response = NextResponse.rewrite(new URL(request.nextUrl.toString()));
+    response.headers.set("x-middleware-cache", "no-cache");
+    return response;
   }
 }
 
