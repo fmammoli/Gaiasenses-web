@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  console.log("Middleware run ");
   const defaultGeolocation = {
     latitude: "-22.8258628",
     longitude: "-47.0771057",
@@ -42,11 +43,21 @@ export function middleware(request: NextRequest) {
       }
     }
     const response = NextResponse.rewrite(new URL(request.nextUrl.toString()));
-    response.headers.set("x-middleware-cache", "no-cache");
+    //response.headers.set("x-middleware-cache", "no-cache");
+    response.headers.set("x-hello-from-middleware2", "went through middleware");
     return response;
   }
 }
 
 export const config = {
-  matcher: "/",
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
