@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  //console.log("Middleware start");
+  console.log("Middleware start");
   const defaultGeolocation = {
     latitude: "-22.8258628",
     longitude: "-47.0771057",
