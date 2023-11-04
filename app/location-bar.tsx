@@ -18,7 +18,6 @@ export default function LocationBar({
   useEffect(() => {
     async function checkPermission() {
       if (navigator && geoState === null) {
-        console.log("checking permission");
         const res = await navigator.permissions.query({ name: "geolocation" });
         setGeoState(res.state);
       }
@@ -27,7 +26,6 @@ export default function LocationBar({
   }, [setGeoState, geoState]);
 
   function handleButton(newState: string) {
-    console.log(newState);
     setGeoState(newState);
   }
   return (

@@ -1,13 +1,15 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type DebugInputProps = {
   index: string | number;
   name: string;
-  value: number;
-  handleChange: (newSketchProp: { [key: string]: number }) => void;
+  value: string;
+  handleChange: (newSketchProp: { [key: string]: string }) => void;
 };
 
 export default function DebugInput({
@@ -16,12 +18,27 @@ export default function DebugInput({
   value,
   handleChange,
 }: DebugInputProps) {
+  const [text, setText] = useState<string>(value.toString());
+  const debounce = useDebouncedCallback((text) => {
+    handleChange({ [name]: text });
+  }, 500);
+
   function onChange(event: ChangeEvent<HTMLInputElement>) {
-    handleChange({ [name]: parseFloat(event.target.value) });
+    setText(event.target.value);
+    debounce(event.target.value);
   }
   function handleSpin(spinValue: number) {
+    setText(
+      (
+        Math.round(((parseFloat(value) + spinValue) * 1) / 0.5) /
+        (1 / 0.5)
+      ).toString()
+    );
     handleChange({
-      [name]: Math.round(((value + spinValue) * 1) / 0.5) / (1 / 0.5),
+      [name]: (
+        Math.round(((parseFloat(value) + spinValue) * 1) / 0.5) /
+        (1 / 0.5)
+      ).toString(),
     });
   }
   return (
@@ -40,7 +57,8 @@ export default function DebugInput({
             name={name}
             type="number"
             step={0.5}
-            value={(value as number | typeof NaN).toString()}
+            value={text}
+            max={50}
             className="w-20 max-w-[5rem]"
             min={0}
             onChange={onChange}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 let audioContext: AudioContext | null = null;
 let webpdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null = null;
@@ -38,7 +38,6 @@ async function startAudio(patchPath: string) {
   };
 
   // Send code to the worklet
-
   webpdNode.port.postMessage({
     type: "code:WASM",
     payload: {

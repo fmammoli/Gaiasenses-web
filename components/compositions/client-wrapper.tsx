@@ -95,23 +95,6 @@ export default function ClientWrapper({
     router.replace(`${pathname}?${newParams.toString()}`);
   }
 
-  async function handleChange(newSketchProp: { [key: string]: number }) {
-    const sketchProps = { ...children.props };
-
-    const paramsString = Object.entries({
-      ...sketchProps,
-      ...newSketchProp,
-    })
-      .map((entry) => `${entry[0]}=${entry[1]}`)
-      .join("&");
-
-    const geolocationParamsString = `lat=${searchParams.get(
-      "lat"
-    )}&lon=${searchParams.get("lon")}`;
-
-    router.replace(`${pathname}?${geolocationParamsString}&${paramsString}`);
-  }
-
   function handleStop() {
     handlePause();
     router.refresh();
@@ -122,10 +105,8 @@ export default function ClientWrapper({
       <div className="relative h-full">
         {debug && (
           <DebugPanel
-            sketchProps={Component.props}
             handlePlay={handlePlay}
             handlePause={handlePause}
-            handleChange={handleChange}
             handleStop={handleStop}
           ></DebugPanel>
         )}

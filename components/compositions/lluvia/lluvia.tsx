@@ -83,7 +83,8 @@ export default async function Lluvia({
       {
         nodeId: "n_0_56",
         portletId: "0",
-        message: [0, 1000, 1, 1000 / (rainData == 0 ? 1 : rainData), "", ""],
+        //message: [0, 1000, 1, rainData, "", ""],
+        message: [1000 / (rainData === 0 ? 1 : rainData)],
         valueIndex: 3,
         name: "rain",
       },

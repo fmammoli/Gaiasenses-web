@@ -1,4 +1,4 @@
-#N canvas 116 101 1366 674 12;
+#N canvas 74 101 1366 674 12;
 #X obj 780 267 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 780 291 metro 100;
 #X obj 780 314 random;
@@ -55,7 +55,7 @@
 #X obj 828 491 del 10;
 #X obj 496 398 *~;
 #X obj 304 145 s fps_\$0;
-#X obj 195 46 vsl 19 162 0 1000 0 1 empty empty Rain\ Slider 0 -9 0 12 #fcfcfc #000000 #000000 1900 1;
+#X obj 195 46 vsl 19 162 0 1000 0 0 empty empty Rain\ Slider 0 -9 0 12 #fcfcfc #000000 #000000 0 1;
 #X floatatom 260 83 5 0 0 0 - - - 0;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;

@@ -1,46 +1,38 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { SketchProps } from "@p5-wrapper/react";
-import { FormEvent } from "react";
 import DebugInput from "./debug-input";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type DebugPanelProps = {
-  sketchProps: SketchProps;
   handlePlay: () => void;
   handlePause: () => void;
-  handleChange: (newSketchProps: { [key: string]: number }) => void;
   handleStop: () => void;
 };
 
 export default function DebugPanel({
-  sketchProps,
   handlePlay,
   handlePause,
   handleStop,
-  handleChange,
 }: DebugPanelProps) {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-    let newSketchProps = { ...sketchProps };
+  const sketchProps = Object.fromEntries(searchParams.entries());
 
-    for (const key in newSketchProps) {
-      const newValue = formData.get(key) as string | null;
-      if (newValue) {
-        newSketchProps[key] = parseFloat(newValue);
-      }
-    }
-    const { containerHeight, play, ...rest } = newSketchProps;
+  function handleChange(newSketchProp: { [key: string]: string }) {
+    const newProps = { ...sketchProps, ...newSketchProp };
+    const newSearchParams = new URLSearchParams(Object.entries(newProps));
+    router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
 
   function handleClick() {
-    if (sketchProps.play) {
+    if (sketchProps.play === "true") {
       handlePause();
     } else {
       handlePlay();
@@ -58,26 +50,31 @@ export default function DebugPanel({
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div>
-              <form onSubmit={handleSubmit}>
-                {Object.entries(sketchProps).map((entry, index) => {
-                  const name = entry[0];
-                  const value = entry[1];
-                  return (
-                    name !== "play" && (
+              <div>
+                {Object.entries(sketchProps)
+                  .filter(
+                    (entry) =>
+                      entry[0] !== "lat" &&
+                      entry[0] != "lon" &&
+                      entry[0] != "play"
+                  )
+                  .map((entry, index) => {
+                    const name = entry[0];
+                    const value = entry[1];
+                    return (
                       <DebugInput
                         key={index}
                         index={index}
                         name={name}
-                        value={value as number}
+                        value={value}
                         handleChange={handleChange}
                       ></DebugInput>
-                    )
-                  );
-                })}
-              </form>
+                    );
+                  })}
+              </div>
               <div>
                 <Button id="play-button" className="mt-2" onClick={handleClick}>
-                  {sketchProps.play ? "Pause" : "Play"}
+                  {sketchProps.play === "true" ? "Pause" : "Play"}
                 </Button>
               </div>
               <div>
