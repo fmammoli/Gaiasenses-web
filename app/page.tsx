@@ -132,7 +132,7 @@ export default async function Page({
           <Card className="shadow-sm hover:shadow-md hover:scale-[102%] transition-shadow">
             <CardHeader>
               <CardTitle>
-                Today - {error} {weatherData?.city}, {weatherData?.state}
+                Today - {error} {city}, {weatherData?.state}
               </CardTitle>
               <CardDescription>
                 {new Date().toLocaleDateString("pt-Br", {
