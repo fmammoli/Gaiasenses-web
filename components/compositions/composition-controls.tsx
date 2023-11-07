@@ -2,7 +2,6 @@
 import useWebpd from "@/hooks/use-webpd";
 import { PatchData } from "./lluvia/lluvia";
 import TogglePlayButton from "./toggle-play-button";
-import { useEffect } from "react";
 
 export default function CompositionControls({
   play,

@@ -22,10 +22,8 @@ import {
 } from "@/components/compositions/lluvia/lluvia";
 import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { Button } from "@/components/ui/button";
-import AudioStopper from "./audio-stopper";
 import TopBar from "./top-bar";
 import LocationBar from "./location-bar";
-import { AudioContextProvider } from "@/hooks/webpd-context";
 
 type CompositionHistoryItem = {
   id: string;

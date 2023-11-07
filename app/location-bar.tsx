@@ -1,5 +1,4 @@
 "use client";
-import { P } from "@/components/ui/p";
 import GeolocationButton from "./geolocation-button";
 import { H2 } from "@/components/ui/h2";
 import { useEffect, useState } from "react";

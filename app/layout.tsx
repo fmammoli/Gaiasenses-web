@@ -1,4 +1,3 @@
-import { GeolocationProvider } from "@/components/geolocation-provider";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";

@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import BackButton from "./back-button";
 import { H1 } from "@/components/ui/h1";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import WebPdScript from "@/components/webpd-script";
-import { AudioContextProvider } from "@/hooks/webpd-context";
 
 export const metadata: Metadata = {
   title: "GaiaSenses Web",

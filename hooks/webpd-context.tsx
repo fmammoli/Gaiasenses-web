@@ -1,13 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 
 // let audioContext: AudioContext | null = null;
 // let webPdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null = null;

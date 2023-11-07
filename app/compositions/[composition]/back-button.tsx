@@ -2,6 +2,7 @@
 import useWebpd from "@/hooks/use-webpd";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function BackButton() {
   const { suspend, close } = useWebpd();
@@ -17,5 +18,9 @@ export default function BackButton() {
 
     router.back();
   }
-  return <Button onClick={handleBack}>Back</Button>;
+  return (
+    <Link href={"/"}>
+      <Button>Back</Button>;
+    </Link>
+  );
 }

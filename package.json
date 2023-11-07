@@ -29,7 +29,8 @@
     "sharp": "^0.32.6",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "use-debounce": "^9.0.4"
+    "use-debounce": "^9.0.4",
+    "webpd": "^1.0.0-alpha.4"
   },
   "devDependencies": {
     "@types/audioworklet": "^0.0.50",
