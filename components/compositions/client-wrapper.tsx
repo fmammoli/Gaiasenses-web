@@ -10,7 +10,7 @@ import {
 } from "next/navigation";
 
 import useWebpd from "../../hooks/use-webpd";
-import DebugPanel from "./debug-panel";
+// import DebugPanel from "./debug-panel";
 import TogglePlayButton from "./toggle-play-button";
 
 //From nextjs ecommerce example
@@ -103,18 +103,17 @@ export default function ClientWrapper({
   return (
     <>
       <div className="relative h-full">
-        {debug && (
+        {/* {debug && (
           <DebugPanel
-            handlePlay={handlePlay}
-            handlePause={handlePause}
-            handleStop={handleStop}
+            patch={{
+              path: "",
+              messages: [],
+            }}
           ></DebugPanel>
-        )}
+        )} */}
 
         <TogglePlayButton
           play={newParams.get("play") === "false" ? false : true}
-          onPlay={handlePlay}
-          onPause={handlePause}
         ></TogglePlayButton>
 
         {Component}

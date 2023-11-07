@@ -110,12 +110,15 @@ export default async function Page({
       error = error;
     }
   }
+
+  //For some reasing it I remove this console.log, the page readers without data,
+  //as if the nextjs cache come in first, before the middleware response.
   console.log(
     `Page: lat:${searchParams["lat"]} lon:${searchParams["lon"]} city:${searchParams["city"]}`
   );
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
-      <AudioStopper></AudioStopper>
+      {/* <AudioStopper></AudioStopper> */}
       <TopBar>
         <LocationBar city={city} state={state}></LocationBar>
       </TopBar>

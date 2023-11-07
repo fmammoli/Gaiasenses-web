@@ -3,6 +3,7 @@ import BackButton from "./back-button";
 import { H1 } from "@/components/ui/h1";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import WebPdScript from "@/components/webpd-script";
+import { AudioContextProvider } from "@/hooks/webpd-context";
 
 export const metadata: Metadata = {
   title: "GaiaSenses Web",
@@ -16,9 +17,8 @@ export default function RootLayout({
 }) {
   return (
     <main className="grid grid-rows-[120px_1fr] grid-cols-1 h-full w-full relative">
-      <WebPdScript></WebPdScript>
       <div className="row-start-1 row-end-3 col-start-1 col-end-2">
-        {children}
+        <AudioContextProvider>{children}</AudioContextProvider>
       </div>
       <div className="row-start-1 row-end-2 col-start-1 col-end-1 z-10">
         <nav className="flex px-2 py-8 md:p8 justify-between z-50 max-w-xl mx-auto items-center">

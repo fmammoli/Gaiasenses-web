@@ -2,6 +2,9 @@ import getData from "@/components/getData";
 
 import ClientWrapper from "../client-wrapper";
 import LluviaSketch from "./lluvia-sketch";
+import Composition from "../composition";
+import TogglePlayButton from "../toggle-play-button";
+import CompositionControls from "../composition-controls";
 
 export type RainfallResponseData = {
   city: string;
@@ -33,7 +36,7 @@ export type RainfallResponseData = {
 };
 
 export type PatchData = {
-  patchPath: string;
+  path: string;
   messages: {
     nodeId: string;
     portletId: string;
@@ -78,7 +81,7 @@ export default async function Lluvia({
   }
 
   const patchData: PatchData = {
-    patchPath: "/lluviaSlider.wasm",
+    path: "/lluviaSlider.wasm",
     messages: [
       {
         nodeId: "n_0_56",
@@ -91,9 +94,20 @@ export default async function Lluvia({
     ],
   };
 
+  // return (
+  //   <ClientWrapper debug={debug} {...patchData}>
+  //     <LluviaSketch rain={rainData} play={play}></LluviaSketch>
+  //   </ClientWrapper>
+  // );
+
   return (
-    <ClientWrapper debug={debug} {...patchData}>
+    <Composition>
       <LluviaSketch rain={rainData} play={play}></LluviaSketch>
-    </ClientWrapper>
+      <CompositionControls
+        play={play}
+        patchPath={patchData.path}
+        messages={patchData.messages}
+      ></CompositionControls>
+    </Composition>
   );
 }

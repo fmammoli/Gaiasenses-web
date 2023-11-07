@@ -45,6 +45,7 @@ export function middleware(request: NextRequest) {
       //console.log("Middleware: ", request.nextUrl.searchParams.toString());
     }
     const response = NextResponse.redirect(new URL(request.nextUrl.toString()));
+    //Should test this middleware cache header to see if it solves the issue of page rendeing before it has its geolocation.
     //response.headers.set("x-middleware-cache", "no-cache");
     //response.headers.set("x-hello-from-middleware2", "went through middleware");
     return response;
