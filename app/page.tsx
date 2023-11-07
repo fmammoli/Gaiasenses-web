@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import AudioStopper from "./audio-stopper";
 import TopBar from "./top-bar";
 import LocationBar from "./location-bar";
+import { AudioContextProvider } from "@/hooks/webpd-context";
 
 type CompositionHistoryItem = {
   id: string;
@@ -118,7 +119,10 @@ export default async function Page({
   );
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
-      {/* <AudioStopper></AudioStopper> */}
+      <AudioContextProvider>
+        <AudioStopper></AudioStopper>
+      </AudioContextProvider>
+
       <TopBar>
         <LocationBar city={city} state={state}></LocationBar>
       </TopBar>

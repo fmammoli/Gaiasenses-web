@@ -2,7 +2,6 @@ import CompositionsInfo, {
   AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
 import WeatherInfoPanel from "./weather-info-panel";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 const DEBUG = true;
@@ -54,7 +53,7 @@ export default async function Page({
             <WeatherInfoPanel></WeatherInfoPanel>
           </div>
           <div
-            className={`row-start-1 w-full row-end-2 col-start-1 col-end-[-1] h-[100svh] z-[1] transition-transform [&:has(label>input:checked)]:-translate-y-[16rem] [&:has(label>input:checked)]:rounded-b-[50px] [&:has(label>input:checked)]:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden`}
+            className={`row-start-1 w-full row-end-2 col-start-1 col-end-[-1] bg-background h-[100svh] z-[1] transition-transform [&:has(label>input:checked)]:-translate-y-[16rem] [&:has(label>input:checked)]:rounded-b-[50px] [&:has(label>input:checked)]:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden`}
           >
             {<Component {...props}></Component> ?? <p>Not working Inside</p>}
             <Label className="absolute bottom-4 z-20 bg-black p-4 rounded-lg text-white cursor-pointer left-1/2 -translate-x-1/2 hover:scale-1">

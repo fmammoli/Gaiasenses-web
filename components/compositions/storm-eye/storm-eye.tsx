@@ -1,4 +1,5 @@
-import ClientWrapper from "../client-wrapper";
+import Composition from "../composition";
+import CompositionControls from "../composition-controls";
 import StormEyeSketch from "./storm-eye-sketch";
 
 export default async function StormEye({
@@ -30,13 +31,14 @@ export default async function StormEye({
   }
 
   return (
-    <ClientWrapper debug={debug}>
+    <Composition>
       <StormEyeSketch
         temperature={temperatureData}
         windDeg={windDegData}
         windSpeed={windSpeedData}
         play={play}
       ></StormEyeSketch>
-    </ClientWrapper>
+      <CompositionControls play={play}></CompositionControls>
+    </Composition>
   );
 }

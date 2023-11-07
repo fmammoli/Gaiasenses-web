@@ -1,7 +1,8 @@
 import getData from "@/components/getData";
 import { getWeather } from "../lluvia/lluvia";
-import ClientWrapper from "../client-wrapper";
 import ZigzagSketch from "./zigzag-sketch";
+import Composition from "../composition";
+import CompositionControls from "../composition-controls";
 
 export type LightningResponseData = {
   city: string;
@@ -51,12 +52,13 @@ export default async function Zigzag({
   }
 
   return (
-    <ClientWrapper debug={debug}>
+    <Composition>
       <ZigzagSketch
         rain={rainData}
         lightningCount={lightningCountData}
         play={play}
       ></ZigzagSketch>
-    </ClientWrapper>
+      <CompositionControls play={play}></CompositionControls>
+    </Composition>
   );
 }

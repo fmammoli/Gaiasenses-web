@@ -1,8 +1,9 @@
 import getData from "@/components/getData";
 
-import ClientWrapper from "../client-wrapper";
 import { RainfallResponseData } from "../lluvia/lluvia";
 import ColorFlowerSketch from "./color-flower-sketch";
+import Composition from "../composition";
+import CompositionControls from "../composition-controls";
 
 export async function getWeather(
   lat: string,
@@ -34,11 +35,12 @@ export default async function ColorFlower({
   }
 
   return (
-    <ClientWrapper debug={debug}>
+    <Composition>
       <ColorFlowerSketch
         temperature={temperatureData}
         play={play}
       ></ColorFlowerSketch>
-    </ClientWrapper>
+      <CompositionControls play={play}></CompositionControls>
+    </Composition>
   );
 }

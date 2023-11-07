@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 
 export default function BackButton() {
   //const { suspend, close } = useWebpd();
+  const { close } = useWebpd();
   const router = useRouter();
   async function handleBack() {
-    // try {
-    //   await suspend();
-    //   await close();
-    // } catch (error) {
-    //   console.log("Cant suspend");
-    // }
+    try {
+      close();
+    } catch (error) {
+      throw error;
+    }
+
     router.back();
   }
   return <Button onClick={handleBack}>Back</Button>;

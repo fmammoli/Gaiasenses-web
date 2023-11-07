@@ -2,7 +2,6 @@
 import useWebpd from "@/hooks/use-webpd";
 import { PatchData } from "./lluvia/lluvia";
 import TogglePlayButton from "./toggle-play-button";
-import { Button } from "../ui/button";
 
 export default function CompositionControls({
   play,
@@ -10,37 +9,43 @@ export default function CompositionControls({
   messages,
 }: {
   play: boolean;
-  patchPath: PatchData["path"];
-  messages: PatchData["messages"];
+  patchPath?: PatchData["path"];
+  messages?: PatchData["messages"];
 }) {
   const { start, status, suspend, sendMsgToWebPd, resume } =
     useWebpd(patchPath);
 
-  if (status === "playing") {
-    console.log(status);
-    messages?.forEach((item) => {
-      sendMsgToWebPd(item.nodeId, item.portletId, item.message);
-    });
+  if (patchPath) {
+    if (status === "playing") {
+      console.log(status);
+      messages?.forEach((item) => {
+        sendMsgToWebPd(item.nodeId, item.portletId, item.message);
+      });
+    }
   }
 
   function handlePlay() {
     //play sound
-    if (status === "waiting" && patchPath) {
-      console.log("play");
-      start().then(() => {
-        // messages?.forEach((item) => {
-        //   sendMsgToWebPd(item.nodeId, item.portletId, item.message);
-        // });
-      });
-    }
-    if (status === "suspended") {
-      resume();
+    if (patchPath) {
+      if (status === "waiting") {
+        console.log("play");
+        start().then(() => {
+          // messages?.forEach((item) => {
+          //   sendMsgToWebPd(item.nodeId, item.portletId, item.message);
+          // });
+        });
+      }
+      if (status === "suspended") {
+        resume();
+      }
     }
   }
 
   async function handlePause() {
-    if (status === "started" || status == "playing") {
-      suspend();
+    if (patchPath) {
+      if (status === "started" || status == "playing") {
+        suspend();
+      }
     }
   }
 

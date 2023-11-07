@@ -1,9 +1,7 @@
 import getData from "@/components/getData";
-
-import ClientWrapper from "../client-wrapper";
 import LluviaSketch from "./lluvia-sketch";
 import Composition from "../composition";
-import TogglePlayButton from "../toggle-play-button";
+
 import CompositionControls from "../composition-controls";
 
 export type RainfallResponseData = {
@@ -93,12 +91,6 @@ export default async function Lluvia({
       },
     ],
   };
-
-  // return (
-  //   <ClientWrapper debug={debug} {...patchData}>
-  //     <LluviaSketch rain={rainData} play={play}></LluviaSketch>
-  //   </ClientWrapper>
-  // );
 
   return (
     <Composition>
