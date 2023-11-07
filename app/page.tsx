@@ -119,10 +119,6 @@ export default async function Page({
   );
   return (
     <main className="grid grid-rows-[auto_1fr] h-full justify-center">
-      <AudioContextProvider>
-        <AudioStopper></AudioStopper>
-      </AudioContextProvider>
-
       <TopBar>
         <LocationBar city={city} state={state}></LocationBar>
       </TopBar>

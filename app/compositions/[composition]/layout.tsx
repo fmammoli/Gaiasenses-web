@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <main className="grid grid-rows-[120px_1fr] grid-cols-1 h-full w-full relative">
       <div className="row-start-1 row-end-3 col-start-1 col-end-2">
-        <AudioContextProvider>{children}</AudioContextProvider>
+        {children}
       </div>
       <div className="row-start-1 row-end-2 col-start-1 col-end-1 z-10">
         <nav className="flex px-2 py-8 md:p8 justify-between z-50 max-w-xl mx-auto items-center">

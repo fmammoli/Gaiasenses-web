@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Montserrat, Poppins } from "next/font/google";
+import { AudioContextProvider } from "@/hooks/webpd-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
   description: "Web version of GaiaSensesApp",
 };
 
+//The AudioContextProvider here at the root layout may not be a very good idea.
+
 export default function RootLayout({
   children,
 }: {
@@ -37,7 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AudioContextProvider>{children}</AudioContextProvider>
         </ThemeProvider>
       </body>
     </html>

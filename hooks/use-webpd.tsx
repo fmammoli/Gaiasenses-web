@@ -1,7 +1,11 @@
 "use client";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { MyAudioContext } from "./webpd-context";
+
+//!!!!! TODO IMPORTANT
+// It seams I am creating a new WebWorker or wasm at every new starAudio.
+// Should look how to clear them after using.
 
 // let audioContext: AudioContext | null = null;
 // let webPdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null = null;
@@ -30,7 +34,10 @@ async function startAudio(patchPath: string) {
 
   const gainNode = audioContext.createGain();
   //gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(1.0, audioContext.currentTime + 1);
+  gainNode.gain.exponentialRampToValueAtTime(
+    1.0,
+    audioContext.currentTime + 0.1
+  );
 
   sourceNode
     .connect(webpdNode)
@@ -112,12 +119,24 @@ export default function useWebpd(patchPath?: string | null) {
   // const audioContextRef = useRef<AudioContext>();
   // const webpdNodeRef = useRef<typeof window.WebPdRuntime.WebPdWorkletNode>();
 
+  // useEffect(() => {
+  //   function closeOnBack(e: any) {
+  //     console.log(e);
+  //   }
+  //   if (window) {
+  //     console.log("adding e listener");
+  //     window.addEventListener("popstate", closeOnBack);
+  //     return () => {
+  //       window.removeEventListener("popstate", closeOnBack);
+  //     };
+  //   }
+  // }, [close]);
+
   function sendMsgToWebPd(
     nodeId: string,
     portletId: string,
     message: (string | number)[]
   ) {
-    console.log(status);
     webPdNode?.port.postMessage({
       type: "inletCaller",
       payload: {
@@ -129,12 +148,13 @@ export default function useWebpd(patchPath?: string | null) {
   }
 
   async function resume() {
+    console.log("going to resume");
     if (audioContext) {
       if (gainRef.current) {
         console.log("fade in");
         gainRef.current.gain.exponentialRampToValueAtTime(
           1,
-          audioContext.currentTime + 1
+          audioContext.currentTime + 0.2
         );
       }
       console.log("resume");
@@ -150,14 +170,16 @@ export default function useWebpd(patchPath?: string | null) {
     if (audioContext) {
       if (gainRef.current) {
         console.log("fade out");
+        console.log(audioContext.currentTime);
         gainRef.current.gain.exponentialRampToValueAtTime(
-          0.0001,
-          audioContext.currentTime + 0.03
+          0.01,
+          audioContext.currentTime + 0.2
         );
       }
+
       setTimeout(() => {
         audioContext.suspend();
-      }, 300);
+      }, 400);
 
       setStatus("suspended");
     } else {
@@ -194,9 +216,11 @@ export default function useWebpd(patchPath?: string | null) {
   }
 
   async function close() {
-    webPdNode?.destroy();
-    if (audioContext?.state! !== "closed") {
+    if (audioContext?.state !== "closed") {
       audioContext?.close();
+      webPdNode?.destroy();
+      setAudioContext && setAudioContext(null);
+      setWebPdNode && setWebPdNode(null);
     }
   }
 
