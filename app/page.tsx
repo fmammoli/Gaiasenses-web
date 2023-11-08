@@ -205,6 +205,15 @@ export default async function Page({
                   Storm Eye
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/curves/?lat=${lat}&lon=${lon}&rain=${rainData}&temperature=${temperatureData}&play=false`}
+                  scroll={false}
+                >
+                  Curves
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>

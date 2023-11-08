@@ -1,4 +1,5 @@
 import ColorFlower from "./color-flower/color-flower";
+import Curves from "./curves/curves";
 import Lluvia from "./lluvia/lluvia";
 import StormEye from "./storm-eye/storm-eye";
 import Zigzag from "./zigzag/zigzag";
@@ -7,9 +8,10 @@ export type AvailableCompositionNames =
   | "lluvia"
   | "zigzag"
   | "colorFlower"
-  | "stormEye";
+  | "stormEye"
+  | "curves";
 
-export type AvailableCompositionComponents = typeof Lluvia | typeof Zigzag;
+export type AvailableCompositionComponents = typeof Lluvia | typeof Zigzag | typeof Curves;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -49,6 +51,13 @@ const CompositionsInfo: CompositionsInfo = {
     Component: StormEye,
     endpoints: [""],
     thumb: "storm-eye.png",
+  },
+  curves: {
+    name: "curves",
+    attributes: ["rain", "temperature"],
+    Component: Curves,
+    endpoints: ["rainfall"],
+    thumb: "curves.png",
   },
 };
 
