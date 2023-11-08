@@ -1,3 +1,4 @@
+import Bonfire from "./bonfire/bonfire";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
 import Lluvia from "./lluvia/lluvia";
@@ -9,9 +10,14 @@ export type AvailableCompositionNames =
   | "zigzag"
   | "colorFlower"
   | "stormEye"
-  | "curves";
+  | "curves"
+  | "bonfire";
 
-export type AvailableCompositionComponents = typeof Lluvia | typeof Zigzag | typeof Curves;
+export type AvailableCompositionComponents =
+  | typeof Lluvia
+  | typeof Zigzag
+  | typeof Curves
+  | typeof Bonfire;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -59,6 +65,13 @@ const CompositionsInfo: CompositionsInfo = {
     endpoints: ["rainfall"],
     thumb: "curves.png",
   },
+  bonfire: {
+    name: "bonfire",
+    attributes: ["fireCount"],
+    Component: Bonfire,
+    endpoints: ["fire"],
+    thumb: "bonfire.png",
+  }
 };
 
 export default CompositionsInfo;

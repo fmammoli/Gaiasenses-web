@@ -24,6 +24,8 @@ import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { Button } from "@/components/ui/button";
 import TopBar from "./top-bar";
 import LocationBar from "./location-bar";
+import { AudioContextProvider } from "@/hooks/webpd-context";
+import { FireSpotsResponseData, getFireSpots } from "@/components/compositions/bonfire/bonfire";
 
 type CompositionHistoryItem = {
   id: string;
@@ -85,6 +87,8 @@ export default async function Page({
   let lightningCountData = 0;
   let windSpeedData = 0;
   let windDegData = 0;
+  let fireData: FireSpotsResponseData | null = null;
+  let fireCount = 0;
   let error = null;
   let state = null;
 
@@ -104,6 +108,9 @@ export default async function Page({
       state = weatherData.state;
       const lightningData = getLightning(lat, lon, 50);
       lightningCountData = (await lightningData).count;
+
+      fireData = await getFireSpots(lat, lon, 50);
+      fireCount = fireData.count;
     } catch (error) {
       console.log(error);
       error = error;
@@ -163,6 +170,7 @@ export default async function Page({
                 <div>Wind Gust: {weatherData?.wind.gust}</div>
                 <div>Wind Deg: {weatherData?.wind.deg}</div>
                 <div>Visibility: {weatherData?.visibility}</div>
+                <div>Fire Spots (50Km): {fireCount}</div>
               </div>
               <div className="mt-4">
                 <p className="text-sm">
@@ -212,6 +220,15 @@ export default async function Page({
                   scroll={false}
                 >
                   Curves
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/bonfire/?lat=${lat}&lon=${lon}&fireCount=${fireCount}&play=false`}
+                  scroll={false}
+                >
+                  Bonfire
                 </Link>
               </Button>
             </CardFooter>
