@@ -289,6 +289,15 @@ export default async function Page({
                   Lightning Trees
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/weatherTree/?lat=${lat}&lon=${lon}&play=false`}
+                  scroll={false}
+                >
+                  Weather Tree
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>

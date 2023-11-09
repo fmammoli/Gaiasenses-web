@@ -9,6 +9,7 @@ import Lluvia from "./lluvia/lluvia";
 import PaintBrush from "./paint-brush/paint-brush";
 import Rectangles from "./rectangles/rectangles";
 import StormEye from "./storm-eye/storm-eye";
+import WeatherTree from "./weather-tree/weather-tree";
 import Zigzag from "./zigzag/zigzag";
 
 export type AvailableCompositionNames =
@@ -23,7 +24,8 @@ export type AvailableCompositionNames =
   | "digitalOrganism"
   | "paintBrush"
   | "rectangles"
-  | "lightningTrees";
+  | "lightningTrees"
+  | "weatherTree";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -35,7 +37,8 @@ export type AvailableCompositionComponents =
   | typeof DigitalOrganism
   | typeof PaintBrush
   | typeof Rectangles
-  | typeof LightningTrees;
+  | typeof LightningTrees
+  | typeof WeatherTree;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -131,6 +134,13 @@ const CompositionsInfo: CompositionsInfo = {
     Component: LightningTrees,
     endpoints: ["lightning"],
     thumb: "lightning-trees.png",
+  },
+  weatherTree: {
+    name: "weatherTree",
+    attributes: [""],
+    Component: WeatherTree,
+    endpoints: [""],
+    thumb: "weather-tree.png",
   },
 };
 
