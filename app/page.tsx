@@ -85,6 +85,7 @@ export default async function Page({
   let temperatureData = 0;
   let rainData = 0;
   let cloudsData = 0;
+  let humidityData = 0;
   let lightningCountData = 0;
   let windSpeedData = 0;
   let windDegData = 0;
@@ -104,6 +105,7 @@ export default async function Page({
         : 0;
 
       cloudsData = weatherData.clouds;
+      humidityData = weatherData.main.humidity;
       windSpeedData = weatherData.wind.speed;
       windDegData = weatherData.wind.deg;
       city = weatherData.city;
@@ -258,6 +260,15 @@ export default async function Page({
                   scroll={false}
                 >
                   Digital Organism
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/paintBrush/?lat=${lat}&lon=${lon}&humidity=${humidityData}&play=false`}
+                  scroll={false}
+                >
+                  Paint Brush
                 </Link>
               </Button>
             </CardFooter>
