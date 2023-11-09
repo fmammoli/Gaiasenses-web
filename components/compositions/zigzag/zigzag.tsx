@@ -3,6 +3,7 @@ import { getWeather } from "../lluvia/lluvia";
 import ZigzagSketch from "./zigzag-sketch";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type LightningResponseData = {
   city: string;
@@ -59,6 +60,7 @@ export default async function Zigzag({
         play={play}
       ></ZigzagSketch>
       <CompositionControls play={play}></CompositionControls>
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

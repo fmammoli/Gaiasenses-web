@@ -4,6 +4,7 @@ import { RainfallResponseData } from "../lluvia/lluvia";
 import ColorFlowerSketch from "./color-flower-sketch";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export async function getWeather(
   lat: string,
@@ -41,6 +42,7 @@ export default async function ColorFlower({
         play={play}
       ></ColorFlowerSketch>
       <CompositionControls play={play}></CompositionControls>
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

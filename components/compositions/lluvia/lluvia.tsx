@@ -3,6 +3,7 @@ import LluviaSketch from "./lluvia-sketch";
 import Composition from "../composition";
 
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type RainfallResponseData = {
   city: string;
@@ -100,6 +101,7 @@ export default async function Lluvia({
         patchPath={patchData.path}
         messages={patchData.messages}
       ></CompositionControls>
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

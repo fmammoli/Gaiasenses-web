@@ -1,3 +1,4 @@
+import DebugPanel from "@/components/debug-panel/debug-panel";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import StormEyeSketch from "./storm-eye-sketch";
@@ -39,6 +40,7 @@ export default async function StormEye({
         play={play}
       ></StormEyeSketch>
       <CompositionControls play={play}></CompositionControls>
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }
