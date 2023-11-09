@@ -231,6 +231,15 @@ export default async function Page({
                   Bonfire
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/chaosTree/?lat=${lat}&lon=${lon}&play=false`}
+                  scroll={false}
+                >
+                  Chaos Tree
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>
