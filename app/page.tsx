@@ -280,6 +280,15 @@ export default async function Page({
                   Rectangles
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/lightningTrees/?lat=${lat}&lon=${lon}&lightningCount=${lightningCountData}&play=false`}
+                  scroll={false}
+                >
+                  Lightning Trees
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>

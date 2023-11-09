@@ -4,6 +4,7 @@ import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
 import DigitalOrganism from "./digital-organism/digital-organism";
+import LightningTrees from "./lightning-trees/lightning-trees";
 import Lluvia from "./lluvia/lluvia";
 import PaintBrush from "./paint-brush/paint-brush";
 import Rectangles from "./rectangles/rectangles";
@@ -21,7 +22,8 @@ export type AvailableCompositionNames =
   | "cloudBubble"
   | "digitalOrganism"
   | "paintBrush"
-  | "rectangles";
+  | "rectangles"
+  | "lightningTrees";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -32,7 +34,8 @@ export type AvailableCompositionComponents =
   | typeof CloudBubble
   | typeof DigitalOrganism
   | typeof PaintBrush
-  | typeof Rectangles;
+  | typeof Rectangles
+  | typeof LightningTrees;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -121,6 +124,13 @@ const CompositionsInfo: CompositionsInfo = {
     Component: Rectangles,
     endpoints: ["rainfall"],
     thumb: "rectangles.png",
+  },
+  lightningTrees: {
+    name: "lightningTrees",
+    attributes: ["lightningCount"],
+    Component: LightningTrees,
+    endpoints: ["lightning"],
+    thumb: "lightning-trees.png",
   },
 };
 
