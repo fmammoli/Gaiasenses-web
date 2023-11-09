@@ -6,6 +6,7 @@ import Curves from "./curves/curves";
 import DigitalOrganism from "./digital-organism/digital-organism";
 import Lluvia from "./lluvia/lluvia";
 import PaintBrush from "./paint-brush/paint-brush";
+import Rectangles from "./rectangles/rectangles";
 import StormEye from "./storm-eye/storm-eye";
 import Zigzag from "./zigzag/zigzag";
 
@@ -19,7 +20,8 @@ export type AvailableCompositionNames =
   | "chaosTree"
   | "cloudBubble"
   | "digitalOrganism"
-  | "paintBrush";
+  | "paintBrush"
+  | "rectangles";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -29,7 +31,8 @@ export type AvailableCompositionComponents =
   | typeof ChaosTree
   | typeof CloudBubble
   | typeof DigitalOrganism
-  | typeof PaintBrush;
+  | typeof PaintBrush
+  | typeof Rectangles;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -111,6 +114,13 @@ const CompositionsInfo: CompositionsInfo = {
     Component: PaintBrush,
     endpoints: ["rainfall"],
     thumb: "paint-brush.png",
+  },
+  rectangles: {
+    name: "rectangles",
+    attributes: ["rain"],
+    Component: Rectangles,
+    endpoints: ["rainfall"],
+    thumb: "rectangles.png",
   },
 };
 

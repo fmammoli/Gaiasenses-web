@@ -271,6 +271,15 @@ export default async function Page({
                   Paint Brush
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/rectangles/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
+                  scroll={false}
+                >
+                  Rectangles
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>
