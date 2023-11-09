@@ -5,14 +5,14 @@ import CompositionControls from "../composition-controls";
 export type PaintBrushProps = {
   lat: string;
   lon: string;
-  humidity: number;
+  humidity?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
 };
 
 export default async function PaintBrush(props: PaintBrushProps) {
-  const humidity = props.humidity;
+  const humidity = props.humidity ?? 0;
 
   return (
     <Composition>

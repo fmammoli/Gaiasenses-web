@@ -5,7 +5,7 @@ import CompositionControls from "../composition-controls";
 export type CloudBubbleProps = {
   lat: string;
   lon: string;
-  clouds: number;
+  clouds?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
