@@ -3,6 +3,7 @@ import ChaosTree from "./chaos-tree/chaos-tree";
 import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
+import DigitalOrganism from "./digital-organism/digital-organism";
 import Lluvia from "./lluvia/lluvia";
 import StormEye from "./storm-eye/storm-eye";
 import Zigzag from "./zigzag/zigzag";
@@ -15,7 +16,8 @@ export type AvailableCompositionNames =
   | "curves"
   | "bonfire"
   | "chaosTree"
-  | "cloudBubble";
+  | "cloudBubble"
+  | "digitalOrganism";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -23,7 +25,8 @@ export type AvailableCompositionComponents =
   | typeof Curves
   | typeof Bonfire
   | typeof ChaosTree
-  | typeof CloudBubble;
+  | typeof CloudBubble
+  | typeof DigitalOrganism;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -89,8 +92,15 @@ const CompositionsInfo: CompositionsInfo = {
     name: "cloudBubble",
     attributes: ["clouds"],
     Component: CloudBubble,
-    endpoints: [""],
+    endpoints: ["rainfall"],
     thumb: "cloud-bubble.png",
+  },
+  digitalOrganism: {
+    name: "digitalOrganism",
+    attributes: ["rain"],
+    Component: DigitalOrganism,
+    endpoints: ["rainfall"],
+    thumb: "digital-organism.png",
   },
 };
 

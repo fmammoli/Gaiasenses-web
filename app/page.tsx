@@ -251,6 +251,15 @@ export default async function Page({
                   Cloud Bubble
                 </Link>
               </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/digitalOrganism/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
+                  scroll={false}
+                >
+                  Digital Organism
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>
