@@ -1,5 +1,6 @@
 import Bonfire from "./bonfire/bonfire";
 import ChaosTree from "./chaos-tree/chaos-tree";
+import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
 import Lluvia from "./lluvia/lluvia";
@@ -13,14 +14,16 @@ export type AvailableCompositionNames =
   | "stormEye"
   | "curves"
   | "bonfire"
-  | "chaosTree";
+  | "chaosTree"
+  | "cloudBubble";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
   | typeof Zigzag
   | typeof Curves
   | typeof Bonfire
-  | typeof ChaosTree;
+  | typeof ChaosTree
+  | typeof CloudBubble;
 
 type CompositionsInfo = {
   [K in AvailableCompositionNames]: {
@@ -81,7 +84,14 @@ const CompositionsInfo: CompositionsInfo = {
     Component: ChaosTree,
     endpoints: [""],
     thumb: "chaos-tree.png",
-  }
+  },
+  cloudBubble: {
+    name: "cloudBubble",
+    attributes: ["clouds"],
+    Component: CloudBubble,
+    endpoints: [""],
+    thumb: "cloud-bubble.png",
+  },
 };
 
 export default CompositionsInfo;
