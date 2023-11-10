@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import DigitalOrganismSketch from "./digital-organism-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type DigitalOrganismProps = {
   lat: string;
@@ -16,10 +17,9 @@ export default async function DigitalOrganism(props: DigitalOrganismProps) {
 
   return (
     <Composition>
-      <DigitalOrganismSketch
-        rain={rain}
-        play={props.play} />
+      <DigitalOrganismSketch rain={rain} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

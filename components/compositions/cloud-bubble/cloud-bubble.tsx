@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import CloudBubbleSketch from "./cloud-bubble-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type CloudBubbleProps = {
   lat: string;
@@ -16,10 +17,9 @@ export default async function CloudBubble(props: CloudBubbleProps) {
 
   return (
     <Composition>
-      <CloudBubbleSketch
-        clouds={clouds}
-        play={props.play} />
+      <CloudBubbleSketch clouds={clouds} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

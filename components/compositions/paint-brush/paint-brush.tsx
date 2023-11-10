@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import PaintBrushSketch from "./paint-brush-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type PaintBrushProps = {
   lat: string;
@@ -16,10 +17,9 @@ export default async function PaintBrush(props: PaintBrushProps) {
 
   return (
     <Composition>
-      <PaintBrushSketch
-        humidity={humidity}
-        play={props.play} />
+      <PaintBrushSketch humidity={humidity} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

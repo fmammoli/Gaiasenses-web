@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import WeatherTreeSketch from "./weather-tree-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type WeatherTreeProps = {
   lat: string;
@@ -13,9 +14,9 @@ export type WeatherTreeProps = {
 export default async function WeatherTree(props: WeatherTreeProps) {
   return (
     <Composition>
-      <WeatherTreeSketch
-        play={props.play} />
+      <WeatherTreeSketch play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

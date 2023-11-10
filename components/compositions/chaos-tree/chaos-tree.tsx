@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import ChaosTreeSketch from "./chaos-tree-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type ChaosTreeProps = {
   lat: string;
@@ -16,11 +17,9 @@ export default async function ChaosTree(props: ChaosTreeProps) {
 
   return (
     <Composition>
-      <ChaosTreeSketch
-        lat={lat}
-        lon={lon}
-        play={props.play} />
+      <ChaosTreeSketch lat={lat} lon={lon} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import RectanglesSketch from "./rectangles-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type RectanglesProps = {
   lat: string;
@@ -16,10 +17,9 @@ export default async function Rectangles(props: RectanglesProps) {
 
   return (
     <Composition>
-      <RectanglesSketch
-        rain={rainData}
-        play={props.play} />
+      <RectanglesSketch rain={rainData} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

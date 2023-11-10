@@ -2,6 +2,7 @@ import { getWeather } from "../lluvia/lluvia";
 import Composition from "../composition";
 import CurvesSketch from "./curves-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type CurvesProps = {
   lat: string;
@@ -29,8 +30,10 @@ export default async function Curves(props: CurvesProps) {
       <CurvesSketch
         rain={rainData}
         temperature={temperatureData}
-        play={props.play} />
+        play={props.play}
+      />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }

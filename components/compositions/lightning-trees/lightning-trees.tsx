@@ -1,6 +1,7 @@
 import Composition from "../composition";
 import LightningTreesSketch from "./lightning-trees-sketch";
 import CompositionControls from "../composition-controls";
+import DebugPanel from "@/components/debug-panel/debug-panel";
 
 export type LightningTreesProps = {
   lat: string;
@@ -16,10 +17,9 @@ export default async function LightningTrees(props: LightningTreesProps) {
 
   return (
     <Composition>
-      <LightningTreesSketch
-        lightningCount={lightningCount}
-        play={props.play} />
+      <LightningTreesSketch lightningCount={lightningCount} play={props.play} />
       <CompositionControls play={props.play} />
+      <DebugPanel></DebugPanel>
     </Composition>
   );
 }
