@@ -36,12 +36,6 @@ export default function DebugPanel() {
     router.refresh();
   }
 
-  function handleClick() {
-    const newParams = new URLSearchParams(searchParams.toString());
-
-    router.replace(`${pathname}?${newParams.toString()}`);
-  }
-
   return (
     <div className="absolute max-w-[22rem] bg-secondary p-2 rounded-lg right-2 top-1/4 opacity-60 hover:opacity-100 z-50">
       <Collapsible>
@@ -76,11 +70,7 @@ export default function DebugPanel() {
                   );
                 })}
             </div>
-            <div>
-              <Button id="play-button" className="mt-2" onClick={handleClick}>
-                {sketchProps.play === "true" ? "Pause" : "Play"}
-              </Button>
-            </div>
+            <div></div>
             <div>
               <Button
                 variant={"outline"}

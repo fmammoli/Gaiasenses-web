@@ -1,12 +1,23 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 
 // let audioContext: AudioContext | null = null;
 // let webPdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null = null;
 //const audioContext = new AudioContext();
 console.log("Module context load");
+
+export type AudioContent = {
+  audioContext: AudioContext | null;
+  webPdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null;
+};
 
 export type MyAudioContextContent = {
   audioContext: AudioContext | null;
@@ -25,16 +36,16 @@ export const MyAudioContext = createContext<MyAudioContextContent>({
   webPdNode: null,
   setWebPdNode: null,
 });
-console.log("Context Module rerender");
-export function AudioContextProvider({ children }: { children: ReactNode }) {
-  const [webPdNodeState, setWebPdNodeState] = useState<
-    typeof window.WebPdRuntime.WebPdWorkletNode | null
-  >(null);
 
+export function AudioContextProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const [audioContextState, setAudioContextState] =
     useState<AudioContext | null>(null);
+
+  const [webPdNodeState, setWebPdNodeState] = useState<
+    typeof window.WebPdRuntime.WebPdWorkletNode | null
+  >(null);
 
   function setWebPdNode(
     newWebPdNode: typeof window.WebPdRuntime.WebPdWorkletNode | null
