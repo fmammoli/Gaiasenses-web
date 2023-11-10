@@ -24,6 +24,8 @@ import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { Button } from "@/components/ui/button";
 import TopBar from "./top-bar";
 import LocationBar from "./location-bar";
+import { AudioContextProvider } from "@/hooks/webpd-context";
+import { FireSpotsResponseData, getFireSpots } from "@/components/compositions/bonfire/bonfire";
 
 type CompositionHistoryItem = {
   id: string;
@@ -82,9 +84,13 @@ export default async function Page({
   let weatherData: RainfallResponseData | null = null;
   let temperatureData = 0;
   let rainData = 0;
+  let cloudsData = 0;
+  let humidityData = 0;
   let lightningCountData = 0;
   let windSpeedData = 0;
   let windDegData = 0;
+  let fireData: FireSpotsResponseData | null = null;
+  let fireCount = 0;
   let error = null;
   let state = null;
 
@@ -98,12 +104,17 @@ export default async function Page({
         ? (weatherData.rain as { "1h": number })["1h"]
         : 0;
 
+      cloudsData = weatherData.clouds;
+      humidityData = weatherData.main.humidity;
       windSpeedData = weatherData.wind.speed;
       windDegData = weatherData.wind.deg;
       city = weatherData.city;
       state = weatherData.state;
       const lightningData = getLightning(lat, lon, 50);
       lightningCountData = (await lightningData).count;
+
+      fireData = await getFireSpots(lat, lon, 50);
+      fireCount = fireData.count;
     } catch (error) {
       console.log(error);
       error = error;
@@ -163,6 +174,7 @@ export default async function Page({
                 <div>Wind Gust: {weatherData?.wind.gust}</div>
                 <div>Wind Deg: {weatherData?.wind.deg}</div>
                 <div>Visibility: {weatherData?.visibility}</div>
+                <div>Fire Spots (50Km): {fireCount}</div>
               </div>
               <div className="mt-4">
                 <p className="text-sm">
@@ -203,6 +215,87 @@ export default async function Page({
                   scroll={false}
                 >
                   Storm Eye
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/curves/?lat=${lat}&lon=${lon}&rain=${rainData}&temperature=${temperatureData}&play=false`}
+                  scroll={false}
+                >
+                  Curves
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/bonfire/?lat=${lat}&lon=${lon}&fireCount=${fireCount}&play=false`}
+                  scroll={false}
+                >
+                  Bonfire
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/chaosTree/?lat=${lat}&lon=${lon}&play=false`}
+                  scroll={false}
+                >
+                  Chaos Tree
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/cloudBubble/?lat=${lat}&lon=${lon}&clouds=${cloudsData}&play=false`}
+                  scroll={false}
+                >
+                  Cloud Bubble
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/digitalOrganism/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
+                  scroll={false}
+                >
+                  Digital Organism
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/paintBrush/?lat=${lat}&lon=${lon}&humidity=${humidityData}&play=false`}
+                  scroll={false}
+                >
+                  Paint Brush
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/rectangles/?lat=${lat}&lon=${lon}&rain=${rainData}&play=false`}
+                  scroll={false}
+                >
+                  Rectangles
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/lightningTrees/?lat=${lat}&lon=${lon}&lightningCount=${lightningCountData}&play=false`}
+                  scroll={false}
+                >
+                  Lightning Trees
+                </Link>
+              </Button>
+
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/weatherTree/?lat=${lat}&lon=${lon}&play=false`}
+                  scroll={false}
+                >
+                  Weather Tree
                 </Link>
               </Button>
             </CardFooter>
