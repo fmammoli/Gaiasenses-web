@@ -20,7 +20,7 @@ export default function BackButton() {
   }
   return (
     <Link href={"/"}>
-      <Button>Back</Button>;
+      <Button>Back</Button>
     </Link>
   );
 }
