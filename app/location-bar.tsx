@@ -3,7 +3,13 @@ import GeolocationButton from "./geolocation-button";
 import { H2 } from "@/components/ui/h2";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { SewingPinFilledIcon } from "@radix-ui/react-icons";
+import {
+  LocateFixedIcon,
+  LocateIcon,
+  MapIcon,
+} from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function LocationBar({
   city,
@@ -13,6 +19,7 @@ export default function LocationBar({
   state: string | null;
 }) {
   const [geoState, setGeoState] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     async function checkPermission() {
@@ -27,6 +34,7 @@ export default function LocationBar({
   function handleButton(newState: string) {
     setGeoState(newState);
   }
+
   return (
     <div>
       {city && (
@@ -36,21 +44,29 @@ export default function LocationBar({
             <h3>{state}</h3>
           </div>
 
-          <div className="text-sm font-light font-mono">
-            {geoState !== "granted" && (
-              <>
-                <p className="my-4">Activate you GPS for better accurcy.</p>
+          <div className="text-sm font-light font-mono mt-4">
+            { geoState !== "granted" && (
+              <p>Activate your GPS for better accuracy</p>
+            )}
+            <div className="flex flex-row gap-3 mt-2">
+              {geoState !== "granted" && (
                 <GeolocationButton setGeoState={handleButton}>
+                  <LocateIcon />
                   <p>Activate GPS</p>
                 </GeolocationButton>
-              </>
-            )}
-            {geoState === "granted" && (
-              <Button variant={"outline"} className="w-full mt-4">
-                <p>You GPS data is activated.</p>
-                <SewingPinFilledIcon className=""></SewingPinFilledIcon>
+              )}
+              {geoState === "granted" && (
+                <Button variant={"outline"} className="w-full gap-2" disabled>
+                  <LocateFixedIcon />
+                  <p>You GPS data is activated</p>
+                </Button>
+              )}
+              <Button variant={"outline"}>
+                <Link href={`/map?${searchParams.toString()}`}>
+                  <MapIcon />
+                </Link>
               </Button>
-            )}
+            </div>
           </div>
         </>
       )}

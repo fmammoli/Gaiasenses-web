@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { SewingPinFilledIcon } from "@radix-ui/react-icons";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, useState } from "react";
 
@@ -51,9 +50,8 @@ export default function GeolocationButton({
     }
   }
   return (
-    <Button className="w-full" onClick={onClick}>
+    <Button className="w-full gap-2" onClick={onClick}>
       {children}
-      <SewingPinFilledIcon className=""></SewingPinFilledIcon>
     </Button>
   );
 }
