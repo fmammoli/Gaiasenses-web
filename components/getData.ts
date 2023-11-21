@@ -15,6 +15,7 @@ export default async function getData(
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
+    console.log(await res.text());
     throw new Error(
       `Failed to fetch data: https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
         dist ? `&dist=${dist}` : ""

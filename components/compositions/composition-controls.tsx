@@ -1,7 +1,8 @@
 "use client";
 import useWebpd from "@/hooks/use-webpd";
-import { PatchData } from "./lluvia/lluvia";
+
 import TogglePlayButton from "./toggle-play-button";
+import { PatchData } from "@/hooks/types";
 
 export default function CompositionControls({
   play,
@@ -25,10 +26,8 @@ export default function CompositionControls({
 
   function handlePlay() {
     //play sound
-    console.log(status);
     if (patchPath) {
       if (status === "waiting") {
-        console.log("play");
         start().then(() => {
           // messages?.forEach((item) => {
           //   sendMsgToWebPd(item.nodeId, item.portletId, item.message);

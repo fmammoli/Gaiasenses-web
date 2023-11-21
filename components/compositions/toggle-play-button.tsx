@@ -23,6 +23,7 @@ export default function TogglePlayButton({
     event.preventDefault();
     event.stopPropagation();
     const newParams = new URLSearchParams(searchParams.toString());
+    console.log(play);
     const newPlayStatus = !play;
     newParams.set("play", newPlayStatus.toString());
     if (newPlayStatus) {
@@ -30,6 +31,7 @@ export default function TogglePlayButton({
     } else {
       if (onPause) onPause(newPlayStatus);
     }
+    console.log(newParams.toString());
     router.replace(`${pathname}?${newParams.toString()}`);
   }
 

@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import Leaflet, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, ReactNode, useEffect, useRef } from "react";
 import {
   MapContainer,
   Marker,
+  Popup,
   TileLayer,
   useMap,
   useMapEvents,
@@ -16,6 +17,7 @@ import {
 export type MapProps = {
   lat: string | number;
   lon: string | number;
+  children?: ReactNode;
 };
 
 type LocationMarkerProps = PropsWithChildren<{
@@ -34,6 +36,8 @@ const DEFAULT_BOUNDS = [
 function LocationMarker(props: LocationMarkerProps) {
   const map = useMap();
 
+  const markerRef = useRef(null);
+
   useEffect(() => {
     // the props set for the `MapContainer` are immutable
     // and only applied on the first render. To reflect
@@ -50,7 +54,13 @@ function LocationMarker(props: LocationMarkerProps) {
     },
   });
 
-  return props.position && <Marker position={props.position}></Marker>;
+  return (
+    props.position && (
+      <Marker position={props.position} ref={markerRef}>
+        <Popup>{props.children}</Popup>
+      </Marker>
+    )
+  );
 }
 
 export default function Map(props: MapProps) {
@@ -79,6 +89,7 @@ export default function Map(props: MapProps) {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("lat", lat.toString());
     newParams.set("lon", lon.toString());
+
     router.replace(`${pathname}?${newParams}`);
   };
 
@@ -86,11 +97,13 @@ export default function Map(props: MapProps) {
     const params = new URLSearchParams();
     params.set("lat", lat.toString());
     params.set("lon", lon.toString());
-    router.replace(`/?${params.toString()}`);
+
+    //router.replace(`/?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
       <div className="absolute z-10 w-full flex justify-center m-3.5">
         <Button
           variant={"outline"}
@@ -118,7 +131,9 @@ export default function Map(props: MapProps) {
           position={{ lat, lng }}
           onUpdateMarker={handleUpdatePosition}
           onSelectPosition={handleSelectPosition}
-        />
+        >
+          {props.children}
+        </LocationMarker>
       </MapContainer>
     </div>
   );

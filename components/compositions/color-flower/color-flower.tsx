@@ -1,10 +1,10 @@
 import getData from "@/components/getData";
 
-import { RainfallResponseData } from "../lluvia/lluvia";
 import ColorFlowerSketch from "./color-flower-sketch";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
+import { RainfallResponseData } from "@/hooks/types";
 
 export async function getWeather(
   lat: string,
@@ -32,9 +32,9 @@ export default async function ColorFlower({
 
   if (today) {
     const data = await getWeather(lat, lon);
-    temperatureData = data.main.temp && 0;
+    temperatureData = data.main.temp ?? 0;
   }
-
+  console.log("Rerender color flower ", temperatureData);
   return (
     <Composition>
       <ColorFlowerSketch

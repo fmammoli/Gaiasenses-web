@@ -4,46 +4,26 @@ import Composition from "../composition";
 
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
+import { useMemo } from "react";
+import { PatchData, RainfallResponseData } from "@/hooks/types";
 
-export type RainfallResponseData = {
-  city: string;
-  clouds: number;
-  lat: number;
-  lon: number;
-  main: {
-    feels_like: number;
-    grnd_level: number;
-    humidity: number;
-    pressure: number;
-    temp: number;
+function newMessages(rainData: number) {
+  const patchData: PatchData = {
+    path: "/lluviaSlider.wasm",
+    messages: [
+      {
+        nodeId: "n_0_56",
+        portletId: "0",
+        //message: [0, 1000, 1, rainData, "", ""],
+        message: [1000 / (rainData === 0 ? 1 : rainData)],
+        valueIndex: 3,
+        name: "rain",
+      },
+    ],
   };
-  rain: { "1h": number } | {};
-  state: string;
-  visibility: number;
-  weather: [
-    {
-      description: string;
-      icon: string;
-      main: string;
-    }
-  ];
-  wind: {
-    deg: number;
-    gust: number;
-    speed: number;
-  };
-};
 
-export type PatchData = {
-  path: string;
-  messages: {
-    nodeId: string;
-    portletId: string;
-    message: (string | number)[];
-    valueIndex: number;
-    name: string;
-  }[];
-};
+  return patchData;
+}
 
 export async function getWeather(
   lat: string,
@@ -79,27 +59,16 @@ export default async function Lluvia({
     }
   }
 
-  const patchData: PatchData = {
-    path: "/lluviaSlider.wasm",
-    messages: [
-      {
-        nodeId: "n_0_56",
-        portletId: "0",
-        //message: [0, 1000, 1, rainData, "", ""],
-        message: [1000 / (rainData === 0 ? 1 : rainData)],
-        valueIndex: 3,
-        name: "rain",
-      },
-    ],
-  };
+  const { path, messages } = newMessages(rainData);
 
+  console.log("Lluvia rerender");
   return (
     <Composition>
       <LluviaSketch rain={rainData} play={play}></LluviaSketch>
       <CompositionControls
         play={play}
-        patchPath={patchData.path}
-        messages={patchData.messages}
+        patchPath={path}
+        messages={messages}
       ></CompositionControls>
       <DebugPanel></DebugPanel>
     </Composition>

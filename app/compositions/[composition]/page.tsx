@@ -50,7 +50,10 @@ export default async function Page({
           className={`grid grid-rows-1 grid-cols-1 bg-[url(/lluvia.png)] isolate`}
         >
           <div className="row-start-1 row-end-2 col-start-1 col-end-[-1]">
-            <WeatherInfoPanel></WeatherInfoPanel>
+            <WeatherInfoPanel
+              lat={searchParams.lat}
+              lon={searchParams.lon}
+            ></WeatherInfoPanel>
           </div>
           <div
             className={`row-start-1 w-full row-end-2 col-start-1 col-end-[-1] bg-background h-[100svh] z-[1] transition-transform [&:has(label>input:checked)]:-translate-y-[16rem] [&:has(label>input:checked)]:rounded-b-[50px] [&:has(label>input:checked)]:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden`}

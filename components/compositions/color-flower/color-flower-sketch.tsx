@@ -2,6 +2,7 @@
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { Color, Renderer } from "p5";
+import { useLayoutEffect, useRef } from "react";
 
 export type ColorFlowerSketchProps = {
   temperature: number;
@@ -228,10 +229,16 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
 export default function ColorFlowerSketch({
   temperature,
-
   play,
 }: ColorFlowerSketchProps) {
+  const ref = useRef(null);
+
   return (
-    <NextReactP5Wrapper sketch={sketch} temperature={temperature} play={play} />
+    <NextReactP5Wrapper
+      ref={ref}
+      sketch={sketch}
+      temperature={temperature}
+      play={play}
+    />
   );
 }
