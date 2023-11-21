@@ -2,6 +2,7 @@ import Composition from "../composition";
 import PaintBrushSketch from "./paint-brush-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
+import { getWeather } from "../lluvia/lluvia";
 
 export type PaintBrushProps = {
   lat: string;
@@ -13,13 +14,18 @@ export type PaintBrushProps = {
 };
 
 export default async function PaintBrush(props: PaintBrushProps) {
-  const humidity = props.humidity ?? 0;
+  let humidity = props.humidity ?? 0;
+
+  if (props.today) {
+    const data = await getWeather(props.lat, props.lon);
+    humidity = data.main.humidity;
+  }
 
   return (
     <Composition>
       <PaintBrushSketch humidity={humidity} play={props.play} />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

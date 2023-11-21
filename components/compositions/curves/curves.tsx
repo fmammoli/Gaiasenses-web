@@ -33,7 +33,7 @@ export default async function Curves(props: CurvesProps) {
         play={props.play}
       />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

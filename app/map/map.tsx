@@ -104,14 +104,6 @@ export default function Map(props: MapProps) {
 
   return (
     <div className="w-full h-full relative">
-      <div className="absolute z-10 w-full flex justify-center m-3.5">
-        <Button
-          variant={"outline"}
-          onClick={() => handleSelectPosition(lat, lng)}
-        >
-          Select Position
-        </Button>
-      </div>
       <MapContainer
         className="z-0"
         style={{ width: "100%", height: "100%" }}

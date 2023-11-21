@@ -35,7 +35,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between text-foreground"
+          className="w-[200px] justify-between text-foreground min-w-fit"
         >
           {value
             ? options.find((item) => item.value === value)?.label
@@ -49,14 +49,12 @@ export function Combobox({
           <CommandEmpty>No composition found.</CommandEmpty>
           <CommandGroup>
             {options.map((item) => {
-              console.log(item);
               return (
                 <CommandItem
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
-                    console.log(currentValue);
                     if (currentValue !== "" && onSelect) {
                       onSelect(currentValue);
                     }

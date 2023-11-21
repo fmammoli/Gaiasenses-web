@@ -37,7 +37,7 @@ export default async function Bonfire(props: BonfireProps) {
   let fireCount = props.fireCount ?? 0;
 
   if (props.today) {
-    const fireData = await getFireSpots(props.lat, props.lon, props.dist);
+    const fireData = await getFireSpots(props.lat, props.lon, 100);
     fireCount = fireData.count;
   }
 
@@ -45,7 +45,7 @@ export default async function Bonfire(props: BonfireProps) {
     <Composition>
       <BonfireSketch fireCount={fireCount} play={props.play} />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

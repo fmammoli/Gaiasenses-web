@@ -2,6 +2,8 @@ import Composition from "../composition";
 import LightningTreesSketch from "./lightning-trees-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
+import { getWeather } from "../lluvia/lluvia";
+import { getLightning } from "../zigzag/zigzag";
 
 export type LightningTreesProps = {
   lat: string;
@@ -15,11 +17,16 @@ export type LightningTreesProps = {
 export default async function LightningTrees(props: LightningTreesProps) {
   let lightningCount = props.lightningCount ?? 0;
 
+  if (props.today) {
+    const data = await getLightning(props.lat, props.lon, 100);
+    lightningCount = data.count;
+  }
+
   return (
     <Composition>
       <LightningTreesSketch lightningCount={lightningCount} play={props.play} />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

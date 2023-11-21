@@ -34,7 +34,7 @@ export default async function ColorFlower({
     const data = await getWeather(lat, lon);
     temperatureData = data.main.temp ?? 0;
   }
-  console.log("Rerender color flower ", temperatureData);
+
   return (
     <Composition>
       <ColorFlowerSketch
@@ -42,7 +42,7 @@ export default async function ColorFlower({
         play={play}
       ></ColorFlowerSketch>
       <CompositionControls play={play}></CompositionControls>
-      <DebugPanel></DebugPanel>
+      {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

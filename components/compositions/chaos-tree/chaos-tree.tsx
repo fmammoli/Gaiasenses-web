@@ -19,7 +19,7 @@ export default async function ChaosTree(props: ChaosTreeProps) {
     <Composition>
       <ChaosTreeSketch lat={lat} lon={lon} play={props.play} />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

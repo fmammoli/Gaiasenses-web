@@ -2,6 +2,7 @@ import DebugPanel from "@/components/debug-panel/debug-panel";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import StormEyeSketch from "./storm-eye-sketch";
+import { getWeather } from "../color-flower/color-flower";
 
 export default async function StormEye({
   lat,
@@ -27,8 +28,10 @@ export default async function StormEye({
   let windSpeedData = windSpeed ?? 0;
 
   if (today) {
-    //TO-DO
-    //make the fetch here
+    const data = await getWeather(lat, lon);
+    temperatureData = data.main.temp;
+    windDegData = data.wind.deg;
+    windSpeedData = data.wind.speed;
   }
 
   return (
@@ -40,7 +43,7 @@ export default async function StormEye({
         play={play}
       ></StormEyeSketch>
       <CompositionControls play={play}></CompositionControls>
-      <DebugPanel></DebugPanel>
+      {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

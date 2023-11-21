@@ -70,7 +70,7 @@ export default async function Lluvia({
         patchPath={path}
         messages={messages}
       ></CompositionControls>
-      <DebugPanel></DebugPanel>
+      {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

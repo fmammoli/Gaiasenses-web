@@ -16,7 +16,7 @@ export default async function WeatherTree(props: WeatherTreeProps) {
     <Composition>
       <WeatherTreeSketch play={props.play} />
       <CompositionControls play={props.play} />
-      <DebugPanel></DebugPanel>
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

@@ -3,12 +3,9 @@ import dynamic from "next/dynamic";
 import AppTitle from "../app-title";
 import { getLightning } from "@/components/compositions/zigzag/zigzag";
 import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
-import ColorFlower from "@/components/compositions/color-flower/color-flower";
 import WeatherInfoPanel from "../compositions/[composition]/weather-info-panel";
 import CompositionsCombobox from "./compositions-combobox";
-import CompositionsInfo, {
-  AvailableCompositionNames,
-} from "@/components/compositions/compositions-info";
+import CompositionsInfo from "@/components/compositions/compositions-info";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 
@@ -32,10 +29,10 @@ export default async function Page({
   const { lat, lon, play, composition } = searchParams;
 
   const compositionInfo = Object.entries(CompositionsInfo).filter(
-    (item) => item[0].toLowerCase() === composition.toLowerCase()
+    (item) => item[0].toLowerCase() === composition?.toLowerCase()
   );
 
-  const Composition = compositionInfo[0][1].Component;
+  const Composition = compositionInfo[0]?.[1]?.Component;
 
   let weatherData = null;
   let lightningData = null;
@@ -56,7 +53,9 @@ export default async function Page({
               lon={lon}
               mode={"compact"}
             ></WeatherInfoPanel>
-            <CompositionsCombobox></CompositionsCombobox>
+            <div className="w-full">
+              <CompositionsCombobox></CompositionsCombobox>
+            </div>
           </>
         </DynamicMap>
       </div>
@@ -66,8 +65,9 @@ export default async function Page({
           <Composition
             lat={lat}
             lon={lon}
-            play={stringToBool(play)}
+            play={stringToBool(play ?? "false")}
             today
+            debug={false}
           ></Composition>
         )}
       </div>

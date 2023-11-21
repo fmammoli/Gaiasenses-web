@@ -60,7 +60,7 @@ export default async function Zigzag({
         play={play}
       ></ZigzagSketch>
       <CompositionControls play={play}></CompositionControls>
-      <DebugPanel></DebugPanel>
+      {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

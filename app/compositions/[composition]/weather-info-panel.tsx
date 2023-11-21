@@ -1,6 +1,8 @@
 import { MoonIcon } from "@radix-ui/react-icons";
 import WeatherInfoPanelElement from "./weather-info-panel-element";
 import { getWeather } from "@/components/compositions/color-flower/color-flower";
+import { getLightning } from "@/components/compositions/zigzag/zigzag";
+import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
 
 const wInfo = [
   { value: "Low", name: "uv index" },
@@ -23,6 +25,11 @@ export default async function WeatherInfoPanel({
   //  const chunks = splitToNChunks<(typeof wInfo)[0]>(wInfo, wInfo.length / 3);
 
   const data = await getWeather(lat.toString(), lon.toString());
+
+  const lightningData = await getLightning(lat.toString(), lon.toString(), 100);
+
+  const fireData = await getFireSpots(lat.toString(), lon.toString(), 100);
+
   const weatherInfo = {
     rainfall: data.rain.hasOwnProperty("1h")
       ? (data.rain as { "1h": number })["1h"]
@@ -36,8 +43,10 @@ export default async function WeatherInfoPanel({
     windGust: data.wind.gust,
     visibility: data.visibility,
     weather: data.weather[0].description,
+    lightnings: `${lightningData.count} (100km)`,
+    fires: `${fireData.count} (100km)`,
   };
-  console.log(weatherInfo.weather);
+
   //Object.entries(weatherInfo).map((item) => console.log(item));
   return (
     <div
