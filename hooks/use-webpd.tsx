@@ -41,7 +41,7 @@ async function startAudio(patchPath: string) {
 
   sourceNode
     .connect(webpdNode)
-    .connect(gainNode)
+    //.connect(gainNode)
     .connect(audioContext.destination);
 
   console.log("webpd connect");

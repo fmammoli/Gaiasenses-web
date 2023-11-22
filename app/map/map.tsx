@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Leaflet, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
@@ -90,6 +89,7 @@ export default function Map(props: MapProps) {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("lat", lat.toString());
     newParams.set("lon", lon.toString());
+    newParams.set("play", false.toString());
     console.log("going to replace url");
     router.replace(`${pathname}?${newParams}`);
   };

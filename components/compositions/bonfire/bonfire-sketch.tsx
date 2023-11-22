@@ -35,12 +35,12 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
       this.red = red;
       this.green = green;
       this.blue = blue;
-      this.alpha = p5.random(100,500);
+      this.alpha = p5.random(100, 500);
     }
 
     update() {
       this.y -= p5.random(1, 3);
-      this.radius -= 0.1;
+      this.radius -= p5.random(7, 10) / 100;
       this.green += 0.5;
     }
 
@@ -58,7 +58,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
   p5.setup = () => {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(width, height, p5.P2D);
-  }
+  };
 
   p5.updateWithProps = (props) => {
     fireCount = Number.isNaN(props.fireCount) ? fireCount : props.fireCount;
@@ -76,18 +76,16 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
     p5.background(0);
 
     //colors and number of particles
-    if(fireCount == 0){
+    if (fireCount == 0) {
       nParticles = 3;
       red = 0;
-      green = 255
+      green = 255;
       blue = p5.floor(p5.random(0, 255));
-    }
-    else if (nParticles >=1 && nParticles <=19){
+    } else if (nParticles >= 1 && nParticles <= 19) {
       red = 255;
       green = p5.floor(p5.random(0, 255));
       blue = 0;
-    }
-    else if(nParticles >= 20){
+    } else if (nParticles >= 20) {
       nParticles = 20;
       red = 255;
       green = p5.floor(p5.random(0, 255));
@@ -115,9 +113,5 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
 }
 
 export default function BonfireSketch(props: BonfireSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      {...props} />
-  )
+  return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }
