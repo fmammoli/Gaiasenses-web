@@ -24,11 +24,17 @@ export default async function WeatherInfoPanel({
 }) {
   //  const chunks = splitToNChunks<(typeof wInfo)[0]>(wInfo, wInfo.length / 3);
 
-  const data = await getWeather(lat.toString(), lon.toString());
+  const [data, lightningData, fireData] = await Promise.all([
+    getWeather(lat.toString(), lon.toString()),
+    getLightning(lat.toString(), lon.toString(), 100),
+    getFireSpots(lat.toString(), lon.toString(), 100),
+  ]);
 
-  const lightningData = await getLightning(lat.toString(), lon.toString(), 100);
+  // const data = await getWeather(lat.toString(), lon.toString());
 
-  const fireData = await getFireSpots(lat.toString(), lon.toString(), 100);
+  // const lightningData = await getLightning(lat.toString(), lon.toString(), 100);
+
+  // const fireData = await getFireSpots(lat.toString(), lon.toString(), 100);
 
   const weatherInfo = {
     rainfall: data.rain.hasOwnProperty("1h")

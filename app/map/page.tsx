@@ -6,6 +6,7 @@ import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
 import WeatherInfoPanel from "../compositions/[composition]/weather-info-panel";
 import CompositionsCombobox from "./compositions-combobox";
 import CompositionsInfo from "@/components/compositions/compositions-info";
+import { Suspense } from "react";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 
@@ -48,11 +49,13 @@ export default async function Page({
       <div className="row-start-1 row-end-2 col-start-1 col-end-2">
         <DynamicMap lat={lat} lon={lon}>
           <>
-            <WeatherInfoPanel
-              lat={lat}
-              lon={lon}
-              mode={"compact"}
-            ></WeatherInfoPanel>
+            <Suspense fallback={<p>Loading...</p>}>
+              <WeatherInfoPanel
+                lat={lat}
+                lon={lon}
+                mode={"compact"}
+              ></WeatherInfoPanel>
+            </Suspense>
             <div className="w-full">
               <CompositionsCombobox></CompositionsCombobox>
             </div>

@@ -48,6 +48,7 @@ function LocationMarker(props: LocationMarkerProps) {
 
   useMapEvents({
     click: (e) => {
+      console.log(props);
       if (props.onUpdateMarker !== undefined) {
         props.onUpdateMarker(e.latlng.lat, e.latlng.lng);
       }
@@ -89,7 +90,7 @@ export default function Map(props: MapProps) {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("lat", lat.toString());
     newParams.set("lon", lon.toString());
-
+    console.log("going to replace url");
     router.replace(`${pathname}?${newParams}`);
   };
 
