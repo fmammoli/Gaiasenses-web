@@ -32,17 +32,7 @@ async function startAudio(patchPath: string) {
   const sourceNode = audioContext.createMediaStreamSource(stream);
   const webpdNode = new window.WebPdRuntime.WebPdWorkletNode(audioContext);
 
-  const gainNode = audioContext.createGain();
-  //gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(
-    1.0,
-    audioContext.currentTime + 0.1
-  );
-
-  sourceNode
-    .connect(webpdNode)
-    //.connect(gainNode)
-    .connect(audioContext.destination);
+  sourceNode.connect(webpdNode).connect(audioContext.destination);
 
   console.log("webpd connect");
   // Setup filesystem management
@@ -62,50 +52,8 @@ async function startAudio(patchPath: string) {
 
   console.log("almost end");
 
-  return { audioContext, webpdNode, gainNode };
+  return { audioContext, webpdNode };
 }
-
-// async function startAudio(patchPath: string) {
-//   // Fetch the patch code
-//   const response = await fetch(patchPath);
-
-//   patch = await response.arrayBuffer();
-
-//   audioContext = new AudioContext();
-//   console.log("new audio context");
-//   const r = await window.WebPdRuntime.registerWebPdWorkletNode(audioContext);
-
-//   let node = audioContext.createMediaStreamDestination();
-//   stream = node.stream;
-
-//   if (audioContext.state === "running") {
-//     audioContext.suspend();
-//   }
-
-//   // Setup web audio graph
-//   const sourceNode = audioContext.createMediaStreamSource(stream);
-//   webpdNode = new window.WebPdRuntime.WebPdWorkletNode(audioContext);
-
-//   sourceNode.connect(webpdNode);
-//   webpdNode.connect(audioContext.destination);
-
-//   // Setup filesystem management
-//   webpdNode.port.onmessage = (message: any) => {
-//     return window.WebPdRuntime.fsWeb(webpdNode.current, message, {
-//       rootUrl: window.WebPdRuntime.urlDirName(location.pathname),
-//     });
-//   };
-
-//   // Send code to the worklet
-//   webpdNode.port.postMessage({
-//     type: "code:WASM",
-//     payload: {
-//       wasmBuffer: patch,
-//     },
-//   });
-
-//   return webpdNode;
-// }
 
 export default function useWebpd(patchPath?: string | null) {
   const [path, setPath] = useState(patchPath);
@@ -150,13 +98,6 @@ export default function useWebpd(patchPath?: string | null) {
   async function resume() {
     console.log("going to resume");
     if (audioContext) {
-      if (gainRef.current) {
-        console.log("fade in");
-        gainRef.current.gain.exponentialRampToValueAtTime(
-          1,
-          audioContext.currentTime + 0.2
-        );
-      }
       console.log("resume");
       await audioContext.resume();
       console.log("resume end");
@@ -168,15 +109,6 @@ export default function useWebpd(patchPath?: string | null) {
 
   async function suspend() {
     if (audioContext) {
-      if (gainRef.current) {
-        console.log("fade out");
-        console.log(audioContext.currentTime);
-        gainRef.current.gain.exponentialRampToValueAtTime(
-          0.01,
-          audioContext.currentTime + 0.2
-        );
-      }
-
       setTimeout(() => {
         audioContext.suspend();
       }, 400);
@@ -187,20 +119,15 @@ export default function useWebpd(patchPath?: string | null) {
     }
   }
 
-  const gainRef = useRef<GainNode>();
-
   async function start(latePath?: string) {
+    setPath(latePath);
     //setStatus("loading");
     if (window.WebPdRuntime) {
       try {
         if (setWebPdNode && setAudioContext && !webPdNode && !audioContext) {
-          const {
-            audioContext: newAudioContext,
-            webpdNode: newWebPdNode,
-            gainNode,
-          } = await startAudio(path ?? latePath ?? "");
+          const { audioContext: newAudioContext, webpdNode: newWebPdNode } =
+            await startAudio(latePath ?? path ?? "");
 
-          gainRef.current = gainNode;
           await newAudioContext.resume();
           setStatus("playing");
           if (newAudioContext && newWebPdNode) {

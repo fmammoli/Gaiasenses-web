@@ -75,6 +75,5 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
 }
 
 export default function LluviaSketch({ rain, play }: LluviaSketchProps) {
-  console.log(rain);
   return <NextReactP5Wrapper sketch={sketch} rain={rain} play={play} />;
 }

@@ -4,7 +4,6 @@ import Composition from "../composition";
 
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { useMemo } from "react";
 import { PatchData, RainfallResponseData } from "@/hooks/types";
 
 function newMessages(rainData: number) {
@@ -61,7 +60,6 @@ export default async function Lluvia({
 
   const { path, messages } = newMessages(rainData);
 
-  console.log("Lluvia rerender");
   return (
     <Composition>
       <LluviaSketch rain={rainData} play={play}></LluviaSketch>

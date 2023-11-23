@@ -65,7 +65,7 @@ export default function CompositionControls({
     //play sound
     if (patchPath) {
       if (status === "waiting") {
-        start().then(() => {
+        start(patchPath).then(() => {
           // messages?.forEach((item) => {
           //   sendMsgToWebPd(item.nodeId, item.portletId, item.message);
           // });

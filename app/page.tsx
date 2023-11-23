@@ -299,6 +299,14 @@ export default async function Page({
                   Weather Tree
                 </Link>
               </Button>
+              <Button className="text-sm" variant={"outline"} asChild>
+                <Link
+                  href={`/compositions/mudflatScatter/?lat=${lat}&lon=${lon}&play=false`}
+                  scroll={false}
+                >
+                  Mudflat Scatter
+                </Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>

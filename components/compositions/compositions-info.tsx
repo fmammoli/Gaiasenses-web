@@ -6,6 +6,7 @@ import Curves from "./curves/curves";
 import DigitalOrganism from "./digital-organism/digital-organism";
 import LightningTrees from "./lightning-trees/lightning-trees";
 import Lluvia from "./lluvia/lluvia";
+import MudflatScatter from "./mudflat-scatter/muflat-scatter";
 import PaintBrush from "./paint-brush/paint-brush";
 import Rectangles from "./rectangles/rectangles";
 import StormEye from "./storm-eye/storm-eye";
@@ -25,7 +26,8 @@ export type AvailableCompositionNames =
   | "paintBrush"
   | "rectangles"
   | "lightningTrees"
-  | "weatherTree";
+  | "weatherTree"
+  | "mudflatScatter";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -139,6 +141,13 @@ const CompositionsInfo: CompositionsInfo = {
     name: "weatherTree",
     attributes: [""],
     Component: WeatherTree,
+    endpoints: [""],
+    thumb: "weather-tree.png",
+  },
+  mudflatScatter: {
+    name: "mudflatScatter",
+    attributes: ["temperature", "windDeg", "windSpeed"],
+    Component: MudflatScatter,
     endpoints: [""],
     thumb: "weather-tree.png",
   },
