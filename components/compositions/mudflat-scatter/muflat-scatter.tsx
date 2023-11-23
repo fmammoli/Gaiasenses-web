@@ -3,7 +3,6 @@ import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 import { getWeather } from "../lluvia/lluvia";
-import { getLightning } from "../zigzag/zigzag";
 import MudflatScatterSketch from "./mudflat-scatter-sketch";
 import { PatchData } from "@/hooks/types";
 
@@ -34,7 +33,7 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
     path: "/ambient_2.wasm",
     messages: [
       {
-        nodeId: "n_0_29",
+        nodeId: "n_0_286",
         portletId: "0",
         message: [1],
         valueIndex: 3,

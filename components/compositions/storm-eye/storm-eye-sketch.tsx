@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer } from "p5";
 
 export type StormEyeSketchProps = {
   temperature: number;
@@ -83,7 +82,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
   let speedFactor = 0;
   let eyeVariance = 0;
 
-  let canvas: Renderer | null = null;
+  let canvas = null;
 
   p5.setup = () => {
     if (!play) p5.noLoop();

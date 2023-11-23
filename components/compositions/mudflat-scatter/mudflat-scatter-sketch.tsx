@@ -1,7 +1,7 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Color, Renderer, Vector } from "p5";
+import { Vector } from "p5";
 
 //for the #wccChallenge on the theme of 'flat'.
 //Thought I would be skipping this week, as I'm on vacation in northern California.
@@ -21,13 +21,13 @@ export type MudFlarScatterSketchProps = {
 };
 
 function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
-  let stroker: Color | null = null;
+  let stroker: any | null = null;
   let beach: sand[] = [];
-  let stones: { pos: Vector; r: number }[] = [];
+  let stones: { pos: any; r: number }[] = [];
   let play = false;
 
   let [w, h] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas = null;
 
   function initialize() {}
 
@@ -95,9 +95,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
   };
 
   class sand {
-    pos: Vector;
-    acc: Vector;
-    vel: Vector;
+    pos: any;
+    acc: any;
+    vel: any;
     constructor(x: number, y: number) {
       this.pos = p5.createVector(x, y);
       this.acc = p5.createVector(p5.random(0.02, 0.05), 0);
@@ -106,7 +106,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
 
     move() {
       for (let i = 0; i < stones.length; i++) {
-        let d = Vector.dist(this.pos, stones[i].pos);
+        //let d = p5.Vector.dist(this.pos, stones[i].pos);
+        let d = this.pos.dist(stones[i].pos);
         if (d <= stones[i].r) {
           let yvOff = (this.pos.y - stones[i].pos.y) * -2;
           this.acc.add(0, yvOff);
