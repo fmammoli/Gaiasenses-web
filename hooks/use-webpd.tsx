@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { MyAudioContext } from "./webpd-context";
 
 //!!!!! TODO IMPORTANT
@@ -20,7 +20,7 @@ async function startAudio(patchPath: string) {
 
   const audioContext = new AudioContext();
   const r = await window.WebPdRuntime.registerWebPdWorkletNode(audioContext);
-  console.log("context created");
+
   let node = audioContext.createMediaStreamDestination();
   const stream = node.stream;
 
@@ -34,14 +34,14 @@ async function startAudio(patchPath: string) {
 
   sourceNode.connect(webpdNode).connect(audioContext.destination);
 
-  console.log("webpd connect");
+  //console.log("webpd connect");
   // Setup filesystem management
   webpdNode.port.onmessage = (message: any) => {
     return window.WebPdRuntime.fsWeb(webpdNode.current, message, {
       rootUrl: window.WebPdRuntime.urlDirName(location.pathname),
     });
   };
-  console.log("port on message");
+  //console.log("port on message");
   // Send code to the worklet
   webpdNode.port.postMessage({
     type: "code:WASM",
@@ -50,20 +50,27 @@ async function startAudio(patchPath: string) {
     },
   });
 
-  console.log("almost end");
+  //console.log("almost end");
 
   return { audioContext, webpdNode };
 }
 
 export default function useWebpd(patchPath?: string | null) {
   const [path, setPath] = useState(patchPath);
-  const [status, setStatus] = useState<
-    "waiting" | "loading" | "error" | "playing" | "suspended" | "started"
-  >("waiting");
+
   const [error, setError] = useState(null);
 
-  const { audioContext, setAudioContext, setWebPdNode, webPdNode } =
-    useContext(MyAudioContext);
+  const {
+    audioContext,
+    setAudioContext,
+    setWebPdNode,
+    webPdNode,
+    setPatch,
+    status,
+    setStatus,
+    resume,
+    suspend,
+  } = useContext(MyAudioContext);
   // const audioContextRef = useRef<AudioContext>();
   // const webpdNodeRef = useRef<typeof window.WebPdRuntime.WebPdWorkletNode>();
 
@@ -95,32 +102,18 @@ export default function useWebpd(patchPath?: string | null) {
     });
   }
 
-  async function resume() {
-    console.log("going to resume");
-    if (audioContext) {
-      console.log("resume");
-      await audioContext.resume();
-      console.log("resume end");
-      setStatus("playing");
-    } else {
-      throw new Error("Cannot resume, AudioContext is null");
-    }
-  }
-
-  async function suspend() {
-    if (audioContext) {
-      setTimeout(() => {
-        audioContext.suspend();
-      }, 400);
-
-      setStatus("suspended");
-    } else {
-      throw new Error("Cannot Suspend, AudioContext is null");
-    }
-  }
-
   async function start(latePath?: string) {
+    //console.log("starting useWebPd");
     setPath(latePath);
+
+    if (latePath) {
+      setPatch && setPatch(latePath);
+    } else {
+      if (path) {
+        setPatch && setPatch(path);
+      }
+    }
+
     //setStatus("loading");
     if (window.WebPdRuntime) {
       try {
@@ -129,7 +122,7 @@ export default function useWebpd(patchPath?: string | null) {
             await startAudio(latePath ?? path ?? "");
 
           await newAudioContext.resume();
-          setStatus("playing");
+          setStatus && setStatus("playing");
           if (newAudioContext && newWebPdNode) {
             setAudioContext(newAudioContext);
             setWebPdNode(newWebPdNode);
@@ -148,6 +141,7 @@ export default function useWebpd(patchPath?: string | null) {
       webPdNode?.destroy();
       setAudioContext && setAudioContext(null);
       setWebPdNode && setWebPdNode(null);
+      setStatus && setStatus("waiting");
     }
   }
 
@@ -158,5 +152,6 @@ export default function useWebpd(patchPath?: string | null) {
     suspend: suspend,
     sendMsgToWebPd: sendMsgToWebPd,
     close: close,
+    patch: patchPath,
   };
 }

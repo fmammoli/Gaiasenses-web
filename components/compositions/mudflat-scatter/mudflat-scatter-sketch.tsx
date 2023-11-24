@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Vector } from "p5";
 
 //for the #wccChallenge on the theme of 'flat'.
 //Thought I would be skipping this week, as I'm on vacation in northern California.
@@ -62,7 +61,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
 
   p5.updateWithProps = (props) => {
     play = props.play;
-    console.log(props);
+
     // if (temperature !== temperature) {
     //   temperature = props.temperature;
     //   initialize();

@@ -8,7 +8,7 @@ import DebugPanel from "@/components/debug-panel/debug-panel";
 export type LightningResponseData = {
   city: string;
   count: number;
-  events: [];
+  events: { lat: string; lon: string; dist?: number }[];
   state: string;
 };
 

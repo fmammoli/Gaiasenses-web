@@ -2,7 +2,9 @@
 
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { Combobox } from "@/components/ui/combo-box";
+import { MyAudioContext } from "@/hooks/webpd-context";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useContext } from "react";
 
 const compositions = Object.entries(CompositionsInfo).map((item) => {
   const newItem = {
@@ -17,7 +19,11 @@ export default function CompositionsCombobox() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const { currentPatch, closeSound, status, setStatus } =
+    useContext(MyAudioContext);
+
   function handleSelect(currentValue: string) {
+    closeSound && closeSound();
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("composition", currentValue);
     newParams.set("play", "false");

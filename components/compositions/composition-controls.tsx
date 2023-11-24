@@ -30,7 +30,7 @@ const Player = ({ path, play }: { path: string; play: boolean }) => {
         ref={ref}
         src={path}
         loop
-        onPlay={(e) => console.log("onPlay")}
+        onPlay={(e) => console.log("play")}
         customProgressBarSection={[RHAP_UI.PROGRESS_BAR]}
         customControlsSection={[]}
         // other props here
@@ -53,8 +53,12 @@ export default function CompositionControls({
   const { start, status, suspend, sendMsgToWebPd, resume, close } =
     useWebpd(patchPath);
 
+  //  console.log(patchPath);
+  // console.log(messages);
+
   if (patchPath && !mp3) {
     if (status === "playing") {
+      //console.log("is playing, sending msg");
       messages?.forEach((item) => {
         sendMsgToWebPd(item.nodeId, item.portletId, item.message);
       });
@@ -63,6 +67,7 @@ export default function CompositionControls({
 
   function handlePlay() {
     //play sound
+
     if (patchPath) {
       if (status === "waiting") {
         start(patchPath).then(() => {
@@ -72,7 +77,7 @@ export default function CompositionControls({
         });
       }
       if (status === "suspended") {
-        resume();
+        resume && resume();
       }
     }
   }
@@ -80,7 +85,7 @@ export default function CompositionControls({
   async function handlePause() {
     if (patchPath) {
       if (status === "started" || status == "playing") {
-        suspend();
+        suspend && suspend();
       }
     }
   }

@@ -1,9 +1,16 @@
 "use client";
 
+import { MyAudioContext } from "@/hooks/webpd-context";
 import Leaflet, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { PropsWithChildren, ReactNode, useEffect, useRef } from "react";
+import {
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 import {
   MapContainer,
   Marker,
@@ -47,7 +54,6 @@ function LocationMarker(props: LocationMarkerProps) {
 
   useMapEvents({
     click: (e) => {
-      console.log(props);
       if (props.onUpdateMarker !== undefined) {
         props.onUpdateMarker(e.latlng.lat, e.latlng.lng);
       }
@@ -71,6 +77,8 @@ export default function Map(props: MapProps) {
   const lat = Number(props.lat) || DEFAULT_POSITION[0];
   const lng = Number(props.lon) || DEFAULT_POSITION[1];
 
+  const { suspend, status } = useContext(MyAudioContext);
+
   // update Leaflet icons path
   // https://github.com/colbyfayock/next-leaflet-starter/blob/5f5cb801456138cdaa2ee454166b1b4bdbfcbb29/src/components/Map/DynamicMap.js#L17C3-L26C10
   useEffect(() => {
@@ -86,11 +94,12 @@ export default function Map(props: MapProps) {
   }, []);
 
   const handleUpdatePosition = (lat: number, lon: number) => {
+    status === "playing" && suspend && suspend();
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("lat", lat.toString());
     newParams.set("lon", lon.toString());
     newParams.set("play", false.toString());
-    console.log("going to replace url");
+
     router.replace(`${pathname}?${newParams}`);
   };
 

@@ -1,8 +1,8 @@
 import { MoonIcon } from "@radix-ui/react-icons";
 import WeatherInfoPanelElement from "./weather-info-panel-element";
 import { getWeather } from "@/components/compositions/color-flower/color-flower";
-import { getLightning } from "@/components/compositions/zigzag/zigzag";
-import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
+import LightningInfo from "./lightning-info";
+import FireInfo from "./fire-info";
 
 const wInfo = [
   { value: "Low", name: "uv index" },
@@ -24,90 +24,86 @@ export default async function WeatherInfoPanel({
 }) {
   //  const chunks = splitToNChunks<(typeof wInfo)[0]>(wInfo, wInfo.length / 3);
 
-  const [data, lightningData, fireData] = await Promise.all([
-    getWeather(lat.toString(), lon.toString()),
-    getLightning(lat.toString(), lon.toString(), 100),
-    getFireSpots(lat.toString(), lon.toString(), 100),
-  ]);
-
-  // const data = await getWeather(lat.toString(), lon.toString());
-
-  // const lightningData = await getLightning(lat.toString(), lon.toString(), 100);
-
-  // const fireData = await getFireSpots(lat.toString(), lon.toString(), 100);
-
-  const weatherInfo = {
-    rainfall: data.rain.hasOwnProperty("1h")
-      ? (data.rain as { "1h": number })["1h"]
-      : 0,
-    humidity: data.main.humidity,
-    clouds: data.clouds,
-    feelsLike: data.main.feels_like,
-    grndLeve: data.main.grnd_level,
-    windSpeed: data.wind.speed,
-    windDeg: data.wind.deg,
-    windGust: data.wind.gust,
-    visibility: data.visibility,
-    weather: data.weather[0].description,
-    lightnings: `${lightningData.count} (100km)`,
-    fires: `${fireData.count} (100km)`,
-  };
-
-  //Object.entries(weatherInfo).map((item) => console.log(item));
-  return (
-    <div
-      className={`${
-        mode === "spaced" ? "p-4" : ""
-      } mx-auto h-full backdrop-blur-md flex items-end bg-[rgba(255,255,255,0.75)]`}
-    >
-      <div className="w-full max-w-2xl mx-auto">
-        <h2 className="font-semibold text-lg uppercase">{data.city}</h2>
-        <h3 className="font-medium text-md">{data.state}</h3>
-        <div className="flex justify-between">
-          {mode === "spaced" && (
-            <h3
-              className={`font-pop text-[67px] leading-none font-[900] tracking-wider`}
-            >
-              10:38
-            </h3>
-          )}
+  try {
+    const data = await getWeather(lat.toString(), lon.toString());
+    const weatherInfo = {
+      weather: data.weather[0].description,
+      rainfall: data.rain.hasOwnProperty("1h")
+        ? (data.rain as { "1h": number })["1h"]
+        : 0,
+      humidity: data.main.humidity,
+      clouds: data.clouds,
+      feelsLike: data.main.feels_like,
+      grndLeve: data.main.grnd_level,
+      windSpeed: data.wind.speed,
+      windDeg: data.wind.deg,
+      windGust: data.wind.gust,
+      visibility: data.visibility,
+    };
+    return (
+      <div
+        className={`${
+          mode === "spaced" ? "p-4" : ""
+        } mx-auto h-full backdrop-blur-md flex items-end bg-[rgba(255,255,255,0.75)]`}
+      >
+        <div className="w-full max-w-2xl mx-auto">
+          <div className="flex justify-between">
+            {mode === "spaced" && (
+              <h3
+                className={`font-pop text-[67px] leading-none font-[900] tracking-wider`}
+              >
+                10:38
+              </h3>
+            )}
+            <div>
+              <div>
+                <h2 className="font-semibold text-lg uppercase">{data.city}</h2>
+                <h3 className="font-medium text-md">{data.state}</h3>
+                <p className="font-semibold tracking-tight">
+                  {new Date().toLocaleDateString("pt-Br", {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="self-center mx-8">
+              <MoonIcon height={36} width={36}></MoonIcon>
+              <p className="font-mono font-semibold">{data.main.temp}°C</p>
+            </div>
+          </div>
+          <div
+            className={`${
+              mode === "spaced" ? "gap-2 mt-2" : ""
+            }grid grid-cols-3 grid-rows-2 gap-2 mt-2`}
+          >
+            {Object.entries(weatherInfo).map((item) => (
+              <WeatherInfoPanelElement
+                key={item[0]}
+                name={item[0]}
+                value={item[1]}
+              ></WeatherInfoPanelElement>
+            ))}
+          </div>
+          <div className="mb-4">
+            <LightningInfo
+              lat={lat.toString()}
+              lon={lon.toString()}
+            ></LightningInfo>
+          </div>
           <div>
-            <p className="font-semibold tracking-tight">
-              {new Date().toLocaleDateString("pt-Br", {
-                weekday: "short",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
+            <FireInfo lat={lat.toString()} lon={lon.toString()}></FireInfo>
           </div>
-          <div className="self-center mx-8">
-            <MoonIcon height={36} width={36}></MoonIcon>
-            <p className="font-mono font-semibold">{data.main.temp}°C</p>
-          </div>
-        </div>
-        <div
-          className={`${
-            mode === "spaced" ? "gap-2 mt-2" : ""
-          }grid grid-cols-3 grid-rows-2 gap-2 mt-2`}
-        >
-          {Object.entries(weatherInfo).map((item) => (
-            <WeatherInfoPanelElement
-              key={item[0]}
-              name={item[0]}
-              value={item[1]}
-            ></WeatherInfoPanelElement>
-          ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function splitToNChunks<T>(array: T[], n: number) {
-  let result = [];
-  for (let i = n; i > 0; i--) {
-    result.push(array.splice(0, Math.ceil(array.length / i)));
+    );
+  } catch (error) {
+    return (
+      <div>
+        <p className="text-center my-4">This location is not supported yet.</p>
+      </div>
+    );
   }
-  return result;
 }
