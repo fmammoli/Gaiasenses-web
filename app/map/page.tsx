@@ -35,15 +35,6 @@ export default async function Page({
 
   const Composition = compositionInfo[0]?.[1]?.Component;
 
-  let weatherData = null;
-  let lightningData = null;
-  let fireData = null;
-  if (lat && lon) {
-    weatherData = getWeather(lat, lon);
-    lightningData = getLightning(lat, lon, 50);
-    fireData = getFireSpots(lat, lon, 50);
-  }
-
   return (
     <div className="grid grid-rows-1 grid-cols-[repeat(2,50%)] h-full isolate">
       <div className="row-start-1 row-end-2 col-start-1 col-end-2">
