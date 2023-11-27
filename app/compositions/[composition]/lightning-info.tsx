@@ -1,5 +1,3 @@
-import { getWeather } from "@/components/compositions/lluvia/lluvia";
-import WeatherInfoPanelElement from "./weather-info-panel-element";
 import { getLightning } from "@/components/compositions/zigzag/zigzag";
 
 export default async function LightningInfo({
@@ -21,7 +19,7 @@ export default async function LightningInfo({
       if (item !== undefined) return item;
     }) as number[];
   const closer = distances.length > 0 ? Math.min(...distances) : null;
-  console.log(closer);
+
   return (
     <>
       {data.count > 0 && (

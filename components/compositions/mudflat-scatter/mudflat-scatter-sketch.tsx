@@ -48,8 +48,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
         p5.width - p5.width / 4
       );
       var stone = {
-        pos: p5.createVector(x, y),
-        r: p5.random(p5.height / 70, p5.height / 12),
+        pos: p5.createVector(x + p5.random(-400, 400), y),
+        r: p5.random(p5.height / 80, p5.height / 10),
       };
       stones.push(stone);
     }
@@ -79,7 +79,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
   };
 
   p5.draw = () => {
-    if (p5.frameCount < 400 && p5.frameCount % 8 == 0) {
+    if (p5.frameCount < 600 && p5.frameCount % 8 == 0) {
       for (let y = -p5.height / 10; y < p5.height + p5.height / 4; y++) {
         beach.push(new sand(-10, y));
       }

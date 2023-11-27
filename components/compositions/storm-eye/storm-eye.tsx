@@ -4,6 +4,28 @@ import CompositionControls from "../composition-controls";
 import StormEyeSketch from "./storm-eye-sketch";
 import { getWeather } from "../color-flower/color-flower";
 
+const forte_concentrado = "/audios/StormEYE-ForteConcentrado.mp3";
+const forte_espalhado = "/audios/StormEYE-ForteEspalhado.mp3";
+const suave_concentrado = "/audios/StormEYE-SuaveConcentrado.mp3";
+const suave_espalhado = "/audios/StormEYE-SuaveEspalhado.mp3";
+
+function getAudio(windDeg: number, windSpeed: number) {
+  if (windSpeed >= 1) {
+    if (windDeg >= 0 && windDeg <= 180) {
+      return forte_concentrado;
+    } else {
+      return forte_espalhado;
+    }
+  } else {
+    if (windDeg >= 0 && windDeg <= 180) {
+      return suave_concentrado;
+    } else {
+      return suave_espalhado;
+    }
+  }
+  return suave_concentrado;
+}
+
 export default async function StormEye({
   lat,
   lon,
@@ -27,11 +49,14 @@ export default async function StormEye({
   let windDegData = windDeg ?? 0;
   let windSpeedData = windSpeed ?? 0;
 
+  let audioPath = "";
+
   if (today) {
     const data = await getWeather(lat, lon);
     temperatureData = data.main.temp;
     windDegData = data.wind.deg;
     windSpeedData = data.wind.speed;
+    audioPath = getAudio(windDegData, windSpeedData);
   }
 
   return (
@@ -42,7 +67,11 @@ export default async function StormEye({
         windSpeed={windSpeedData}
         play={play}
       ></StormEyeSketch>
-      <CompositionControls play={play}></CompositionControls>
+      <CompositionControls
+        play={play}
+        mp3
+        patchPath={audioPath}
+      ></CompositionControls>
       {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

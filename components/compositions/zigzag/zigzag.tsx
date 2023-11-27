@@ -20,6 +20,27 @@ export async function getLightning(
   return getData("lightning", lat, lon, dist);
 }
 
+const zigzagAA = "/audios/ZigZag-AA.mp3";
+const zigzagAB = "/audios/ZigZag-AB.mp3";
+const zigzagBA = "/audios/ZigZag-BA.mp3";
+const zigzagBB = "/audios/ZigZag-BB.mp3";
+
+function getAudio(rain: number, lCount: number) {
+  if (rain > 20) {
+    if (lCount > 4) {
+      return zigzagAA;
+    } else {
+      return zigzagAB;
+    }
+  } else {
+    if (lCount > 4) {
+      return zigzagBA;
+    } else {
+      return zigzagBB;
+    }
+  }
+}
+
 export default async function Zigzag({
   lat,
   lon,
@@ -39,7 +60,7 @@ export default async function Zigzag({
 }) {
   let rainData = rain ?? 0;
   let lightningCountData = lightningCount ?? 0;
-
+  let audioPath = "";
   if (today) {
     const [weatherData, lightningData] = await Promise.all([
       getWeather(lat, lon),
@@ -50,6 +71,7 @@ export default async function Zigzag({
       : 0;
 
     lightningCountData = lightningData.count;
+    audioPath = getAudio(rainData, lightningCountData);
   }
 
   return (
@@ -59,7 +81,11 @@ export default async function Zigzag({
         lightningCount={lightningCountData}
         play={play}
       ></ZigzagSketch>
-      <CompositionControls play={play}></CompositionControls>
+      <CompositionControls
+        play={play}
+        mp3
+        patchPath={audioPath}
+      ></CompositionControls>
       {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

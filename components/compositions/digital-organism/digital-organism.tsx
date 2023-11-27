@@ -13,6 +13,12 @@ export type DigitalOrganismProps = {
   today?: boolean;
 };
 
+const audioPath = "/audios/DigitalOrganism-Improviso.mp3";
+
+function getAudio() {
+  return audioPath;
+}
+
 export default async function DigitalOrganism(props: DigitalOrganismProps) {
   let rain = props.rain ?? 0;
 
@@ -23,10 +29,12 @@ export default async function DigitalOrganism(props: DigitalOrganismProps) {
       : 0;
   }
 
+  const audio = getAudio();
+
   return (
     <Composition>
       <DigitalOrganismSketch rain={rain} play={props.play} />
-      <CompositionControls play={props.play} />
+      <CompositionControls play={props.play} mp3 patchPath={audio} />
       {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

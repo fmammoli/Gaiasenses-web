@@ -19,6 +19,8 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import LocationMarker from "./location-marker";
+import Link from "next/link";
 
 export type MapProps = {
   lat: string | number;
@@ -26,49 +28,12 @@ export type MapProps = {
   children?: ReactNode;
 };
 
-type LocationMarkerProps = PropsWithChildren<{
-  position: Leaflet.LatLngLiteral;
-  onUpdateMarker?: (lat: number, lon: number) => void;
-  onSelectPosition?: (lat: number, lon: number) => void;
-}>;
-
 const DEFAULT_POSITION = [-22.85, -47.12];
 const DEFAULT_ZOOM = 10;
 const DEFAULT_BOUNDS = [
   [-60, -100],
   [25, -30],
 ];
-
-function LocationMarker(props: LocationMarkerProps) {
-  const map = useMap();
-
-  const markerRef = useRef(null);
-
-  useEffect(() => {
-    // the props set for the `MapContainer` are immutable
-    // and only applied on the first render. To reflect
-    // position updates we must imperatively set the map's
-    // center coordinate
-    map.setView(props.position);
-  }, [props.position, map]);
-
-  useMapEvents({
-    click: (e) => {
-      if (props.onUpdateMarker !== undefined) {
-        props.onUpdateMarker(e.latlng.lat, e.latlng.lng);
-      }
-    },
-  });
-
-  return (
-    props.position && (
-      <Marker position={props.position} ref={markerRef}>
-        <Popup>{props.children}</Popup>
-      </Marker>
-    )
-  );
-}
-
 export default function Map(props: MapProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -126,7 +91,7 @@ export default function Map(props: MapProps) {
         scrollWheelZoom={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; <Link href="https://www.openstreetmap.org/copyright" scroll={false}>OpenStreetMap</Link> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <LocationMarker

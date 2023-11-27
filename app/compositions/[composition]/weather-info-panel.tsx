@@ -3,6 +3,7 @@ import WeatherInfoPanelElement from "./weather-info-panel-element";
 import { getWeather } from "@/components/compositions/color-flower/color-flower";
 import LightningInfo from "./lightning-info";
 import FireInfo from "./fire-info";
+import { ReactNode } from "react";
 
 const wInfo = [
   { value: "Low", name: "uv index" },
@@ -17,13 +18,13 @@ export default async function WeatherInfoPanel({
   lat,
   lon,
   mode,
+  children,
 }: {
   lat: string | number;
   lon: string | number;
   mode?: "spaced" | "compact";
+  children?: ReactNode;
 }) {
-  //  const chunks = splitToNChunks<(typeof wInfo)[0]>(wInfo, wInfo.length / 3);
-
   try {
     const data = await getWeather(lat.toString(), lon.toString());
     const weatherInfo = {
@@ -44,7 +45,7 @@ export default async function WeatherInfoPanel({
       <div
         className={`${
           mode === "spaced" ? "p-4" : ""
-        } mx-auto h-full backdrop-blur-md flex items-end bg-[rgba(255,255,255,0.75)]`}
+        } mx-auto h-full backdrop-blur-md  bg-[rgba(255,255,255,0.75)]`}
       >
         <div className="w-full max-w-2xl mx-auto">
           <div className="flex justify-between">
@@ -97,6 +98,8 @@ export default async function WeatherInfoPanel({
             <FireInfo lat={lat.toString()} lon={lon.toString()}></FireInfo>
           </div>
         </div>
+
+        {children}
       </div>
     );
   } catch (error) {

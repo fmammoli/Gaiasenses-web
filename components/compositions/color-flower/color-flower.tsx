@@ -12,6 +12,30 @@ export async function getWeather(
 ): Promise<RainfallResponseData> {
   return getData("rainfall", lat, lon);
 }
+const flor_10 = "/audios/Flor-infinito_10.mp3";
+const flor_10_15 = "/audios/Flor-10_15.mp3";
+const flor_15_20 = "/audios/Flor-15_20.mp3";
+const flor_20_25 = "/audios/Flor-20_25.mp3";
+const flor_25_30 = "/audios/Flor-25_30.mp3";
+const flor_30 = "/audios/Flor-30_infinito.mp3";
+
+function getAudio(temp: number) {
+  if (temp < 10) return flor_10;
+
+  if (temp >= 10 && temp < 15) return flor_10_15;
+
+  if (temp >= 15 && temp < 20) return flor_10_15;
+
+  if (temp >= 15 && temp < 20) return flor_15_20;
+
+  if (temp >= 20 && temp < 25) return flor_20_25;
+
+  if (temp >= 25 && temp < 30) return flor_25_30;
+
+  if (temp >= 30) return flor_30;
+
+  return flor_30;
+}
 
 export default async function ColorFlower({
   lat,
@@ -30,9 +54,12 @@ export default async function ColorFlower({
 }) {
   let temperatureData = temperature ?? 0;
 
+  let audioPath = "";
+
   if (today) {
     const data = await getWeather(lat, lon);
     temperatureData = data.main.temp ?? 0;
+    audioPath = getAudio(temperatureData);
   }
 
   return (
@@ -41,7 +68,11 @@ export default async function ColorFlower({
         temperature={temperatureData}
         play={play}
       ></ColorFlowerSketch>
-      <CompositionControls play={play}></CompositionControls>
+      <CompositionControls
+        play={play}
+        mp3
+        patchPath={audioPath}
+      ></CompositionControls>
       {debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

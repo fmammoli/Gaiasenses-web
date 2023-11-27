@@ -28,8 +28,14 @@ export default function TogglePlayButton({
     newParams.set("play", newPlayStatus.toString());
     if (newPlayStatus) {
       if (onPlay) onPlay(newPlayStatus);
+      if (window) {
+        window.scrollTo({ left: window.innerWidth, behavior: "smooth" });
+      }
     } else {
       if (onPause) onPause(newPlayStatus);
+      if (window) {
+        window.scrollTo({ left: -window.innerWidth, behavior: "smooth" });
+      }
     }
 
     router.replace(`${pathname}?${newParams.toString()}`);

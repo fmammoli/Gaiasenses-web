@@ -2,6 +2,7 @@
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { Renderer } from "p5";
+import { useEffect, useRef } from "react";
 
 export type BonfireSketchProps = {
   fireCount: number;
