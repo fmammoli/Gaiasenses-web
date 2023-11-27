@@ -17,8 +17,12 @@ export default async function CloudBubble(props: CloudBubbleProps) {
   let clouds = props.clouds ?? 0;
 
   if (props.today) {
-    const data = await getWeather(props.lat, props.lon);
-    clouds = data.clouds;
+    try {
+      const data = await getWeather(props.lat, props.lon);
+      clouds = data.clouds;
+    } catch (error) {
+      [console.log(error)];
+    }
   }
 
   return (

@@ -47,16 +47,18 @@ export default async function Lluvia({
   rain?: number;
 }) {
   let rainData = 0;
-  if (rain) {
-    rainData = rain;
-  } else {
-    if (today) {
-      const data = await getWeather(lat, lon);
-      rainData = data.rain.hasOwnProperty("1h")
-        ? (data.rain as { "1h": number })["1h"]
-        : 0;
+  try {
+    if (rain) {
+      rainData = rain;
+    } else {
+      if (today) {
+        const data = await getWeather(lat, lon);
+        rainData = data.rain.hasOwnProperty("1h")
+          ? (data.rain as { "1h": number })["1h"]
+          : 0;
+      }
     }
-  }
+  } catch (error) {}
 
   const { path, messages } = newMessages(rainData);
 

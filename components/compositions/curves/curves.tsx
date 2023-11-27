@@ -19,11 +19,15 @@ export default async function Curves(props: CurvesProps) {
   let temperatureData = props.temperature ?? 20;
 
   if (props.today) {
-    const weatherData = await getWeather(props.lat, props.lon);
-    rainData = weatherData.rain.hasOwnProperty("1h")
-      ? (weatherData.rain as { "1h": number })["1h"]
-      : 0;
-    temperatureData = weatherData.main.temp;
+    try {
+      const weatherData = await getWeather(props.lat, props.lon);
+      rainData = weatherData.rain.hasOwnProperty("1h")
+        ? (weatherData.rain as { "1h": number })["1h"]
+        : 0;
+      temperatureData = weatherData.main.temp;
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <Composition>

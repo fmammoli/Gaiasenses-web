@@ -4,6 +4,7 @@ import WeatherInfoPanel from "../compositions/[composition]/weather-info-panel";
 import CompositionsCombobox from "./compositions-combobox";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { Suspense } from "react";
+import MyErrorBoudary from "./error-boundry-client";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 

@@ -16,9 +16,13 @@ export type PaintBrushProps = {
 export default async function PaintBrush(props: PaintBrushProps) {
   let humidity = props.humidity ?? 0;
 
-  if (props.today) {
-    const data = await getWeather(props.lat, props.lon);
-    humidity = data.main.humidity;
+  try {
+    if (props.today) {
+      const data = await getWeather(props.lat, props.lon);
+      humidity = data.main.humidity;
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return (

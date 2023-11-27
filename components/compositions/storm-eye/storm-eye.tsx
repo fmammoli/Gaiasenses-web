@@ -51,12 +51,16 @@ export default async function StormEye({
 
   let audioPath = "";
 
-  if (today) {
-    const data = await getWeather(lat, lon);
-    temperatureData = data.main.temp;
-    windDegData = data.wind.deg;
-    windSpeedData = data.wind.speed;
-    audioPath = getAudio(windDegData, windSpeedData);
+  try {
+    if (today) {
+      const data = await getWeather(lat, lon);
+      temperatureData = data.main.temp;
+      windDegData = data.wind.deg;
+      windSpeedData = data.wind.speed;
+      audioPath = getAudio(windDegData, windSpeedData);
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return (

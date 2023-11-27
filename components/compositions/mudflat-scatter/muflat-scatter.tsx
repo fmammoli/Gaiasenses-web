@@ -22,12 +22,14 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
   let windDeg = props.windDeg ?? 0;
   let windSpeed = props.windSpeed ?? 0;
 
-  if (props.today) {
-    const data = await getWeather(props.lat, props.lon);
-    temperature = data.main.temp;
-    windDeg = data.wind.deg;
-    windSpeed = data.wind.speed;
-  }
+  try {
+    if (props.today) {
+      const data = await getWeather(props.lat, props.lon);
+      temperature = data.main.temp;
+      windDeg = data.wind.deg;
+      windSpeed = data.wind.speed;
+    }
+  } catch (error) {}
 
   const patchData: PatchData = {
     path: "/ambient_2.wasm",

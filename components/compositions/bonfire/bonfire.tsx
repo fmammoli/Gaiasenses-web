@@ -59,12 +59,17 @@ export default async function Bonfire(props: BonfireProps) {
 
   let fireAudio = "";
   if (props.today) {
-    const fireData = await getFireSpots(props.lat, props.lon, 100);
-    fireCount = fireData.count;
-    fireAudio = getFireAudio(
-      fireCount,
-      fireData.events.filter((item) => item.dist < 50).length
-    );
+    try {
+      const fireData = await getFireSpots(props.lat, props.lon, 100);
+      fireCount = fireData.count;
+      fireAudio = getFireAudio(
+        fireCount,
+        fireData.events.filter((item) => item.dist < 50).length
+      );
+    } catch (error) {
+      console.log("Server responded with error.");
+      console.log(error);
+    }
   }
 
   return (

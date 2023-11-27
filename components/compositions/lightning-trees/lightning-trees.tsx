@@ -17,9 +17,13 @@ export type LightningTreesProps = {
 export default async function LightningTrees(props: LightningTreesProps) {
   let lightningCount = props.lightningCount ?? 0;
 
-  if (props.today) {
-    const data = await getLightning(props.lat, props.lon, 100);
-    lightningCount = data.count;
+  try {
+    if (props.today) {
+      const data = await getLightning(props.lat, props.lon, 100);
+      lightningCount = data.count;
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return (

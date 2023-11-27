@@ -61,17 +61,22 @@ export default async function Zigzag({
   let rainData = rain ?? 0;
   let lightningCountData = lightningCount ?? 0;
   let audioPath = "";
-  if (today) {
-    const [weatherData, lightningData] = await Promise.all([
-      getWeather(lat, lon),
-      getLightning(lat, lon, 50),
-    ]);
-    rainData = weatherData.rain.hasOwnProperty("1h")
-      ? (weatherData.rain as { "1h": number })["1h"]
-      : 0;
 
-    lightningCountData = lightningData.count;
-    audioPath = getAudio(rainData, lightningCountData);
+  try {
+    if (today) {
+      const [weatherData, lightningData] = await Promise.all([
+        getWeather(lat, lon),
+        getLightning(lat, lon, 50),
+      ]);
+      rainData = weatherData.rain.hasOwnProperty("1h")
+        ? (weatherData.rain as { "1h": number })["1h"]
+        : 0;
+
+      lightningCountData = lightningData.count;
+      audioPath = getAudio(rainData, lightningCountData);
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return (

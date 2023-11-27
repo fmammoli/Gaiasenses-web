@@ -57,9 +57,13 @@ export default async function ColorFlower({
   let audioPath = "";
 
   if (today) {
-    const data = await getWeather(lat, lon);
-    temperatureData = data.main.temp ?? 0;
-    audioPath = getAudio(temperatureData);
+    try {
+      const data = await getWeather(lat, lon);
+      temperatureData = data.main.temp ?? 0;
+      audioPath = getAudio(temperatureData);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

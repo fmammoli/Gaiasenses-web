@@ -7,7 +7,8 @@ export default async function getData(
   const res = await fetch(
     `https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
       dist ? `&dist=${dist}` : ""
-    }`
+    }`,
+    { next: { revalidate: 7200 } }
   );
 
   // The return value is *not* serialized

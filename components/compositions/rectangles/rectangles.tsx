@@ -15,11 +15,16 @@ export type RectanglesProps = {
 
 export default async function Rectangles(props: RectanglesProps) {
   let rainData = props.rain ?? 0;
-  if (props.today) {
-    const data = await getWeather(props.lat, props.lon);
-    rainData = data.rain.hasOwnProperty("1h")
-      ? (data.rain as { "1h": number })["1h"]
-      : 0;
+
+  try {
+    if (props.today) {
+      const data = await getWeather(props.lat, props.lon);
+      rainData = data.rain.hasOwnProperty("1h")
+        ? (data.rain as { "1h": number })["1h"]
+        : 0;
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   return (
