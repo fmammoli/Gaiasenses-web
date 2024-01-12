@@ -5,12 +5,46 @@ import CompositionsCombobox from "./compositions-combobox";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { Suspense } from "react";
 import MyErrorBoudary from "./error-boundry-client";
+import { getWeather } from "@/components/compositions/color-flower/color-flower";
+import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
+import { getLightning } from "@/components/compositions/zigzag/zigzag";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 
 function stringToBool(text: string | undefined | null) {
   if (text && text === "true") return true;
   return false;
+}
+
+const compositions = Object.entries(CompositionsInfo).map((item) => {
+  const newItem = {
+    label: item[1].name,
+    value: item[0],
+  };
+  return newItem;
+});
+
+async function getDefaultComposition(lat: string, lon: string) {
+  const [weather, firespots, lightning] = await Promise.all([
+    getWeather(lat, lon), 
+    getFireSpots(lat, lon), 
+    getLightning(lat, lon, 50)
+  ]);
+
+  const rain = Object.hasOwn(weather.rain, '1h') ? (weather.rain as {'1h': number })['1h'] : 0;
+
+  if (firespots.count > 0) {
+    return CompositionsInfo.bonfire;
+  }
+  else if (rain > 5) {
+    return CompositionsInfo.lluvia;
+  }
+  else if (lightning.count > 5) {
+    return CompositionsInfo.zigzag;
+  }
+  else {
+    return CompositionsInfo.colorFlower;
+  }
 }
 
 export default async function Page({
@@ -27,11 +61,21 @@ export default async function Page({
 }) {
   const { lat, lon, play, composition } = searchParams;
 
-  const compositionInfo = Object.entries(CompositionsInfo).filter(
+  let compositionIndex = Object.entries(CompositionsInfo).findIndex(
     (item) => item[0].toLowerCase() === composition?.toLowerCase()
   );
+  let compositionInfo: CompositionsInfo[keyof CompositionsInfo];
 
-  const Composition = compositionInfo[0]?.[1]?.Component;
+  if (compositionIndex >= 0) {
+    compositionInfo = Object.entries(CompositionsInfo)[compositionIndex][1];
+  } else {
+    compositionInfo = await getDefaultComposition(lat, lon);
+    compositionIndex = compositions.findIndex(
+      (item) => item.label === compositionInfo.name
+    );
+  }
+
+  const Composition = compositionInfo.Component;
 
   return (
     <div className="grid grid-rows-1 grid-cols-[repeat(2,50%)] h-full isolate">
@@ -41,7 +85,7 @@ export default async function Page({
             <Suspense fallback={<p>Loading weather info...</p>}>
               <WeatherInfoPanel lat={lat} lon={lon} mode={"compact"}>
                 <div className="w-full">
-                  <CompositionsCombobox></CompositionsCombobox>
+                  <CompositionsCombobox options={compositions} initial={compositionIndex}></CompositionsCombobox>
                 </div>
               </WeatherInfoPanel>
             </Suspense>
@@ -52,7 +96,7 @@ export default async function Page({
       <div className="row-start-1 row-end-2 col-start-2 col-end-3">
         {lat && lon && Composition && (
           <Composition
-            key={`${lat}_${lon}_${compositionInfo[0]?.[1]?.name}`}
+            key={`${lat}_${lon}_${compositionInfo.name}`}
             lat={lat}
             lon={lon}
             play={stringToBool(play ?? "false")}
