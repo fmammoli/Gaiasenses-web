@@ -1,4 +1,4 @@
-import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
+import { getFireSpots } from "@/components/getData";
 
 export default async function FireInfo({
   lat,

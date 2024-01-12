@@ -2,7 +2,7 @@ import Composition from "../composition";
 import CloudBubbleSketch from "./cloud-bubble-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getWeather } from "../color-flower/color-flower";
+import { getWeather } from "@/components/getData";
 
 export type CloudBubbleProps = {
   lat: string;

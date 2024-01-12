@@ -1,4 +1,4 @@
-import getData from "@/components/getData";
+import { getFireSpots } from "@/components/getData";
 import Composition from "../composition";
 import BonfireSketch from "./bonfire-sketch";
 import CompositionControls from "../composition-controls";
@@ -34,25 +34,6 @@ export type BonfireProps = {
   debug?: boolean;
   today?: boolean;
 };
-
-export type FireSpotsResponseData = {
-  city: string;
-  count: number;
-  events: {
-    dist: number;
-    lat: number;
-    lon: number;
-  }[];
-  state: string;
-};
-
-export async function getFireSpots(
-  lat: string,
-  lon: string,
-  dist?: number
-): Promise<FireSpotsResponseData> {
-  return await getData("fire", lat, lon, dist);
-}
 
 export default async function Bonfire(props: BonfireProps) {
   let fireCount = props.fireCount ?? 0;

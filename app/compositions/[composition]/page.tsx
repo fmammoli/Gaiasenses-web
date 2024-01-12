@@ -6,13 +6,6 @@ import { Label } from "@/components/ui/label";
 
 const DEBUG = true;
 
-export type FireSpotsResponseData = {
-  city: string;
-  count: number;
-  events: [];
-  state: string;
-};
-
 export default async function Page({
   params,
   searchParams,

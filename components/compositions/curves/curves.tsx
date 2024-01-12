@@ -1,4 +1,4 @@
-import { getWeather } from "../lluvia/lluvia";
+import { getWeather } from "@/components/getData";
 import Composition from "../composition";
 import CurvesSketch from "./curves-sketch";
 import CompositionControls from "../composition-controls";

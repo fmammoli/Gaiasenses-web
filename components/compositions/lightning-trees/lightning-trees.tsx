@@ -2,8 +2,7 @@ import Composition from "../composition";
 import LightningTreesSketch from "./lightning-trees-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getWeather } from "../lluvia/lluvia";
-import { getLightning } from "../zigzag/zigzag";
+import { getLightning } from "@/components/getData";
 
 export type LightningTreesProps = {
   lat: string;

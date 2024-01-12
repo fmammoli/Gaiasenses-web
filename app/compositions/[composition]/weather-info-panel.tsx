@@ -1,6 +1,6 @@
 import { MoonIcon } from "@radix-ui/react-icons";
 import WeatherInfoPanelElement from "./weather-info-panel-element";
-import { getWeather } from "@/components/compositions/color-flower/color-flower";
+import { getWeather } from "@/components/getData";
 import LightningInfo from "./lightning-info";
 import FireInfo from "./fire-info";
 import { ReactNode } from "react";

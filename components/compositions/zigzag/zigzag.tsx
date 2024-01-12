@@ -1,24 +1,8 @@
-import getData from "@/components/getData";
-import { getWeather } from "../lluvia/lluvia";
+import { getLightning, getWeather } from "@/components/getData";
 import ZigzagSketch from "./zigzag-sketch";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-
-export type LightningResponseData = {
-  city: string;
-  count: number;
-  events: { lat: string; lon: string; dist?: number }[];
-  state: string;
-};
-
-export async function getLightning(
-  lat: string,
-  lon: string,
-  dist: number
-): Promise<LightningResponseData> {
-  return getData("lightning", lat, lon, dist);
-}
 
 const zigzagAA = "/audios/ZigZag-AA.mp3";
 const zigzagAB = "/audios/ZigZag-AB.mp3";

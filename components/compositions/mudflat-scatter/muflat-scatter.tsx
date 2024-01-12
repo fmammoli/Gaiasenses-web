@@ -2,7 +2,7 @@ import Composition from "../composition";
 
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getWeather } from "../lluvia/lluvia";
+import { getWeather } from "@/components/getData";
 import MudflatScatterSketch from "./mudflat-scatter-sketch";
 import { PatchData } from "@/hooks/types";
 

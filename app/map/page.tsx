@@ -5,9 +5,7 @@ import CompositionsCombobox from "./compositions-combobox";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { Suspense } from "react";
 import MyErrorBoudary from "./error-boundry-client";
-import { getWeather } from "@/components/compositions/color-flower/color-flower";
-import { getFireSpots } from "@/components/compositions/bonfire/bonfire";
-import { getLightning } from "@/components/compositions/zigzag/zigzag";
+import { getWeather, getFireSpots, getLightning } from "@/components/getData";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 
