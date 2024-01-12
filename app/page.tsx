@@ -21,7 +21,9 @@ import {
   getLightning,
   getFireSpots, 
   RainfallResponseData, 
-  FireSpotsResponseData
+  FireSpotsResponseData,
+  BrightnessResponseData,
+  getBrightness
 } from "@/components/getData";
 import { Button } from "@/components/ui/button";
 import TopBar from "./top-bar";
@@ -92,6 +94,7 @@ export default async function Page({
   let windDegData = 0;
   let fireData: FireSpotsResponseData | null = null;
   let fireCount = 0;
+  let brightnessTemperature = 0;
   let error = null;
   let state = null;
 
@@ -116,6 +119,9 @@ export default async function Page({
 
       fireData = await getFireSpots(lat, lon, 50);
       fireCount = fireData.count;
+
+      const brightnessData = await getBrightness(lat, lon);
+      brightnessTemperature = brightnessData.temp;
     } catch (error) {
       console.log(error);
       error = error;
@@ -165,17 +171,18 @@ export default async function Page({
                 </p>
               </div>
               <div className="grid grid-rows-3 grid-cols-3 text-xs gap-3">
-                <div>Temp: {temperatureData}</div>
-                <div>Feels like: {weatherData?.main.feels_like}</div>
-                <div>Humidity: {weatherData?.main.humidity}</div>
-                <div>Clouds: {weatherData?.clouds}</div>
-                <div>Rain 1h: {rainData}</div>
+                <div>Temperature: {temperatureData}°C</div>
+                <div>Feels like: {weatherData?.main.feels_like}°C</div>
+                <div>Humidity: {weatherData?.main.humidity}%</div>
+                <div>Clouds: {weatherData?.clouds}%</div>
+                <div>Rain 1h: {rainData}mm</div>
                 <div>Lightning Count: {lightningCountData}</div>
-                <div>Wind Speed: {weatherData?.wind.speed}</div>
-                <div>Wind Gust: {weatherData?.wind.gust}</div>
-                <div>Wind Deg: {weatherData?.wind.deg}</div>
-                <div>Visibility: {weatherData?.visibility}</div>
+                <div>Wind Speed: {weatherData?.wind.speed}m/s</div>
+                <div>Wind Gust: {weatherData?.wind.gust}m/s</div>
+                <div>Wind Deg: {weatherData?.wind.deg}°</div>
+                <div>Visibility: {weatherData?.visibility}m</div>
                 <div>Fire Spots (50Km): {fireCount}</div>
+                <div>Brightness Temperature: {brightnessTemperature}°C</div>
               </div>
               <div className="mt-4">
                 <p className="text-sm">
