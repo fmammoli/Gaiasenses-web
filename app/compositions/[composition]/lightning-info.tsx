@@ -1,4 +1,4 @@
-import { getLightning } from "@/components/compositions/zigzag/zigzag";
+import { getLightning } from "@/components/getData";
 
 export default async function LightningInfo({
   lat,

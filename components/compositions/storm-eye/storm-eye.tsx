@@ -2,7 +2,7 @@ import DebugPanel from "@/components/debug-panel/debug-panel";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import StormEyeSketch from "./storm-eye-sketch";
-import { getWeather } from "../color-flower/color-flower";
+import { getWeather } from "@/components/getData";
 
 const forte_concentrado = "/audios/StormEYE-ForteConcentrado.mp3";
 const forte_espalhado = "/audios/StormEYE-ForteEspalhado.mp3";

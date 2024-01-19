@@ -20,13 +20,15 @@ import {
 
 export function Combobox({
   options,
+  initial = 0,
   onSelect,
 }: {
   options: { value: string; label: string }[];
+  initial?: number;
   onSelect?: (currentValue: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(options[initial].value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

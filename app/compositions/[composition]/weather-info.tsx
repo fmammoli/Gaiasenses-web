@@ -1,4 +1,4 @@
-import { getWeather } from "@/components/compositions/lluvia/lluvia";
+import { getWeather } from "@/components/getData";
 import WeatherInfoPanelElement from "./weather-info-panel-element";
 
 export default async function WeatherInfoData({

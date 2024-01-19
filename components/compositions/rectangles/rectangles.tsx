@@ -2,7 +2,7 @@ import Composition from "../composition";
 import RectanglesSketch from "./rectangles-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getWeather } from "../lluvia/lluvia";
+import { getWeather } from "@/components/getData";
 
 export type RectanglesProps = {
   lat: string;

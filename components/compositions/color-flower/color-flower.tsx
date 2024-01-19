@@ -1,17 +1,10 @@
-import getData from "@/components/getData";
+import { getWeather } from "@/components/getData";
 
 import ColorFlowerSketch from "./color-flower-sketch";
 import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { RainfallResponseData } from "@/hooks/types";
 
-export async function getWeather(
-  lat: string,
-  lon: string
-): Promise<RainfallResponseData> {
-  return getData("rainfall", lat, lon);
-}
 const flor_10 = "/audios/Flor-infinito_10.mp3";
 const flor_10_15 = "/audios/Flor-10_15.mp3";
 const flor_15_20 = "/audios/Flor-15_20.mp3";

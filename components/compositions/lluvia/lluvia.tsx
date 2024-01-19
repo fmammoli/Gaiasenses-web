@@ -1,10 +1,10 @@
-import getData from "@/components/getData";
+import { getWeather } from "@/components/getData";
 import LluviaSketch from "./lluvia-sketch";
 import Composition from "../composition";
 
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { PatchData, RainfallResponseData } from "@/hooks/types";
+import { PatchData } from "@/hooks/types";
 
 function newMessages(rainData: number) {
   const patchData: PatchData = {
@@ -22,13 +22,6 @@ function newMessages(rainData: number) {
   };
 
   return patchData;
-}
-
-export async function getWeather(
-  lat: string,
-  lon: string
-): Promise<RainfallResponseData> {
-  return getData("rainfall", lat, lon);
 }
 
 export default async function Lluvia({

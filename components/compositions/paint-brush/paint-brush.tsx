@@ -2,7 +2,7 @@ import Composition from "../composition";
 import PaintBrushSketch from "./paint-brush-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getWeather } from "../lluvia/lluvia";
+import { getWeather } from "@/components/getData";
 
 export type PaintBrushProps = {
   lat: string;
