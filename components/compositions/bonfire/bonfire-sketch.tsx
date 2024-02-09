@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer } from "p5";
 import { useEffect, useRef } from "react";
 
 export type BonfireSketchProps = {
@@ -18,7 +17,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
   let play = false;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   class Particle {
     x: number;

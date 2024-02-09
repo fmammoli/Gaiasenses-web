@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Color, Renderer } from "p5";
 import { useLayoutEffect, useRef } from "react";
 
 export type ColorFlowerSketchProps = {
@@ -108,22 +107,22 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
 
     return colors;
   }
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
-    canvas = p5.createCanvas(w, h);
+    canvas = p5.createCanvas(w, h, p5.WEBGL);
 
     petalColors = decideColors(temperature);
 
     flowers.push(new Flower(p5.frameCount));
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     temperature = props.temperature;
     play = props.play;
 
     petalColors = decideColors(temperature);
-
+    console.log(temperature);
     if (props.play) {
       p5.loop();
     } else {
@@ -150,9 +149,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & ColorFlowerSketchProps>) {
     extent: number;
     n: number;
     nuOfPetals: number;
-    edgeColor: Color;
-    color1: Color;
-    color2: Color;
+    edgeColor: any;
+    color1: any;
+    color2: any;
 
     constructor(n: number) {
       this.extent = 1;

@@ -78,7 +78,7 @@ export default function Map(props: MapProps) {
   };
 
   return (
-    <div className="w-full h-full relative">
+    <div className="">
       <MapContainer
         className="z-0"
         style={{ width: "100%", height: "100%" }}

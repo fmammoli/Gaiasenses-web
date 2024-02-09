@@ -2,10 +2,17 @@ import dynamic from "next/dynamic";
 import AppTitle from "../app-title";
 import WeatherInfoPanel from "../compositions/[composition]/weather-info-panel";
 import CompositionsCombobox from "./compositions-combobox";
-import CompositionsInfo from "@/components/compositions/compositions-info";
+import CompositionsInfo, {
+  CompositionsInfoType,
+} from "@/components/compositions/compositions-info";
 import { Suspense } from "react";
 import MyErrorBoudary from "./error-boundry-client";
-import { getWeather, getFireSpots, getLightning, getBrightness } from "@/components/getData";
+import {
+  getWeather,
+  getFireSpots,
+  getLightning,
+  getBrightness,
+} from "@/components/getData";
 
 const DynamicMap = dynamic(() => import("./map"), { ssr: false });
 
@@ -22,29 +29,27 @@ const compositions = Object.entries(CompositionsInfo).map((item) => {
   return newItem;
 });
 
-async function getDefaultComposition(lat: string, lon: string) {
+export async function getDefaultComposition(lat: string, lon: string) {
   const [weather, firespots, lightning, brightness] = await Promise.all([
-    getWeather(lat, lon), 
-    getFireSpots(lat, lon), 
+    getWeather(lat, lon),
+    getFireSpots(lat, lon),
     getLightning(lat, lon, 50),
     getBrightness(lat, lon),
   ]);
 
-  const rain = Object.hasOwn(weather.rain, '1h') ? (weather.rain as {'1h': number })['1h'] : 0;
+  const rain = Object.hasOwn(weather.rain, "1h")
+    ? (weather.rain as { "1h": number })["1h"]
+    : 0;
 
   if (firespots.count > 0) {
     return CompositionsInfo.bonfire;
-  }
-  else if (brightness.temp < -50) {
+  } else if (brightness.temp < -50) {
     return CompositionsInfo.curves;
-  }
-  else if (rain > 5) {
+  } else if (rain > 5) {
     return CompositionsInfo.lluvia;
-  }
-  else if (lightning.count > 5) {
+  } else if (lightning.count > 5) {
     return CompositionsInfo.zigzag;
-  }
-  else {
+  } else {
     return CompositionsInfo.colorFlower;
   }
 }
@@ -66,7 +71,7 @@ export default async function Page({
   let compositionIndex = Object.entries(CompositionsInfo).findIndex(
     (item) => item[0].toLowerCase() === composition?.toLowerCase()
   );
-  let compositionInfo: CompositionsInfo[keyof CompositionsInfo];
+  let compositionInfo: CompositionsInfoType[keyof CompositionsInfoType];
 
   if (compositionIndex >= 0) {
     compositionInfo = Object.entries(CompositionsInfo)[compositionIndex][1];
@@ -87,7 +92,10 @@ export default async function Page({
             <Suspense fallback={<p>Loading weather info...</p>}>
               <WeatherInfoPanel lat={lat} lon={lon} mode={"compact"}>
                 <div className="w-full">
-                  <CompositionsCombobox options={compositions} initial={compositionIndex}></CompositionsCombobox>
+                  <CompositionsCombobox
+                    options={compositions}
+                    initial={compositionIndex}
+                  ></CompositionsCombobox>
                 </div>
               </WeatherInfoPanel>
             </Suspense>
