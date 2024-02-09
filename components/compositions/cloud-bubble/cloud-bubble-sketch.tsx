@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer } from "p5";
 
 export type CloudBubbleSketchProps = {
   clouds: number;
@@ -16,7 +15,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & CloudBubbleSketchProps>) {
   let cloudsColor2 = 256;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   class Particle {
     posx: number;
@@ -38,7 +37,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & CloudBubbleSketchProps>) {
       p5.fill(this.color);
       p5.ellipse(this.posx, this.posy, this.radius * 2);
     }
-  };
+  }
 
   const system = {
     particles: [] as Particle[],
@@ -95,9 +94,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & CloudBubbleSketchProps>) {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(width, height, p5.P2D);
     p5.noStroke();
-  }
+  };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     clouds = props.clouds;
     play = props.play;
 
@@ -111,34 +110,31 @@ function sketch(p5: P5CanvasInstance<SketchProps & CloudBubbleSketchProps>) {
   p5.draw = () => {
     if (clouds <= 5) {
       clouds = 5;
-      p5.background('#75c2f6');
+      p5.background("#75c2f6");
       cloudsColor1 = 192;
       cloudsColor2 = 256;
     } else if (clouds <= 20) {
-      p5.background('#93b5c6');
+      p5.background("#93b5c6");
       cloudsColor1 = 128;
       cloudsColor2 = 192;
     } else if (clouds <= 50) {
-      p5.background('#c9ccd5');
+      p5.background("#c9ccd5");
       cloudsColor1 = 64;
       cloudsColor2 = 128;
     } else {
       clouds = 50;
-      p5.background('#aaaaaa');
+      p5.background("#aaaaaa");
       cloudsColor1 = 0;
       cloudsColor2 = 64;
     }
 
     system.avoidOverlap();
     system.update();
-    p5.frameCount % 20 == 0 && system.spawn(p5.random(width), p5.random(height / 2));
+    p5.frameCount % 20 == 0 &&
+      system.spawn(p5.random(width), p5.random(height / 2));
   };
 }
 
 export default function CloudBubbleSketch(props: CloudBubbleSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      {...props} />
-  )
+  return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }

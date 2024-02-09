@@ -60,7 +60,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
     canvas = p5.createCanvas(width, height, p5.P2D);
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     fireCount = Number.isNaN(props.fireCount) ? fireCount : props.fireCount;
     nParticles = fireCount;
     play = props.play;

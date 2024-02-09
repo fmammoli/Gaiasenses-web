@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useControl, useMap } from "react-map-gl";
+import { useMap } from "react-map-gl";
 
 export default function LightControl(props: any) {
   const { current: map } = useMap();

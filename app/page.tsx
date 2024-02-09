@@ -16,19 +16,17 @@ import colorFlowerThumb from "../public/color-flower.png";
 import zigzagThumb from "../public/zig-zag.png";
 import stormEyeThumb from "../public/storm-eye.png";
 
-import { 
+import {
   getWeather,
   getLightning,
-  getFireSpots, 
-  RainfallResponseData, 
+  getFireSpots,
+  RainfallResponseData,
   FireSpotsResponseData,
-  BrightnessResponseData,
-  getBrightness
+  getBrightness,
 } from "@/components/getData";
 import { Button } from "@/components/ui/button";
 import TopBar from "./top-bar";
 import LocationBar from "./location-bar";
-import { AudioContextProvider } from "@/hooks/webpd-context";
 
 type CompositionHistoryItem = {
   id: string;

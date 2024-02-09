@@ -1,7 +1,7 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 
 export type ColorFlowerSketchProps = {
   temperature: number;

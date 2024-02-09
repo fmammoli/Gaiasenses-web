@@ -5,7 +5,6 @@ import {
   type ReactNode,
   useContext,
   useRef,
-  useEffect,
 } from "react";
 
 import Map, {
@@ -14,7 +13,6 @@ import Map, {
   NavigationControl,
   Popup,
   GeolocateControl,
-  useMap,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 

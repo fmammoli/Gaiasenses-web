@@ -92,7 +92,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
     // }
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     temperature = props.temperature;
     speedFactor = props.windSpeed / 100;
     eyeVariance = props.windDeg / 1000;

@@ -2,9 +2,6 @@
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
-import * as p5 from "p5";
-import { Renderer } from "p5";
-
 export type ZigZagSketchProps = {
   rain: number;
   lightningCount: number;
@@ -12,9 +9,9 @@ export type ZigZagSketchProps = {
 };
 
 type Agent = {
-  pos: p5.Vector;
-  oldPos: p5.Vector;
-  color: p5.Color;
+  pos: any;
+  oldPos: any;
+  color: any;
   strokeWidth: number;
 };
 
@@ -147,7 +144,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
       agents.push(createAgent(width * 1.0 + p5.randomGaussian() * 200, 0));
     }
   }
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(width, height);
@@ -157,7 +154,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
     initialize();
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     rain = props.rain;
     lightningCount = props.lightningCount;
     play = props.play;

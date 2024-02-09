@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Color, Renderer } from "p5";
 
 export type WeatherTreeSketchProps = {
   play: boolean;
@@ -12,14 +11,14 @@ function sketch(p5: P5CanvasInstance<SketchProps & WeatherTreeSketchProps>) {
   let play = false;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   let x = -width / 2;
   let y = 50;
   let theta = 0;
   let dir = true;
   let posX = 0;
-  let treeColor: Color;
+  let treeColor: any;
 
   const branch = (h: number) => {
     h *= 0.66;
@@ -40,7 +39,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & WeatherTreeSketchProps>) {
       branch(h);
       p5.pop();
     }
-  }
+  };
 
   p5.setup = () => {
     if (!play) p5.noLoop();
@@ -50,9 +49,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & WeatherTreeSketchProps>) {
     p5.frameRate(20);
 
     treeColor = p5.color(p5.random(255), p5.random(255), p5.random(255));
-  }
+  };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     play = props.play;
 
     if (props.play) {
@@ -63,7 +62,12 @@ function sketch(p5: P5CanvasInstance<SketchProps & WeatherTreeSketchProps>) {
   };
 
   p5.draw = () => {
-    if (p5.mouseX < width && p5.mouseX > 0 && p5.mouseY < height && p5.mouseY > 0) {
+    if (
+      p5.mouseX < width &&
+      p5.mouseX > 0 &&
+      p5.mouseY < height &&
+      p5.mouseY > 0
+    ) {
       posX = p5.mouseX;
     }
     p5.background(0);
@@ -98,9 +102,5 @@ function sketch(p5: P5CanvasInstance<SketchProps & WeatherTreeSketchProps>) {
 }
 
 export default function WeatherTreeSketch(props: WeatherTreeSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      {...props} />
-  )
+  return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }
