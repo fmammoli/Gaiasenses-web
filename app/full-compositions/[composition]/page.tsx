@@ -2,7 +2,7 @@ import CompositionsInfo, {
   type AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
 
-const DEBUG = true;
+const DEBUG = false;
 
 export default async function Page({
   params,
