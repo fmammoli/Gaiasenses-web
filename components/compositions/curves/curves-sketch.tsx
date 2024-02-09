@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer } from "p5";
 
 export type CurvesSketchProps = {
   rain: number;
@@ -22,18 +21,20 @@ function sketch(p5: P5CanvasInstance<SketchProps & CurvesSketchProps>) {
   let play = false;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   p5.setup = () => {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(width, height, p5.P2D);
     const fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
     p5.frameRate(fps);
-  }
+  };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     rain = Number.isNaN(props.rain) ? rain : props.rain;
-    temperature = Number.isNaN(props.temperature) ? temperature : props.temperature;
+    temperature = Number.isNaN(props.temperature)
+      ? temperature
+      : props.temperature;
     play = props.play;
 
     const fps = p5.map(rain, 0, CRITICAL_RAIN, FPS_MIN, FPS_MAX);
@@ -61,15 +62,11 @@ function sketch(p5: P5CanvasInstance<SketchProps & CurvesSketchProps>) {
       p5.random(width),
       p5.random(width),
       p5.random(width),
-      height,
+      height
     );
   };
 }
 
 export default function CurvesSketch(props: CurvesSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      {...props} />
-  )
+  return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }

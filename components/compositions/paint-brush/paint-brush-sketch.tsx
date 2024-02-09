@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Color, Renderer, Vector } from "p5";
 
 export type PaintBrushSketchProps = {
   humidity: number;
@@ -17,17 +16,17 @@ function sketch(p5: P5CanvasInstance<SketchProps & PaintBrushSketchProps>) {
   let play = false;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   class Pointer {
     dist: number;
     rad: number;
     speed: number;
     acc: number;
-    pos: Vector;
+    pos: any;
     finalSize: number;
-    downSpeed: Vector;
-    downAcc: Vector;
+    downSpeed: any;
+    downAcc: any;
 
     constructor(rad: number, acc: number, finalSize: number) {
       this.dist = 1;
@@ -57,7 +56,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & PaintBrushSketchProps>) {
 
   class Drip {
     splat: Pointer[];
-    color: Color;
+    color: any;
     x: number;
     y: number;
     death: number;
@@ -109,7 +108,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & PaintBrushSketchProps>) {
     p5.background("#f0ead6");
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     humidity = props.humidity;
     play = props.play;
 

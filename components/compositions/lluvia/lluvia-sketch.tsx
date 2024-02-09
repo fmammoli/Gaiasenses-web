@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer } from "p5";
 
 export type LluviaSketchProps = {
   rain: number;
@@ -29,7 +28,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
   let play = false;
 
   let [w, h] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
   p5.setup = () => {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(w, h, p5.P2D);
@@ -40,7 +39,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LluviaSketchProps>) {
     p5.frameRate(fps);
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     rain = Number.isNaN(props.rain) ? rain : props.rain;
     play = props.play;
 

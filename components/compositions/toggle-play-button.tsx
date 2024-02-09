@@ -23,19 +23,19 @@ export default function TogglePlayButton({
     event.preventDefault();
     event.stopPropagation();
     const newParams = new URLSearchParams(searchParams.toString());
-
+    console.log("play now, ", play);
     const newPlayStatus = !play;
     newParams.set("play", newPlayStatus.toString());
     if (newPlayStatus) {
       if (onPlay) onPlay(newPlayStatus);
-      if (window) {
-        window.scrollTo({ left: window.innerWidth, behavior: "smooth" });
-      }
+      // if (window) {
+      //   window.scrollTo({ left: window.innerWidth, behavior: "smooth" });
+      // }
     } else {
       if (onPause) onPause(newPlayStatus);
-      if (window) {
-        window.scrollTo({ left: -window.innerWidth, behavior: "smooth" });
-      }
+      // if (window) {
+      //   window.scrollTo({ left: -window.innerWidth, behavior: "smooth" });
+      // }
     }
 
     router.replace(`${pathname}?${newParams.toString()}`);

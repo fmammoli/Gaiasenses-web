@@ -42,17 +42,19 @@ export type AvailableCompositionComponents =
   | typeof LightningTrees
   | typeof WeatherTree;
 
-type CompositionsInfo = {
-  [K in AvailableCompositionNames]: {
-    name: string;
-    attributes: string[];
-    Component: AvailableCompositionComponents;
-    endpoints: string[];
-    thumb: string;
-  };
+export type CompositionInfo = {
+  name: string;
+  attributes: string[];
+  Component: AvailableCompositionComponents;
+  endpoints: string[];
+  thumb: string;
 };
 
-const CompositionsInfo: CompositionsInfo = {
+export type CompositionsInfoType = {
+  [K in AvailableCompositionNames]: CompositionInfo;
+};
+
+const CompositionsInfo: CompositionsInfoType = {
   lluvia: {
     name: "lluvia",
     attributes: ["rain"],

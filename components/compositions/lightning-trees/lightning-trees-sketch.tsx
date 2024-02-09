@@ -1,7 +1,6 @@
 "use client";
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { Renderer, Vector } from "p5";
 
 export type LightningTreesSketchProps = {
   lightningCount: number;
@@ -10,12 +9,12 @@ export type LightningTreesSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
   // inspired by: https://openprocessing.org/sketch/1203202
-  let colors = ['#793FDF', '#5800FF', '#2FA4FF', '#72FFFF'];
+  let colors = ["#793FDF", "#5800FF", "#2FA4FF", "#72FFFF"];
   let r: number;
   let w: number;
   let k = 30;
-  let grid: (Vector | undefined)[][] = [];
-  let active: { pos: Vector; color: string }[] = [];
+  let grid: (any | undefined)[][] = [];
+  let active: { pos: any; color: string }[] = [];
   let nCols: number;
   let nRows: number;
   let lightningCount = 0;
@@ -24,10 +23,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
   let play = false;
 
   let [width, height] = [p5.windowWidth, p5.windowHeight];
-  let canvas: Renderer | null = null;
+  let canvas: any | null = null;
 
   const initialize = () => {
-    if (lightningCount == 0 ) {
+    if (lightningCount == 0) {
       r = 25;
       speed = 1;
     } else if (lightningCount >= 50) {
@@ -38,7 +37,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
       speed = lightningCount;
     }
 
-    p5.background('#000000');
+    p5.background("#000000");
     p5.strokeWeight(r * 0.5);
     p5.strokeCap(p5.ROUND);
     w = r / p5.sqrt(2);
@@ -68,17 +67,19 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
         color: colors[n],
       });
     }
-  }
+  };
 
   p5.setup = () => {
     if (!play) p5.noLoop();
     canvas = p5.createCanvas(width, height, p5.P2D);
 
     initialize();
-  }
+  };
 
-  p5.updateWithProps = (props) => {
-    const count = Number.isNaN(props.lightningCount) ? lightningCount : props.lightningCount;
+  p5.updateWithProps = (props: any) => {
+    const count = Number.isNaN(props.lightningCount)
+      ? lightningCount
+      : props.lightningCount;
     play = props.play;
 
     if (lightningCount !== count) {
@@ -108,7 +109,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
           // https://github.com/P5-wrapper/react/issues/42#issuecomment-633108409
           // @ts-ignore
           let sample = p5.constructor.Vector.random2D();
-          let m = p5.random(r, 8*r);
+          let m = p5.random(r, 8 * r);
           sample.setMag(m);
           sample.add(pos);
 
@@ -123,8 +124,16 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
             !grid[col + row * nCols]
           ) {
             var ok = true;
-            for (var i = p5.max(row - 1, 0); i <= p5.min(row + 1, nRows - 1); i++) {
-              for (var j = p5.max(col - 1, 0); j <= p5.min(col + 1, nRows - 1); j++) {
+            for (
+              var i = p5.max(row - 1, 0);
+              i <= p5.min(row + 1, nRows - 1);
+              i++
+            ) {
+              for (
+                var j = p5.max(col - 1, 0);
+                j <= p5.min(col + 1, nRows - 1);
+                j++
+              ) {
                 let neighbor = grid[i][j];
                 if (neighbor) {
                   // @ts-ignore
@@ -158,9 +167,5 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningTreesSketchProps>) {
 }
 
 export default function LightningTreesSketch(props: LightningTreesSketchProps) {
-  return (
-    <NextReactP5Wrapper
-      sketch={sketch}
-      {...props} />
-  )
+  return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }

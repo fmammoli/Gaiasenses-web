@@ -59,7 +59,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
     }
   };
 
-  p5.updateWithProps = (props) => {
+  p5.updateWithProps = (props: any) => {
     play = props.play;
 
     // if (temperature !== temperature) {
