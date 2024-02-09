@@ -33,7 +33,7 @@ import LightControl from "./light-control";
 const initialViewState = {
   latitude: -22.82,
   longitude: -47.07,
-  zoom: 8,
+  zoom: 0,
 };
 
 const compositions = Object.entries(CompositionsInfo).map((item) => {
