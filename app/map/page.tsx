@@ -29,7 +29,7 @@ const compositions = Object.entries(CompositionsInfo).map((item) => {
   return newItem;
 });
 
-export async function getDefaultComposition(lat: string, lon: string) {
+async function getDefaultComposition(lat: string, lon: string) {
   const [weather, firespots, lightning, brightness] = await Promise.all([
     getWeather(lat, lon),
     getFireSpots(lat, lon),
