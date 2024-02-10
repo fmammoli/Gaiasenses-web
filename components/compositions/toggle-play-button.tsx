@@ -32,12 +32,15 @@ export default function TogglePlayButton({
       //   window.scrollTo({ left: window.innerWidth, behavior: "smooth" });
       // }
     } else {
+      console.log("shourd router");
       if (onPause) onPause(newPlayStatus);
-      // if (window) {
-      //   window.scrollTo({ left: -window.innerWidth, behavior: "smooth" });
-      // }
     }
 
+    newParams.set("mode", "map");
+    //newParams.delete("compositionName");
+    //newParams.set("play", "false");
+    newParams.set("today", "false");
+    newParams.set("initial", "false");
     router.replace(`${pathname}?${newParams.toString()}`);
   }
 

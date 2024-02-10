@@ -14,9 +14,7 @@ export default function Player({
 }) {
   const ref = useRef<H5AudioPlayer>(null);
 
-  console.log(play);
   useEffect(() => {
-    console.log("inside ", play);
     if (play) {
       if (ref.current?.audio?.current) {
         if (play === true || play === "true") {
@@ -41,7 +39,7 @@ export default function Player({
         ref={ref}
         src={path}
         loop
-        onPlay={(e) => console.log("play")}
+        // onPlay={(e) => console.log("play")}
         customProgressBarSection={[RHAP_UI.PROGRESS_BAR]}
         customControlsSection={[]}
         // other props here
