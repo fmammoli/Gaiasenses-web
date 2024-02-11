@@ -29,7 +29,7 @@ export default function AutoFadeContainer({
       newParams.set("initial", "false");
       const timeoutId = setTimeout(() => {
         router.replace(`${pathname}?${newParams}`);
-      }, 18000);
+      }, 5 * 60000);
       return () => {
         clearTimeout(timeoutId);
       };

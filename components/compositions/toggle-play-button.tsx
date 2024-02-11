@@ -23,7 +23,7 @@ export default function TogglePlayButton({
     event.preventDefault();
     event.stopPropagation();
     const newParams = new URLSearchParams(searchParams.toString());
-    console.log("play now, ", play);
+
     const newPlayStatus = !play;
     newParams.set("play", newPlayStatus.toString());
     if (newPlayStatus) {
@@ -32,7 +32,6 @@ export default function TogglePlayButton({
       //   window.scrollTo({ left: window.innerWidth, behavior: "smooth" });
       // }
     } else {
-      console.log("shourd router");
       if (onPause) onPause(newPlayStatus);
     }
 
