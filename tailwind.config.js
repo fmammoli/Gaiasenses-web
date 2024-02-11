@@ -113,7 +113,7 @@ module.exports = {
         "f-out": "fade-out-k 4s forwards ease-in",
         "title-page": "fade 4s ease-in-out 4s 1 reverse forwards running",
         "composition-fade":
-          "my-fade-in-out 20s cubic-bezier(.63,.97,.35,1) 0s 1 normal forwards running",
+          "my-fade-in-out 300s cubic-bezier(0,1.26,0,1.02) 0s 1 normal forwards running",
         "composition-fade-2":
           "f-s 22s cubic-bezier(.47,.63,.23,1.4) 0s 2 alternate forwards running",
         "my-fade-in": "fade 4s ease-in-out 1s 1 normal forwards running",

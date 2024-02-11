@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
 import AutoFadeContainer from "./auto-fade-container";
+import InfoPanel from "./info-panel";
 
 const initialViewState = {
   latitude: -22.82,
@@ -127,7 +128,6 @@ export default function ClientMap({
     const randomComposition =
       comps[Math.floor(Math.random() * Object.entries(comps).length)][1];
 
-    console.log(randomComposition);
     setComposition(randomComposition);
 
     logEvents((_events) => ({
@@ -213,12 +213,11 @@ export default function ClientMap({
           >
             {showPopup && (
               <Popup
-                offset={30}
+                offset={38}
                 latitude={marker.latitude}
                 longitude={marker.longitude}
                 anchor="bottom"
                 onClose={() => {
-                  console.log("closing");
                   setShowPopup(false);
                 }}
                 closeButton={false}
@@ -261,7 +260,9 @@ export default function ClientMap({
                     ></Combobox> */}
                   </>
                 ) : (
-                  <p className="text-2xl">Arraste o Pin para outro lagar.</p>
+                  <p className="text-xl">
+                    Arraste o Pin para descobrir novas composições.
+                  </p>
                 )}
               </Popup>
             )}
@@ -275,6 +276,7 @@ export default function ClientMap({
               })
             }
           ></GeolocateControl>
+          <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
       </div>
 
