@@ -1,11 +1,5 @@
 "use client";
-import {
-  useCallback,
-  useState,
-  type ReactNode,
-  useContext,
-  useRef,
-} from "react";
+import { useCallback, useState, type ReactNode, useContext } from "react";
 
 import Map, {
   FullscreenControl,
@@ -29,27 +23,48 @@ import { Combobox } from "@/components/ui/combo-box";
 import { useRouter } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
+import AutoFadeContainer from "./auto-fade-container";
 
 const initialViewState = {
   latitude: -22.82,
   longitude: -47.07,
-  zoom: 0,
+  zoom: 1.5,
 };
 
-const compositions = Object.entries(CompositionsInfo).map((item) => {
-  const newItem = {
-    label: item[1].name,
-    value: item[0],
-  };
-  return newItem;
-});
+const compositions = Object.entries(CompositionsInfo)
+  .map((item) => {
+    const newItem = {
+      label: item[1].name,
+      value: item[0],
+    };
+    return newItem;
+  })
+  .filter((item) => {
+    if (
+      item.label === "zigzag" ||
+      item.label === "stormEye" ||
+      item.label === "curves" ||
+      item.label === "bonfire" ||
+      item.label === "digitalOrganism" ||
+      item.label === "lightningTrees" ||
+      item.label === "mudflatScatter"
+    ) {
+      return item;
+    }
+  });
 
 export default function ClientMap({
   children,
   mode = "map",
+  initial = true,
+  compositionName,
+  timed,
 }: {
   children?: ReactNode;
   mode: "map" | "composition";
+  initial: boolean;
+  compositionName: string | undefined;
+  timed: boolean;
 }) {
   const router = useRouter();
   const { suspend, status } = useContext(MyAudioContext);
@@ -71,6 +86,11 @@ export default function ClientMap({
     CompositionsInfoType[keyof CompositionsInfoType] | null
   >();
 
+  if (mode === "composition" && composition) {
+    setTimeout(() => {
+      setComposition(null);
+    }, 10000);
+  }
   const onMarkerDragStart = useCallback((event: MarkerDragEvent) => {
     setComposition(null);
     logEvents((_events) => ({
@@ -90,16 +110,24 @@ export default function ClientMap({
   }, []);
 
   const onMarkerDragEnd = useCallback(async (event: MarkerDragEvent) => {
-    // const composition = await getDefaultComposition(
-    //   event.lngLat.lat.toString(),
-    //   event.lngLat.lng.toString()
-    // );
+    const comps = Object.entries(CompositionsInfo).filter((item) => {
+      if (
+        item[0] === "zigzag" ||
+        item[0] === "stormEye" ||
+        item[0] === "curves" ||
+        item[0] === "bonfire" ||
+        item[0] === "digitalOrganism" ||
+        item[0] === "lightningTrees" ||
+        item[0] === "mudflatScatter"
+      ) {
+        return item;
+      }
+    });
 
     const randomComposition =
-      Object.entries(CompositionsInfo)[
-        Math.floor(Math.random() * Object.entries(CompositionsInfo).length)
-      ][1];
+      comps[Math.floor(Math.random() * Object.entries(comps).length)][1];
 
+    console.log(randomComposition);
     setComposition(randomComposition);
 
     logEvents((_events) => ({
@@ -109,17 +137,20 @@ export default function ClientMap({
     setShowPopup(true);
   }, []);
 
-  const handleSelect = (currentValue: string) => {
-    setComposition(
-      CompositionsInfo[currentValue as keyof CompositionsInfoType]
-    );
-
-    router.push(
-      `/full-compositions/${currentValue}/?lat=${marker.latitude}&lon=${marker.longitude}&today=true&play=false&cleanMode=true`
-    );
+  const handleClick = () => {
+    setShowPopup(false);
+    if (composition) {
+      router.replace(
+        `/map2?mode=${"composition"}&timed=${timed}&compositionName=${
+          composition?.name
+        }&lat=${marker.latitude}&lon=${
+          marker.longitude
+        }&play=true&today=true&initial=false`,
+        { scroll: false }
+      );
+    }
   };
 
-  const prevZoomRef = useRef(initialViewState.zoom);
   //make a slow pitch, it increases as it zooms from a specific zoom value
   const onZoomEnd = (e: ViewStateChangeEvent) => {
     if (e.viewState.zoom >= 16) {
@@ -128,15 +159,39 @@ export default function ClientMap({
       }
     }
     if (e.viewState.zoom < 16) {
-      if (e.viewState.pitch >= 60) {
+      if (e.viewState.pitch !== 0) {
         e.target.easeTo({ pitch: 0, duration: 1000 });
       }
     }
   };
-
+  const [userInteracting, setUserInteracting] = useState(false);
   return (
     <>
-      <div className="h-full">
+      {initial && (
+        <div
+          className={`grid h-full content-center gap-10 bg-black ${
+            initial ? "animate-title-page " : "opacity-0 -z-20"
+          }`}
+        >
+          <div className="text-[10rem] max-w-[4em] self-center justify-self-center">
+            <h1 className="text-white font-extrabold leading-[0.7em]">
+              Gaia Senses
+            </h1>
+          </div>
+          <div className="text-[4rem] self-center justify-self-center">
+            <h2 className="text-white font-pop font-semibold leading-[0.7em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
+              Ressonâncias Climáticas
+            </h2>
+          </div>
+        </div>
+      )}
+
+      <div
+        className={`h-full w-full absolute top-0 left-0 z-10 bg-black ${
+          initial ? "mix-blend-darken" : "mix-blend-normal"
+        } `}
+        id={"total-container"}
+      >
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
@@ -146,7 +201,8 @@ export default function ClientMap({
           onZoomEnd={onZoomEnd}
         >
           <LightControl></LightControl>
-          <FullscreenControl></FullscreenControl>
+
+          <FullscreenControl containerId="total-container"></FullscreenControl>
           <Marker
             draggable
             latitude={marker.latitude}
@@ -166,36 +222,46 @@ export default function ClientMap({
                   setShowPopup(false);
                 }}
                 closeButton={false}
+                maxWidth={"40rem"}
               >
                 {composition ? (
                   <>
-                    <Button className="text-lg" variant={"outline"} asChild>
+                    {/* <Button className="text-lg" variant={"outline"}>
+                      <Link
+                        href={`/full-compositions/${composition.name}/?lat=${marker.latitude}&lon=${marker.longitude}&today=true&play=false&cleanMode=true&initial=false`}
+                        scroll={false}
+                      >
+                        {composition.name}
+                      </Link>
+                    </Button> */}
+                    <Button
+                      className="text-2xl focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
+                      onClick={handleClick}
+                    >
+                      <p>
+                        Clique para ver
+                        <span className="capitalize"> {composition.name}</span>
+                      </p>
+
                       {/* <Link
                         href={`/map2?mode=${"composition"}&compositionName=${
                           composition?.name
                         }&lat=${marker.latitude}&lon=${
                           marker.longitude
-                        }&play=false`}
+                        }&play=true&today=true&initial=false`}
                         scroll={false}
                       >
-                        {composition.name}
+                        {composition.name} : same page
                       </Link> */}
-                      <Link
-                        href={`/full-compositions/${composition.name}/?lat=${marker.latitude}&lon=${marker.longitude}&today=true&play=false&cleanMode=true`}
-                        scroll={false}
-                      >
-                        {composition.name}
-                      </Link>
                     </Button>
-                    <Combobox
+
+                    {/* <Combobox
                       options={compositions}
                       onSelect={handleSelect}
-                    ></Combobox>
+                    ></Combobox> */}
                   </>
                 ) : (
-                  <p className="text-lg text-secondary">
-                    Analisando dados atmosféricos....
-                  </p>
+                  <p className="text-2xl">Arraste o Pin para outro lagar.</p>
                 )}
               </Popup>
             )}
@@ -210,24 +276,15 @@ export default function ClientMap({
             }
           ></GeolocateControl>
         </Map>
-        {/* <div
-          className={`absolute h-full top-0 left-0 w-full bg-black isolate transition-opacity ${
-            mode === "composition" ? "opacity-100 z-[1]" : "opacity-0 -z-10"
-          } `}
-        >
-          <div className="relative">{children}</div>
-          <Button className="text-lg" variant={"outline"} asChild>
-            <Link
-              href={`/map2?mode=${"map"}&compositionName=${
-                composition?.name
-              }&lat=${marker.latitude}&lon=${marker.longitude}&play=false`}
-              scroll={false}
-            >
-              Back to map
-            </Link>
-          </Button>
-        </div> */}
       </div>
+
+      <AutoFadeContainer
+        show={mode === "composition" ? true : false}
+        compositionName={compositionName}
+        timeout={0}
+      >
+        {children}
+      </AutoFadeContainer>
     </>
   );
 }

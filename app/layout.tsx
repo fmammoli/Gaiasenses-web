@@ -4,8 +4,6 @@ import type { Metadata } from "next";
 import { Inter, Montserrat, Poppins } from "next/font/google";
 import { AudioContextProvider } from "@/hooks/webpd-context";
 
-const inter = Inter({ subsets: ["latin"] });
-
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -35,7 +33,7 @@ export default function RootLayout({
       <body className={`${montserrat.className} min-h-[100svh] h-[100svh]`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

@@ -30,6 +30,9 @@ module.exports = {
         kandinsky: {
           blue: "hsl(var(--kandinsky-blue))",
         },
+        space: {
+          spaceBlue: "hsl(var(--space-blue)))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -74,12 +77,55 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "my-fade-in-out": {
+          "0%": { opacity: "0" },
+          "10%": { opacity: "1" },
+          "25%": { opacity: "1" },
+          "50%": { opacity: "1" },
+          "75%": { opacity: "1" },
+          "85%": { opacity: "1" },
+          "99%": { opacity: "0" },
+          "100%": { opacity: "0" },
+        },
+        "my-fade-in-out-s": {
+          "0%": { opacity: "0" },
+
+          "50%": { opacity: "1" },
+
+          "100%": { opacity: "0" },
+        },
+        "move-z": {
+          "0%": { zIndex: 10 },
+          "99%": { zIndex: 10 },
+          "100%": { zIndex: -1 },
+        },
+        "f-s": {
+          "0%": { opacity: "0" },
+          "25%": { opacity: "1" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "auto-fade-out": "auto-fade-out-k 10s ease-in-out forwards",
+        "f-out": "fade-out-k 4s forwards ease-in",
+        "title-page": "fade 4s ease-in-out 4s 1 reverse forwards running",
+        "composition-fade":
+          "my-fade-in-out 20s cubic-bezier(.63,.97,.35,1) 0s 1 normal forwards running",
+        "composition-fade-2":
+          "f-s 22s cubic-bezier(.47,.63,.23,1.4) 0s 2 alternate forwards running",
+        "my-fade-in": "fade 4s ease-in-out 1s 1 normal forwards running",
+        "my-fade-out": "fade 4s ease-in-out 1s 1 reverse  running",
+      },
+      transitionDuration: {
+        "10s": "4000ms",
+      },
+      transitionProperty: {
+        "my-opacity": "opacity",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwindcss-animated")],
 };

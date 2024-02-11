@@ -10,21 +10,27 @@ export default async function Page({
     lat: string;
     lon: string;
     compositionName: string;
-    play: boolean;
+    play: string;
     mode: "composition" | "map";
+    initial: string;
+    timed: string;
   };
 }) {
   return (
     <>
-      <ClientMap mode={searchParams.mode ?? "map"}>
-        {searchParams.mode === "composition" &&
-          searchParams.compositionName &&
+      <ClientMap
+        mode={searchParams.mode ?? "map"}
+        initial={searchParams.initial === "false" ? false : true}
+        compositionName={searchParams.compositionName}
+        timed={searchParams.timed === "false" ? false : true}
+      >
+        {searchParams.compositionName &&
           CompositionsInfo[
             searchParams.compositionName as keyof CompositionsInfoType
           ].Component({
             lat: searchParams.lat,
             lon: searchParams.lon,
-            play: searchParams.play ?? false,
+            play: searchParams.play == "true" ? true : false,
             today: true,
           })}
       </ClientMap>

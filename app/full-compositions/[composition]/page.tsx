@@ -1,6 +1,7 @@
 import CompositionsInfo, {
   type AvailableCompositionNames,
 } from "@/components/compositions/compositions-info";
+import FullscreenController from "./fullscreen-controller";
 
 const DEBUG = false;
 
@@ -51,7 +52,9 @@ export default async function Page({
           <div
             className={`row-start-1 w-full row-end-2 col-start-1 col-end-[-1] bg-background h-[100svh] z-[1] transition-transform [&:has(label>input:checked)]:-translate-y-[16rem] [&:has(label>input:checked)]:rounded-b-[50px] [&:has(label>input:checked)]:shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden`}
           >
-            {<Component {...props}></Component> ?? <p>Not working Inside</p>}
+            <FullscreenController>
+              {<Component {...props}></Component> ?? <p>Not working Inside</p>}
+            </FullscreenController>
           </div>
         </div>
       );

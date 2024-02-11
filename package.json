@@ -37,6 +37,7 @@
     "sharp": "^0.32.6",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-animated": "^1.0.1",
     "use-debounce": "^9.0.4"
   },
   "devDependencies": {
