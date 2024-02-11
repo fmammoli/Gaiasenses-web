@@ -16,10 +16,10 @@ import type {
   ViewStateChangeEvent,
 } from "react-map-gl";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { type CompositionsInfoType } from "@/components/compositions/compositions-info";
-import { Combobox } from "@/components/ui/combo-box";
+
 import { useRouter } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
@@ -173,13 +173,13 @@ export default function ClientMap({
             initial ? "animate-title-page " : "opacity-0 -z-20"
           }`}
         >
-          <div className="text-[10rem] max-w-[4em] self-center justify-self-center">
-            <h1 className="text-white font-extrabold leading-[0.7em]">
+          <div className="max-w-full  md:max-w-[40rem] self-center justify-self-center px-2">
+            <h1 className="text-white font-extrabold leading-[0.7em] text-[5rem] md:text-[10rem]">
               Gaia Senses
             </h1>
           </div>
-          <div className="text-[4rem] self-center justify-self-center">
-            <h2 className="text-white font-pop font-semibold leading-[0.7em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
+          <div className=" self-center justify-self-center max-w-full  md:max-w-[40rem] px-2 ">
+            <h2 className="text-white text-[2rem] md:text-[4rem] font-pop font-semibold leading-tight md:leading-[0.9em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
               Ressonâncias Climáticas
             </h2>
           </div>
