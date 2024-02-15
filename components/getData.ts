@@ -16,7 +16,7 @@ export type RainfallResponseData = {
   lon: number;
   main: {
     feels_like: number;
-    grnd_level?: number;
+    grnd_level: number;
     humidity: number;
     pressure: number;
     temp: number;
@@ -118,9 +118,11 @@ async function openWeather(
       humidity: data.current.humidity,
       pressure: data.current.pressure,
       temp: data.current.temp,
+      grnd_level: 0,
     },
     rain: data.current.rain ? { "1h": data.current.rain["1h"] } : {},
     state: "Open weather API",
+
     visibility: data.current.visibility,
     weather: data.current.weather,
     wind: {
