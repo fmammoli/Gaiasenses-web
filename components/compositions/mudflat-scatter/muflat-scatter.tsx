@@ -82,13 +82,11 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
     try {
       const data = await getWeather(props.lat, props.lon);
       temperatureData = data.main.temp ?? 0;
-
-      audioPath = getAudio(temperatureData);
     } catch (error) {
       console.log(error);
     }
   }
-
+  audioPath = getAudio(temperatureData);
   return (
     <Composition>
       <MudflatScatterSketch
