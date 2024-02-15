@@ -57,12 +57,11 @@ export default async function Zigzag({
         : 0;
 
       lightningCountData = lightningData.count;
-      audioPath = getAudio(rainData, lightningCountData);
     }
   } catch (error) {
     console.log(error);
   }
-
+  audioPath = getAudio(rainData, lightningCountData);
   return (
     <Composition>
       <ZigzagSketch

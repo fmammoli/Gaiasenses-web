@@ -37,21 +37,20 @@ export type BonfireProps = {
 
 export default async function Bonfire(props: BonfireProps) {
   let fireCount = props.fireCount ?? 0;
-
-  let fireAudio = "";
+  let closeFires = 0;
+  let fireAudio = null;
   if (props.today) {
     try {
       const fireData = await getFireSpots(props.lat, props.lon, 100);
       fireCount = fireData.count;
-      fireAudio = getFireAudio(
-        fireCount,
-        fireData.events.filter((item) => item.dist < 50).length
-      );
+      closeFires = fireData.events.filter((item) => item.dist < 50).length;
     } catch (error) {
       console.log("Server responded with error.");
       console.log(error);
     }
   }
+
+  fireAudio = getFireAudio(fireCount, closeFires);
 
   return (
     <Composition>

@@ -21,7 +21,7 @@ export default async function CloudBubble(props: CloudBubbleProps) {
       const data = await getWeather(props.lat, props.lon);
       clouds = data.clouds;
     } catch (error) {
-      [console.log(error)];
+      console.log(error);
     }
   }
 

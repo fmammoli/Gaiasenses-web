@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { type CompositionsInfoType } from "@/components/compositions/compositions-info";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
 import AutoFadeContainer from "./auto-fade-container";
@@ -48,7 +48,9 @@ const compositions = Object.entries(CompositionsInfo)
       item.label === "bonfire" ||
       item.label === "digitalOrganism" ||
       item.label === "lightningTrees" ||
-      item.label === "mudflatScatter"
+      item.label === "mudflatScatter" ||
+      item.label === "paintBrush" ||
+      item.label === "cloudBubble"
     ) {
       return item;
     }
@@ -67,6 +69,8 @@ export default function ClientMap({
   compositionName: string | undefined;
   timed: boolean;
 }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { suspend, status } = useContext(MyAudioContext);
 
@@ -110,32 +114,41 @@ export default function ClientMap({
     });
   }, []);
 
-  const onMarkerDragEnd = useCallback(async (event: MarkerDragEvent) => {
-    const comps = Object.entries(CompositionsInfo).filter((item) => {
-      if (
-        item[0] === "zigzag" ||
-        item[0] === "stormEye" ||
-        item[0] === "curves" ||
-        item[0] === "bonfire" ||
-        item[0] === "digitalOrganism" ||
-        item[0] === "lightningTrees" ||
-        item[0] === "mudflatScatter"
-      ) {
-        return item;
-      }
-    });
+  const onMarkerDragEnd = useCallback(
+    async (event: MarkerDragEvent) => {
+      const comps = Object.entries(CompositionsInfo).filter((item) => {
+        if (
+          item[0] === "zigzag" ||
+          item[0] === "stormEye" ||
+          item[0] === "curves" ||
+          item[0] === "bonfire" ||
+          item[0] === "digitalOrganism" ||
+          item[0] === "lightningTrees" ||
+          item[0] === "mudflatScatter" ||
+          item[0] === "cloudBubble" ||
+          item[0] === "paintBrush"
+        ) {
+          return item;
+        }
+      });
 
-    const randomComposition =
-      comps[Math.floor(Math.random() * Object.entries(comps).length)][1];
+      const randomComposition =
+        comps[Math.floor(Math.random() * Object.entries(comps).length)][1];
 
-    setComposition(randomComposition);
+      setComposition(randomComposition);
 
-    logEvents((_events) => ({
-      ..._events,
-      onDragEnd: event.lngLat as LngLat,
-    }));
-    setShowPopup(true);
-  }, []);
+      logEvents((_events) => ({
+        ..._events,
+        onDragEnd: event.lngLat as LngLat,
+      }));
+      setShowPopup(true);
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set("lat", event.lngLat.lat.toString());
+      newSearchParams.set("lat", event.lngLat.lng.toString());
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+    },
+    [pathname, searchParams, router]
+  );
 
   const handleClick = () => {
     setShowPopup(false);

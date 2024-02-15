@@ -68,12 +68,19 @@ export default async function getData(
   // You can return Date, Map, Set, etc.
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
+    //This will activate the closest `error.js` Error Boundary
 
+    if (res.status === 503) {
+      console.log(
+        `Failed to fetch data from https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
+          dist ? `&dist=${dist}` : ""
+        } Got status ${res.status}: ${res.statusText}`
+      );
+    }
     throw new Error(
-      `Failed to fetch data: https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
+      `Failed to fetch data from https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
         dist ? `&dist=${dist}` : ""
-      }`
+      } got status ${res.status}; ${res.statusText}`
     );
   }
 
@@ -88,11 +95,52 @@ export async function getFireSpots(
   return await getData("fire", lat, lon, dist);
 }
 
+async function openWeather(
+  lat: string,
+  lon: string
+): Promise<RainfallResponseData> {
+  const part = "minutely,hourly,daily,alerts";
+
+  const res = await fetch(
+    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric`,
+    { next: { revalidate: 7200 } }
+  );
+
+  const data = await res.json();
+  //console.log(data.current.w);
+  const transformedData = {
+    city: "Open Weather API",
+    clouds: data.current.clounds,
+    lat: data.lat,
+    lon: data.lon,
+    main: {
+      feels_like: data.current.feels_like,
+      humidity: data.current.humidity,
+      pressure: data.current.pressure,
+      temp: data.current.temp,
+      grnd_level: 0,
+    },
+    rain: data.current.rain ? { "1h": data.current.rain["1h"] } : {},
+    state: "Open weather API",
+
+    visibility: data.current.visibility,
+    weather: data.current.weather,
+    wind: {
+      deg: data.current.wind_deg,
+      gust: data.current.wind_gust,
+      speed: data.current.wind_speed,
+    },
+  };
+  return transformedData;
+}
+
 export async function getWeather(
   lat: string,
   lon: string
 ): Promise<RainfallResponseData> {
-  return getData("rainfall", lat, lon);
+  //this is the old fetch, using satellite-fetcher API
+  //return getData("rainfall", lat, lon);
+  return openWeather(lat, lon);
 }
 
 export async function getLightning(
@@ -100,7 +148,17 @@ export async function getLightning(
   lon: string,
   dist: number
 ): Promise<LightningResponseData> {
-  return getData("lightning", lat, lon, dist);
+  try {
+    const res = await getData("lightning", lat, lon, dist);
+    return res;
+  } catch (error) {
+    return {
+      city: "Test",
+      count: 1,
+      events: [{ lat: lat, lon: lon, dist: dist }],
+      state: "This is mock data in case of server error.",
+    };
+  }
 }
 
 export async function getBrightness(

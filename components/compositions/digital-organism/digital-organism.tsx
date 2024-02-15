@@ -23,10 +23,14 @@ export default async function DigitalOrganism(props: DigitalOrganismProps) {
   let rain = props.rain ?? 0;
 
   if (props.today) {
-    const data = await getWeather(props.lat, props.lon);
-    rain = data.rain.hasOwnProperty("1h")
-      ? (data.rain as { "1h": number })["1h"]
-      : 0;
+    try {
+      const data = await getWeather(props.lat, props.lon);
+      rain = data.rain.hasOwnProperty("1h")
+        ? (data.rain as { "1h": number })["1h"]
+        : 0;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const audio = getAudio();
