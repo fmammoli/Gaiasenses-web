@@ -177,7 +177,7 @@ export default function ClientMap({
       }
     }
   };
-  const [userInteracting, setUserInteracting] = useState(false);
+
   return (
     <>
       {initial && (
