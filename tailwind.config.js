@@ -109,6 +109,10 @@ module.exports = {
           "0%": { opacity: 1 },
           "100%": { opacity: 0 },
         },
+        "black-to-white": {
+          from: { backgroundColor: "black" },
+          to: { backgroundColor: "white" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -122,6 +126,8 @@ module.exports = {
           "f-s 22s cubic-bezier(.47,.63,.23,1.4) 0s 2 alternate forwards running",
         "my-fade-in": "fade 4s ease-in-out 1s 1 normal forwards running",
         "my-fade-out": "my-fade-out-k 1s both",
+        "background-color-fade":
+          "black-to-white 4s ease-out 0s 1 normal both running",
       },
       transitionDuration: {
         "10s": "4000ms",

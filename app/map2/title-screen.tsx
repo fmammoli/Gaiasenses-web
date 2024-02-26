@@ -27,7 +27,9 @@ export default function TitleScreen({
   return (
     <div
       className={`top-0 left-0 w-full grid h-full content-center gap-10 mix-blend-darken bg-black relative ${
-        (state === "animating" || state === "ended") && "animate-title-page"
+        (state === "animating" || state === "ended") &&
+        //"animate-title-page mix-blend-normal"
+        "animate-background-color-fade"
       } ${state === "ended" && "-z-50"}`}
       onAnimationEnd={onAnimationEnd}
     >

@@ -20,6 +20,10 @@ export default async function Page({
     timed: string;
   };
 }) {
+  //For cool animation instead of fade, both total container and title screen must have background black.
+  //total container can have mix-blend-mode normal and title-screen have mix-blend-mode darken.
+  //then I transition title-screeen from black to white, thus transitioning like a fade.
+
   // Always show the initial title screen except when initial=false is present in search params
   const initial = searchParams.initial === "false" ? false : true;
 
