@@ -1,7 +1,6 @@
 "use client";
-import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+import { type P5CanvasInstance, type SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import { useEffect, useRef } from "react";
 
 export type BonfireSketchProps = {
   fireCount: number;

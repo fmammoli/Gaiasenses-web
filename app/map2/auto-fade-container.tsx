@@ -2,8 +2,6 @@
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 
-const COMPOSITITON_DURATION = 10000;
-
 export default function AutoFadeContainer({
   show,
   timeout,

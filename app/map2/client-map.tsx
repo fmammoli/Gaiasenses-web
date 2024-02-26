@@ -23,7 +23,6 @@ import { type CompositionsInfoType } from "@/components/compositions/composition
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
-import AutoFadeContainer from "./auto-fade-container";
 import InfoPanel from "./info-panel";
 
 const initialViewState = {
@@ -178,33 +177,10 @@ export default function ClientMap({
     }
   };
   const [userInteracting, setUserInteracting] = useState(false);
+
   return (
     <>
-      {initial && (
-        <div
-          className={`grid h-full content-center gap-10 bg-black ${
-            initial ? "animate-title-page " : "opacity-0 -z-20"
-          }`}
-        >
-          <div className="max-w-full  md:max-w-[40rem] self-center justify-self-center px-2">
-            <h1 className="text-white font-extrabold leading-[0.7em] text-[5rem] md:text-[10rem]">
-              Gaia Senses
-            </h1>
-          </div>
-          <div className=" self-center justify-self-center max-w-full  md:max-w-[40rem] px-2 ">
-            <h2 className="text-white text-[2rem] md:text-[4rem] font-pop font-semibold leading-tight md:leading-[0.9em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
-              Ressonâncias Climáticas
-            </h2>
-          </div>
-        </div>
-      )}
-
-      <div
-        className={`h-full w-full absolute top-0 left-0 z-10 bg-black ${
-          initial ? "mix-blend-darken" : "mix-blend-normal"
-        } `}
-        id={"total-container"}
-      >
+      <div className={`h-svh relative isolate bg-white`} id={"total-container"}>
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
@@ -292,14 +268,6 @@ export default function ClientMap({
           <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
       </div>
-
-      <AutoFadeContainer
-        show={mode === "composition" ? true : false}
-        compositionName={compositionName}
-        timeout={0}
-      >
-        {children}
-      </AutoFadeContainer>
     </>
   );
 }

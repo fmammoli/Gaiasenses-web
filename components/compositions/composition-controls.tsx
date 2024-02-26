@@ -6,7 +6,6 @@ import { PatchData } from "@/hooks/types";
 
 import "react-h5-audio-player/lib/styles.css";
 import Player from "./my-player";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function CompositionControls({
   play,
@@ -19,9 +18,6 @@ export default function CompositionControls({
   messages?: PatchData["messages"];
   mp3?: boolean;
 }) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const { start, status, suspend, sendMsgToWebPd, resume, close } =
     useWebpd(patchPath);
 
