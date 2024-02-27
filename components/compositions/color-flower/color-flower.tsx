@@ -57,6 +57,7 @@ export default async function ColorFlower({
       console.log(error);
     }
   }
+  audioPath = getAudio(temperatureData);
 
   audioPath = getAudio(temperatureData);
   return (

@@ -15,13 +15,13 @@ export default function LightControl() {
     if (hour > 5 && hour <= 10) {
       presetIndex = 0;
     }
-    if (hour > 10 && hour <= 16) {
+    if (hour > 10 && hour <= 15) {
       presetIndex = 1;
     }
-    if (hour > 16 && hour <= 19) {
+    if (hour > 15 && hour <= 18) {
       presetIndex = 2;
     }
-    if (hour > 19 || hour <= 5) {
+    if (hour > 18 || hour <= 5) {
       presetIndex = 3;
     }
     if (map && map.loaded()) {
@@ -34,19 +34,17 @@ export default function LightControl() {
   if (hour > 5 && hour <= 10) {
     counter !== 0 && changeLight(0);
   }
-  if (hour > 10 && hour <= 16) {
+  if (hour > 10 && hour <= 15) {
     counter !== 1 && changeLight(1);
   }
-  if (hour > 16 && hour <= 19) {
+  if (hour > 15 && hour <= 18) {
     counter !== 2 && changeLight(2);
   }
-  if (hour > 19 || hour <= 5) {
+  if (hour > 15 || hour <= 5) {
     counter !== 3 && changeLight(3);
   }
 
   function changeLight(counter: number) {
-    console.log("Setting light to: ", lights[counter]);
-
     if (map) {
       //@ts-ignore
       map.setConfigProperty("basemap", "lightPreset", lights[counter]);
