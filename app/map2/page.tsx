@@ -26,6 +26,8 @@ export default async function Page({
   // Always show the initial title screen except when initial=false is present in search params
   const initial = searchParams.initial === "false" ? false : true;
 
+  const lat = parseFloat(searchParams.lat);
+  const lon = parseFloat(searchParams.lon);
   const comps = Object.entries(CompositionsInfo).filter((item) => {
     if (
       item[0] === "zigzag" ||
@@ -45,12 +47,7 @@ export default async function Page({
     <>
       <div className="grid grid-cols-1 grid-rows-1 min-h-svh">
         <div className="col-start-1 row-start-1">
-          <ClientMap
-            mode={searchParams.mode ?? "map"}
-            initial={searchParams.initial === "false" ? false : true}
-            compositionName={searchParams.compositionName}
-            timed={searchParams.timed === "false" ? false : true}
-          ></ClientMap>
+          <ClientMap></ClientMap>
         </div>
 
         <div className="col-start-1 row-start-1">
