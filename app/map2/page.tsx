@@ -3,7 +3,6 @@ import CompositionsInfo, {
 } from "@/components/compositions/compositions-info";
 import ClientMap from "./client-map";
 import TitleScreen from "./title-screen";
-import TitleScreenButton from "./title-screen-button";
 import FadeContainer from "./fade-container";
 import { Suspense } from "react";
 
@@ -34,7 +33,6 @@ export default async function Page({
       item[0] === "curves" ||
       item[0] === "bonfire" ||
       item[0] === "digitalOrganism" ||
-      item[0] === "lightningTrees" ||
       item[0] === "mudflatScatter" ||
       item[0] === "cloudBubble" ||
       item[0] === "paintBrush"
@@ -57,25 +55,26 @@ export default async function Page({
 
         <div className="col-start-1 row-start-1">
           {searchParams.play === "true" && (
-            <FadeContainer play={searchParams.play === "true" ? true : false}>
-              {searchParams.compositionName &&
-                CompositionsInfo[
-                  searchParams.compositionName as keyof CompositionsInfoType
-                ].Component({
-                  lat: searchParams.lat,
-                  lon: searchParams.lon,
-                  play: searchParams.play == "true" ? true : false,
-                  today: true,
-                })}
+            <FadeContainer
+              play={searchParams.play === "true" ? true : false}
+              mode={searchParams.mode ?? "map"}
+            >
+              <Suspense fallback={<div className="h-svh bg-black "></div>}>
+                {searchParams.compositionName &&
+                  CompositionsInfo[
+                    searchParams.compositionName as keyof CompositionsInfoType
+                  ].Component({
+                    lat: searchParams.lat,
+                    lon: searchParams.lon,
+                    play: searchParams.play == "true" ? true : false,
+                    today: true,
+                  })}
+              </Suspense>
             </FadeContainer>
           )}
         </div>
         <div className="col-start-1 row-start-1">
-          {initial && (
-            <TitleScreen show={initial}>
-              <TitleScreenButton></TitleScreenButton>
-            </TitleScreen>
-          )}
+          {initial && <TitleScreen show={initial}></TitleScreen>}
         </div>
       </div>
     </>

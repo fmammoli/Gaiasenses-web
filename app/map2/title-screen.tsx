@@ -15,7 +15,6 @@ export default function TitleScreen({
   );
 
   function onClick() {
-    console.log(state);
     if (state == "idle") setState("animating");
   }
 
