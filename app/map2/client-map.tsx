@@ -14,6 +14,7 @@ import type {
   MarkerDragEvent,
   LngLat,
   ViewStateChangeEvent,
+  GeolocateResultEvent,
 } from "react-map-gl";
 import { Button } from "@/components/ui/button";
 
@@ -23,7 +24,6 @@ import { type CompositionsInfoType } from "@/components/compositions/composition
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
 import LightControl from "./light-control";
-import AutoFadeContainer from "./auto-fade-container";
 import InfoPanel from "./info-panel";
 
 const initialViewState = {
@@ -32,29 +32,16 @@ const initialViewState = {
   zoom: 1.5,
 };
 
-const compositions = Object.entries(CompositionsInfo)
-  .map((item) => {
-    const newItem = {
-      label: item[1].name,
-      value: item[0],
-    };
-    return newItem;
-  })
-  .filter((item) => {
-    if (
-      item.label === "zigzag" ||
-      item.label === "stormEye" ||
-      item.label === "curves" ||
-      item.label === "bonfire" ||
-      item.label === "digitalOrganism" ||
-      item.label === "lightningTrees" ||
-      item.label === "mudflatScatter" ||
-      item.label === "paintBrush" ||
-      item.label === "cloudBubble"
-    ) {
-      return item;
-    }
-  });
+// The following values can be changed to control rotation speed:
+
+// At low zooms, complete a revolution every two minutes.
+const secondsPerRevolution = 240;
+// Above zoom level 5, do not rotate.
+const maxSpinZoom = 5;
+// Rotate at intermediate speeds between zoom levels 3 and 5.
+const slowSpinZoom = 3;
+
+const spinEnabled = true;
 
 export default function ClientMap({
   children,
@@ -98,15 +85,15 @@ export default function ClientMap({
   }
   const onMarkerDragStart = useCallback((event: MarkerDragEvent) => {
     setComposition(null);
-    logEvents((_events) => ({
-      ..._events,
-      onDragStart: event.lngLat as LngLat,
-    }));
+    // logEvents((_events) => ({
+    //   ..._events,
+    //   onDragStart: event.lngLat as LngLat,
+    // }));
     setShowPopup(false);
   }, []);
 
   const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
-    logEvents((_events) => ({ ..._events, onDrag: event.lngLat as LngLat }));
+    // logEvents((_events) => ({ ..._events, onDrag: event.lngLat as LngLat }));
 
     setMarker({
       latitude: event.lngLat.lat,
@@ -123,7 +110,6 @@ export default function ClientMap({
           item[0] === "curves" ||
           item[0] === "bonfire" ||
           item[0] === "digitalOrganism" ||
-          item[0] === "lightningTrees" ||
           item[0] === "mudflatScatter" ||
           item[0] === "cloudBubble" ||
           item[0] === "paintBrush"
@@ -137,10 +123,10 @@ export default function ClientMap({
 
       setComposition(randomComposition);
 
-      logEvents((_events) => ({
-        ..._events,
-        onDragEnd: event.lngLat as LngLat,
-      }));
+      // logEvents((_events) => ({
+      //   ..._events,
+      //   onDragEnd: event.lngLat as LngLat,
+      // }));
       setShowPopup(true);
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set("lat", event.lngLat.lat.toString());
@@ -177,34 +163,17 @@ export default function ClientMap({
       }
     }
   };
-  const [userInteracting, setUserInteracting] = useState(false);
+
+  function onGeolocate(e: GeolocateResultEvent) {
+    setMarker({
+      latitude: e.coords.latitude,
+      longitude: e.coords.longitude,
+    });
+  }
+
   return (
     <>
-      {initial && (
-        <div
-          className={`grid h-full content-center gap-10 bg-black ${
-            initial ? "animate-title-page " : "opacity-0 -z-20"
-          }`}
-        >
-          <div className="max-w-full  md:max-w-[40rem] self-center justify-self-center px-2">
-            <h1 className="text-white font-extrabold leading-[0.7em] text-[5rem] md:text-[10rem]">
-              Gaia Senses
-            </h1>
-          </div>
-          <div className=" self-center justify-self-center max-w-full  md:max-w-[40rem] px-2 ">
-            <h2 className="text-white text-[2rem] md:text-[4rem] font-pop font-semibold leading-tight md:leading-[0.9em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
-              Ressonâncias Climáticas
-            </h2>
-          </div>
-        </div>
-      )}
-
-      <div
-        className={`h-full w-full absolute top-0 left-0 z-10 bg-black ${
-          initial ? "mix-blend-darken" : "mix-blend-normal"
-        } `}
-        id={"total-container"}
-      >
+      <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
@@ -238,14 +207,6 @@ export default function ClientMap({
               >
                 {composition ? (
                   <>
-                    {/* <Button className="text-lg" variant={"outline"}>
-                      <Link
-                        href={`/full-compositions/${composition.name}/?lat=${marker.latitude}&lon=${marker.longitude}&today=true&play=false&cleanMode=true&initial=false`}
-                        scroll={false}
-                      >
-                        {composition.name}
-                      </Link>
-                    </Button> */}
                     <Button
                       className="text-2xl focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900"
                       onClick={handleClick}
@@ -254,23 +215,7 @@ export default function ClientMap({
                         Clique para ver
                         <span className="capitalize"> {composition.name}</span>
                       </p>
-
-                      {/* <Link
-                        href={`/map2?mode=${"composition"}&compositionName=${
-                          composition?.name
-                        }&lat=${marker.latitude}&lon=${
-                          marker.longitude
-                        }&play=true&today=true&initial=false`}
-                        scroll={false}
-                      >
-                        {composition.name} : same page
-                      </Link> */}
                     </Button>
-
-                    {/* <Combobox
-                      options={compositions}
-                      onSelect={handleSelect}
-                    ></Combobox> */}
                   </>
                 ) : (
                   <p className="text-xl">
@@ -281,25 +226,10 @@ export default function ClientMap({
             )}
           </Marker>
           <NavigationControl></NavigationControl>
-          <GeolocateControl
-            onGeolocate={(e) =>
-              setMarker({
-                latitude: e.coords.latitude,
-                longitude: e.coords.longitude,
-              })
-            }
-          ></GeolocateControl>
+          <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
           <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
       </div>
-
-      <AutoFadeContainer
-        show={mode === "composition" ? true : false}
-        compositionName={compositionName}
-        timeout={0}
-      >
-        {children}
-      </AutoFadeContainer>
     </>
   );
 }

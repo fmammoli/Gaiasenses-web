@@ -105,19 +105,29 @@ module.exports = {
           "50%": { opacity: "1" },
           "100%": { opacity: "1" },
         },
+        "my-fade-out-k": {
+          "0%": { opacity: 1 },
+          "100%": { opacity: 0 },
+        },
+        "black-to-white": {
+          from: { backgroundColor: "black" },
+          to: { backgroundColor: "white" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "auto-fade-out": "auto-fade-out-k 10s ease-in-out forwards",
         "f-out": "fade-out-k 4s forwards ease-in",
-        "title-page": "fade 4s ease-in-out 4s 1 reverse forwards running",
+        "title-page": "fade 4s ease-out 0s 1 reverse forwards",
         "composition-fade":
           "my-fade-in-out 300s cubic-bezier(0,1.26,0,1.02) 0s 1 normal forwards running",
         "composition-fade-2":
           "f-s 22s cubic-bezier(.47,.63,.23,1.4) 0s 2 alternate forwards running",
         "my-fade-in": "fade 4s ease-in-out 1s 1 normal forwards running",
-        "my-fade-out": "fade 4s ease-in-out 1s 1 reverse  running",
+        "my-fade-out": "my-fade-out-k 1s both",
+        "background-color-fade":
+          "black-to-white 4s ease-out 0s 1 normal both running",
       },
       transitionDuration: {
         "10s": "4000ms",

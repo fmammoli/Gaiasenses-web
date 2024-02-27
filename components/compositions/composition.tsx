@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 
 export default function Composition({ children }: { children: ReactNode }) {

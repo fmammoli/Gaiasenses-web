@@ -3,6 +3,7 @@ import Composition from "../composition";
 import BonfireSketch from "./bonfire-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
+import { Suspense } from "react";
 
 const fogoAA = "/audios/FOGO-AA.mp3";
 const fogoAB = "/audios/FOGO-AB.mp3";
@@ -59,6 +60,7 @@ export default async function Bonfire(props: BonfireProps) {
         fireCount={fireCount}
         play={props.play}
       />
+
       <CompositionControls play={props.play} mp3 patchPath={fireAudio} />
       {props.debug && <DebugPanel></DebugPanel>}
     </Composition>

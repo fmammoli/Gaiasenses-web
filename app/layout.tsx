@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${montserrat.className} min-h-[100svh] h-[100svh]`}>
+      <body className={`${montserrat.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

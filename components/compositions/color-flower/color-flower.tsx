@@ -53,13 +53,13 @@ export default async function ColorFlower({
     try {
       const data = await getWeather(lat, lon);
       temperatureData = data.main.temp ?? 0;
-
-      audioPath = getAudio(temperatureData);
     } catch (error) {
       console.log(error);
     }
   }
+  audioPath = getAudio(temperatureData);
 
+  audioPath = getAudio(temperatureData);
   return (
     <Composition>
       <ColorFlowerSketch
