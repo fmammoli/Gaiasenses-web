@@ -5,6 +5,10 @@ import ClientMap from "./client-map";
 import TitleScreen from "./title-screen";
 import FadeContainer from "./fade-container";
 import { Suspense } from "react";
+import PopupBase from "./popup-base";
+import PopupLocationInfo from "./popup-location-info";
+import PopupWeatherInfo from "./popup-weather-info";
+import PopupButton from "./popup-button";
 
 export default async function Page({
   searchParams,
@@ -47,7 +51,37 @@ export default async function Page({
     <>
       <div className="grid grid-cols-1 grid-rows-1 min-h-svh">
         <div className="col-start-1 row-start-1">
-          <ClientMap></ClientMap>
+          <ClientMap
+            initialLatitude={Number(searchParams.lat)}
+            initialLongitude={Number(searchParams.lon)}
+          >
+            <Suspense fallback={<h1>loading....</h1>}>
+              <PopupBase
+                latitude={Number(searchParams.lat)}
+                longitude={Number(searchParams.lon)}
+              >
+                <div className="mb-4">
+                  <PopupLocationInfo
+                    lat={searchParams.lat}
+                    lon={searchParams.lon}
+                  />
+                  <PopupWeatherInfo
+                    lat={searchParams.lat}
+                    lon={searchParams.lon}
+                  ></PopupWeatherInfo>
+                </div>
+
+                <PopupButton compositionName={searchParams.compositionName}>
+                  <p>
+                    Clique para ver{" "}
+                    <span className="capitalize">
+                      {searchParams.compositionName}
+                    </span>
+                  </p>
+                </PopupButton>
+              </PopupBase>
+            </Suspense>
+          </ClientMap>
         </div>
 
         <div className="col-start-1 row-start-1">

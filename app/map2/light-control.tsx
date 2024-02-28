@@ -1,56 +1,56 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMap } from "react-map-gl";
 
-const lights = ["dawn", "day", "dusk", "night"];
+const dayPeriodToLightPreset = {
+  morning: "dawn",
+  afternoon: "day",
+  evening: "dusk",
+  night: "night",
+};
+type DayPeriods = "morning" | "afternoon" | "evening" | "night";
 
-export default function LightControl() {
+//Should probably refactor this as a ui controller using the useControler.
+//With an option with auto change
+export default function LightControl({
+  forceDayPeriod,
+}: {
+  forceDayPeriod?: DayPeriods;
+}) {
   const { current: map } = useMap();
-  const now = new Date();
-  const hour = now.getHours();
 
-  const [counter, setCounter] = useState(defineCounter);
+  const [preset, setPreset] = useState(dayPeriodToLightPreset["morning"]);
 
-  function defineCounter() {
-    let presetIndex = 0;
-    if (hour > 5 && hour <= 10) {
-      presetIndex = 0;
-    }
-    if (hour > 10 && hour <= 15) {
-      presetIndex = 1;
-    }
-    if (hour > 15 && hour <= 18) {
-      presetIndex = 2;
-    }
-    if (hour > 18 || hour <= 5) {
-      presetIndex = 3;
-    }
-    if (map && map.loaded()) {
+  const changeLight = useCallback(() => {
+    const dayPeriod: DayPeriods = forceDayPeriod
+      ? forceDayPeriod
+      : (new Intl.DateTimeFormat("en-US", {
+          dayPeriod: "long",
+          hourCycle: "h12",
+        })
+          .format(new Date())
+          .split(" ")
+          .slice(-1)[0] as DayPeriods);
+
+    const newPreset = dayPeriodToLightPreset[dayPeriod];
+
+    if (newPreset !== preset) {
       //@ts-ignore
-      map.setConfigProperty("basemap", "lightPreset", lights[presetIndex]);
+      map.setConfigProperty("basemap", "lightPreset", newPreset);
+      setPreset(newPreset);
     }
-    return presetIndex;
-  }
+  }, [map, forceDayPeriod, preset]);
 
-  if (hour > 5 && hour <= 10) {
-    counter !== 0 && changeLight(0);
-  }
-  if (hour > 10 && hour <= 15) {
-    counter !== 1 && changeLight(1);
-  }
-  if (hour > 15 && hour <= 18) {
-    counter !== 2 && changeLight(2);
-  }
-  if (hour > 15 || hour <= 5) {
-    counter !== 3 && changeLight(3);
-  }
-
-  function changeLight(counter: number) {
+  useEffect(() => {
     if (map) {
-      //@ts-ignore
-      map.setConfigProperty("basemap", "lightPreset", lights[counter]);
+      map.on("style.load", changeLight);
+      return () => {
+        map.off("style.load", changeLight);
+      };
     }
+  }, [map, changeLight]);
 
-    setCounter(counter);
+  if (map?.isStyleLoaded()) {
+    changeLight();
   }
 
   return null;

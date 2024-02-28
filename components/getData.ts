@@ -96,21 +96,21 @@ export async function getFireSpots(
 }
 
 async function openWeather(
-  lat: string,
-  lon: string
+  lat: string | number,
+  lon: string | number
 ): Promise<RainfallResponseData> {
   const part = "minutely,hourly,daily,alerts";
 
   const res = await fetch(
-    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric`,
+    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric&lang=pt_br`,
     { next: { revalidate: 7200 } }
   );
 
   const data = await res.json();
-  //console.log(data.current.w);
+
   const transformedData = {
     city: "Open Weather API",
-    clouds: data.current.clounds,
+    clouds: data.current.clouds,
     lat: data.lat,
     lon: data.lon,
     main: {
@@ -135,8 +135,8 @@ async function openWeather(
 }
 
 export async function getWeather(
-  lat: string,
-  lon: string
+  lat: string | number,
+  lon: string | number
 ): Promise<RainfallResponseData> {
   //this is the old fetch, using satellite-fetcher API
   //return getData("rainfall", lat, lon);
@@ -166,4 +166,35 @@ export async function getBrightness(
   lon: string
 ): Promise<BrightnessResponseData> {
   return getData("brightness", lat, lon);
+}
+
+export async function reverseGeocode(
+  lat: string | number,
+  lon: string | number
+): Promise<{
+  name: string;
+  local_name: any[];
+  lat: number;
+  lon: number;
+  country: string;
+  state?: string;
+} | null> {
+  const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=${1}&appid=${
+    process.env.OPEN_WEATHER_API_KEY
+  }`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error("Response was not ok"); // some people throw the response entirely
+    }
+
+    const data = await res.json();
+    return data[0];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    return null;
+  }
 }

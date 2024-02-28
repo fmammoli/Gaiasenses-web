@@ -1,50 +1,29 @@
 "use client";
-import { useCallback, useState, type ReactNode, useContext } from "react";
+import { useState, type ReactNode, useContext } from "react";
 
 import Map, {
   FullscreenControl,
-  Marker,
   NavigationControl,
-  Popup,
   GeolocateControl,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import type {
-  MarkerDragEvent,
-  LngLat,
-  ViewStateChangeEvent,
-  GeolocateResultEvent,
-} from "react-map-gl";
-import { Button } from "@/components/ui/button";
+import type { ViewStateChangeEvent, GeolocateResultEvent } from "react-map-gl";
 
-import CompositionsInfo from "@/components/compositions/compositions-info";
-import { type CompositionsInfoType } from "@/components/compositions/compositions-info";
-
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { MyAudioContext } from "@/hooks/webpd-context";
-import LightControl from "./light-control";
-import InfoPanel from "./info-panel";
 import MarkerBase from "./marker-base";
+import LightControl from "./light-control";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const initialViewState = {
-  latitude: -22.82,
-  longitude: -47.07,
-  zoom: 1.5,
-};
-
-// The following values can be changed to control rotation speed:
-
-// At low zooms, complete a revolution every two minutes.
-const secondsPerRevolution = 240;
-// Above zoom level 5, do not rotate.
-const maxSpinZoom = 5;
-// Rotate at intermediate speeds between zoom levels 3 and 5.
-const slowSpinZoom = 3;
-
-const spinEnabled = true;
-
-export default function ClientMap({}) {
+export default function ClientMap({
+  children,
+  initialLatitude,
+  initialLongitude,
+}: {
+  initialLatitude: number;
+  initialLongitude: number;
+  children?: ReactNode;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -55,9 +34,11 @@ export default function ClientMap({}) {
   }
 
   const [marker, setMarker] = useState({
-    latitude: initialViewState.latitude,
-    longitude: initialViewState.longitude,
+    latitude: initialLatitude,
+    longitude: initialLongitude,
   });
+
+  const [showPopup, setShowPopup] = useState(false);
 
   //make a slow pitch, it increases as it zooms from a specific zoom value
   const onZoomEnd = (e: ViewStateChangeEvent) => {
@@ -78,25 +59,37 @@ export default function ClientMap({}) {
       latitude: e.coords.latitude,
       longitude: e.coords.longitude,
     });
+
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set("initial", "false");
+    newSearchParams.set("lat", e.coords.latitude.toString());
+    newSearchParams.set("lon", e.coords.longitude.toString());
+    router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
-  console.log("rerender");
+
   return (
     <>
       <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
-          initialViewState={initialViewState}
+          initialViewState={{ ...marker, zoom: 1.5 }}
           mapStyle="mapbox://styles/mapbox/standard"
           projection={{ name: "globe" }}
           onZoomEnd={onZoomEnd}
         >
-          <LightControl></LightControl>
-
           <FullscreenControl containerId="total-container"></FullscreenControl>
-          <MarkerBase></MarkerBase>
+          <LightControl></LightControl>
           <NavigationControl></NavigationControl>
           <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
+          <MarkerBase
+            longitude={marker.longitude}
+            latitude={marker.latitude}
+            setMarker={setMarker}
+            setShowPopup={setShowPopup}
+          ></MarkerBase>
+          {showPopup && children}
+
           {/* <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel> */}
         </Map>
       </div>
