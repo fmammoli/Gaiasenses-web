@@ -87,15 +87,13 @@ export default function MarkerBase({
   );
 
   return (
-    <>
-      <Marker
-        draggable
-        latitude={latitude}
-        longitude={longitude}
-        onDragStart={onMarkerDragStart}
-        onDrag={onMarkerDrag}
-        onDragEnd={onMarkerDragEnd}
-      ></Marker>
-    </>
+    <Marker
+      draggable
+      latitude={latitude}
+      longitude={longitude}
+      onDragStart={onMarkerDragStart}
+      onDrag={onMarkerDrag}
+      onDragEnd={onMarkerDragEnd}
+    ></Marker>
   );
 }

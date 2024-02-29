@@ -3,12 +3,8 @@ import GeolocationButton from "./geolocation-button";
 import { H2 } from "@/components/ui/h2";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  LocateFixedIcon,
-  LocateIcon,
-  MapIcon,
-} from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { LocateFixedIcon, LocateIcon, MapIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LocationBar({
@@ -45,7 +41,7 @@ export default function LocationBar({
           </div>
 
           <div className="text-sm font-light font-mono mt-4">
-            { geoState !== "granted" && (
+            {geoState !== "granted" && (
               <p>Activate your GPS for better accuracy</p>
             )}
             <div className="flex flex-row gap-3 mt-2">

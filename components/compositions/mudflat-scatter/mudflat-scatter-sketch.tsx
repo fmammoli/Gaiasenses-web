@@ -1,5 +1,5 @@
 "use client";
-import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+import { type P5CanvasInstance, type SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
 //for the #wccChallenge on the theme of 'flat'.
@@ -145,6 +145,6 @@ function sketch(p5: P5CanvasInstance<SketchProps & MudFlarScatterSketchProps>) {
   }
 }
 
-export default function LluviaSketch(props: MudFlarScatterSketchProps) {
+export default function MudflatScatterSketch(props: MudFlarScatterSketchProps) {
   return <NextReactP5Wrapper sketch={sketch} {...props} />;
 }

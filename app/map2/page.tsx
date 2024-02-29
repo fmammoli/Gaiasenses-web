@@ -4,11 +4,11 @@ import CompositionsInfo, {
 import ClientMap from "./client-map";
 import TitleScreen from "./title-screen";
 import FadeContainer from "./fade-container";
-import { Suspense } from "react";
 import PopupBase from "./popup-base";
 import PopupLocationInfo from "./popup-location-info";
 import PopupWeatherInfo from "./popup-weather-info";
 import PopupButton from "./popup-button";
+import { Suspense } from "react";
 
 export default async function Page({
   searchParams,
@@ -38,32 +38,30 @@ export default async function Page({
             initialLatitude={Number(searchParams.lat)}
             initialLongitude={Number(searchParams.lon)}
           >
-            <Suspense fallback={<h1>loading....</h1>}>
-              <PopupBase
-                latitude={Number(searchParams.lat)}
-                longitude={Number(searchParams.lon)}
-              >
-                <div className="mb-4">
-                  <PopupLocationInfo
-                    lat={searchParams.lat}
-                    lon={searchParams.lon}
-                  />
-                  <PopupWeatherInfo
-                    lat={searchParams.lat}
-                    lon={searchParams.lon}
-                  ></PopupWeatherInfo>
-                </div>
+            <PopupBase
+              latitude={Number(searchParams.lat)}
+              longitude={Number(searchParams.lon)}
+            >
+              <div className="mb-4">
+                <PopupLocationInfo
+                  lat={searchParams.lat}
+                  lon={searchParams.lon}
+                />
+                <PopupWeatherInfo
+                  lat={searchParams.lat}
+                  lon={searchParams.lon}
+                ></PopupWeatherInfo>
+              </div>
 
-                <PopupButton compositionName={searchParams.compositionName}>
-                  <p>
-                    Clique para ver{" "}
-                    <span className="capitalize">
-                      {searchParams.compositionName}
-                    </span>
-                  </p>
-                </PopupButton>
-              </PopupBase>
-            </Suspense>
+              <PopupButton compositionName={searchParams.compositionName}>
+                <p>
+                  Clique para ver{" "}
+                  <span className="capitalize">
+                    {searchParams.compositionName}
+                  </span>
+                </p>
+              </PopupButton>
+            </PopupBase>
           </ClientMap>
         </div>
 
@@ -73,17 +71,20 @@ export default async function Page({
               play={searchParams.play === "true" ? true : false}
               mode={searchParams.mode ?? "map"}
             >
-              <Suspense fallback={<div className="h-svh bg-black "></div>}>
-                {searchParams.compositionName &&
-                  CompositionsInfo[
-                    searchParams.compositionName as keyof CompositionsInfoType
-                  ].Component({
-                    lat: searchParams.lat,
-                    lon: searchParams.lon,
-                    play: searchParams.play == "true" ? true : false,
-                    today: true,
-                  })}
-              </Suspense>
+              {searchParams.compositionName &&
+                CompositionsInfo[
+                  searchParams.compositionName as keyof CompositionsInfoType
+                ].Component({
+                  lat: searchParams.lat,
+                  lon: searchParams.lon,
+                  play: searchParams.play == "true" ? true : false,
+                  today: true,
+                })}
+
+              {/* fore some reasing this suspense causes a concurrent render of the same context provder */}
+              {/* <Suspense
+                fallback={<div className="h-svh bg-black "></div>}
+              ></Suspense> */}
             </FadeContainer>
           )}
         </div>
