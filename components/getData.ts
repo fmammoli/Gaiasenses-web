@@ -135,20 +135,20 @@ async function openWeather(
     console.log(error);
     const transformedData = {
       city: "Open Weather API",
-      clouds: 0,
+      clouds: 30,
       lat: 0,
       lon: 0,
       main: {
-        feels_like: 0,
-        humidity: 0,
-        pressure: 0,
-        temp: 0,
+        feels_like: 24,
+        humidity: 30,
+        pressure: 20,
+        temp: 24,
         grnd_level: 0,
       },
       rain: {},
       state: "Open weather API",
 
-      visibility: 0,
+      visibility: 100,
       weather: [
         {
           description: "indisponível",
@@ -157,9 +157,9 @@ async function openWeather(
         },
       ],
       wind: {
-        deg: 0,
-        gust: 0,
-        speed: 0,
+        deg: 90,
+        gust: 40,
+        speed: 30,
       },
     };
     return transformedData;
