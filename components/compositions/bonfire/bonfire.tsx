@@ -3,7 +3,6 @@ import Composition from "../composition";
 import BonfireSketch from "./bonfire-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { Suspense } from "react";
 
 const fogoAA = "/audios/FOGO-AA.mp3";
 const fogoAB = "/audios/FOGO-AB.mp3";

@@ -4,6 +4,10 @@ import CompositionsInfo, {
 import ClientMap from "./client-map";
 import TitleScreen from "./title-screen";
 import FadeContainer from "./fade-container";
+import PopupBase from "./popup-base";
+import PopupLocationInfo from "./popup-location-info";
+import PopupWeatherInfo from "./popup-weather-info";
+import PopupButton from "./popup-button";
 import { Suspense } from "react";
 
 export default async function Page({
@@ -26,31 +30,39 @@ export default async function Page({
   // Always show the initial title screen except when initial=false is present in search params
   const initial = searchParams.initial === "false" ? false : true;
 
-  const comps = Object.entries(CompositionsInfo).filter((item) => {
-    if (
-      item[0] === "zigzag" ||
-      item[0] === "stormEye" ||
-      item[0] === "curves" ||
-      item[0] === "bonfire" ||
-      item[0] === "digitalOrganism" ||
-      item[0] === "mudflatScatter" ||
-      item[0] === "cloudBubble" ||
-      item[0] === "paintBrush"
-    ) {
-      return item;
-    }
-  });
-
   return (
     <>
       <div className="grid grid-cols-1 grid-rows-1 min-h-svh">
         <div className="col-start-1 row-start-1">
           <ClientMap
-            mode={searchParams.mode ?? "map"}
-            initial={searchParams.initial === "false" ? false : true}
-            compositionName={searchParams.compositionName}
-            timed={searchParams.timed === "false" ? false : true}
-          ></ClientMap>
+            initialLatitude={Number(searchParams.lat)}
+            initialLongitude={Number(searchParams.lon)}
+          >
+            <PopupBase
+              latitude={Number(searchParams.lat)}
+              longitude={Number(searchParams.lon)}
+            >
+              <div className="mb-4">
+                <PopupLocationInfo
+                  lat={searchParams.lat}
+                  lon={searchParams.lon}
+                />
+                <PopupWeatherInfo
+                  lat={searchParams.lat}
+                  lon={searchParams.lon}
+                ></PopupWeatherInfo>
+              </div>
+
+              <PopupButton compositionName={searchParams.compositionName}>
+                <p>
+                  Clique para ver{" "}
+                  <span className="capitalize">
+                    {searchParams.compositionName}
+                  </span>
+                </p>
+              </PopupButton>
+            </PopupBase>
+          </ClientMap>
         </div>
 
         <div className="col-start-1 row-start-1">
@@ -59,17 +71,20 @@ export default async function Page({
               play={searchParams.play === "true" ? true : false}
               mode={searchParams.mode ?? "map"}
             >
-              <Suspense fallback={<div className="h-svh bg-black "></div>}>
-                {searchParams.compositionName &&
-                  CompositionsInfo[
-                    searchParams.compositionName as keyof CompositionsInfoType
-                  ].Component({
-                    lat: searchParams.lat,
-                    lon: searchParams.lon,
-                    play: searchParams.play == "true" ? true : false,
-                    today: true,
-                  })}
-              </Suspense>
+              {searchParams.compositionName &&
+                CompositionsInfo[
+                  searchParams.compositionName as keyof CompositionsInfoType
+                ].Component({
+                  lat: searchParams.lat,
+                  lon: searchParams.lon,
+                  play: searchParams.play == "true" ? true : false,
+                  today: true,
+                })}
+
+              {/* fore some reasing this suspense causes a concurrent render of the same context provder */}
+              {/* <Suspense
+                fallback={<div className="h-svh bg-black "></div>}
+              ></Suspense> */}
             </FadeContainer>
           )}
         </div>

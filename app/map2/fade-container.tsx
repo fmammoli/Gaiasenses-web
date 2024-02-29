@@ -41,17 +41,15 @@ export default function FadeContainer({
   }, [searchParams, pathname, router, play]);
 
   return (
-    <>
-      <div
-        className={cn(
-          "h-svh relative bg-black",
-          mode === "composition" && "animate-fade z-10",
-          mode === "map" ? "animate-my-fade-out -z-10" : ""
-          //fadeOutState === "ended" || (fadeOutState === "idle" && "-z-10")
-        )}
-      >
-        {children}
-      </div>
-    </>
+    <div
+      className={cn(
+        "h-svh relative bg-black",
+        mode === "composition" && "animate-fade z-10",
+        mode === "map" ? "animate-my-fade-out -z-10" : ""
+        //fadeOutState === "ended" || (fadeOutState === "idle" && "-z-10")
+      )}
+    >
+      {children}
+    </div>
   );
 }

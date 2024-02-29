@@ -4,7 +4,6 @@ import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 import { getWeather } from "@/components/getData";
 import MudflatScatterSketch from "./mudflat-scatter-sketch";
-import { PatchData } from "@/hooks/types";
 
 const flor_10 = "/audios/Flor-infinito_10.mp3";
 const flor_10_15 = "/audios/Flor-10_15.mp3";
@@ -95,7 +94,6 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
         windSpeed={windSpeed}
         play={props.play}
       ></MudflatScatterSketch>
-
       <CompositionControls
         play={props.play}
         mp3

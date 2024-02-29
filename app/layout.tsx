@@ -1,7 +1,7 @@
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
-import { Inter, Montserrat, Poppins } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { AudioContextProvider } from "@/hooks/webpd-context";
 
 const montserrat = Montserrat({
@@ -31,14 +31,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.className}`}>
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-          <AudioContextProvider>{children}</AudioContextProvider>
-        </ThemeProvider>
+        </ThemeProvider> */}
+        <AudioContextProvider>{children}</AudioContextProvider>
       </body>
     </html>
   );
