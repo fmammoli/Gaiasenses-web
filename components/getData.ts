@@ -24,13 +24,11 @@ export type RainfallResponseData = {
   rain: { "1h": number } | {};
   state: string;
   visibility: number;
-  weather: [
-    {
-      description: string;
-      icon: string;
-      main: string;
-    }
-  ];
+  weather: {
+    description: string;
+    icon: string;
+    main: string;
+  }[];
   wind: {
     deg: number;
     gust: number;
@@ -101,37 +99,71 @@ async function openWeather(
 ): Promise<RainfallResponseData> {
   const part = "minutely,hourly,daily,alerts";
 
-  const res = await fetch(
-    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric&lang=pt_br`,
-    { next: { revalidate: 7200 } }
-  );
+  try {
+    const res = await fetch(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric&lang=pt_br`,
+      { next: { revalidate: 7200 } }
+    );
 
-  const data = await res.json();
+    const data = await res.json();
 
-  const transformedData = {
-    city: "Open Weather API",
-    clouds: data.current.clouds,
-    lat: data.lat,
-    lon: data.lon,
-    main: {
-      feels_like: data.current.feels_like,
-      humidity: data.current.humidity,
-      pressure: data.current.pressure,
-      temp: data.current.temp,
-      grnd_level: 0,
-    },
-    rain: data.current.rain ? { "1h": data.current.rain["1h"] } : {},
-    state: "Open weather API",
+    const transformedData = {
+      city: "Open Weather API",
+      clouds: data.current.clouds,
+      lat: data.lat,
+      lon: data.lon,
+      main: {
+        feels_like: data.current.feels_like,
+        humidity: data.current.humidity,
+        pressure: data.current.pressure,
+        temp: data.current.temp,
+        grnd_level: 0,
+      },
+      rain: data.current.rain ? { "1h": data.current.rain["1h"] } : {},
+      state: "Open weather API",
 
-    visibility: data.current.visibility,
-    weather: data.current.weather,
-    wind: {
-      deg: data.current.wind_deg,
-      gust: data.current.wind_gust,
-      speed: data.current.wind_speed,
-    },
-  };
-  return transformedData;
+      visibility: data.current.visibility,
+      weather: data.current.weather,
+      wind: {
+        deg: data.current.wind_deg,
+        gust: data.current.wind_gust,
+        speed: data.current.wind_speed,
+      },
+    };
+    return transformedData;
+  } catch (error) {
+    console.log(error);
+    const transformedData = {
+      city: "Open Weather API",
+      clouds: 0,
+      lat: 0,
+      lon: 0,
+      main: {
+        feels_like: 0,
+        humidity: 0,
+        pressure: 0,
+        temp: 0,
+        grnd_level: 0,
+      },
+      rain: {},
+      state: "Open weather API",
+
+      visibility: 0,
+      weather: [
+        {
+          description: "indisponível",
+          icon: "indisponível",
+          main: "indisponível",
+        },
+      ],
+      wind: {
+        deg: 0,
+        gust: 0,
+        speed: 0,
+      },
+    };
+    return transformedData;
+  }
 }
 
 export async function getWeather(
