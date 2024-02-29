@@ -30,23 +30,6 @@ export default async function Page({
   // Always show the initial title screen except when initial=false is present in search params
   const initial = searchParams.initial === "false" ? false : true;
 
-  const lat = parseFloat(searchParams.lat);
-  const lon = parseFloat(searchParams.lon);
-  const comps = Object.entries(CompositionsInfo).filter((item) => {
-    if (
-      item[0] === "zigzag" ||
-      item[0] === "stormEye" ||
-      item[0] === "curves" ||
-      item[0] === "bonfire" ||
-      item[0] === "digitalOrganism" ||
-      item[0] === "mudflatScatter" ||
-      item[0] === "cloudBubble" ||
-      item[0] === "paintBrush"
-    ) {
-      return item;
-    }
-  });
-
   return (
     <>
       <div className="grid grid-cols-1 grid-rows-1 min-h-svh">

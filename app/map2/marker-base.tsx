@@ -61,7 +61,8 @@ export default function MarkerBase({
           item[0] === "digitalOrganism" ||
           item[0] === "mudflatScatter" ||
           item[0] === "cloudBubble" ||
-          item[0] === "paintBrush"
+          item[0] === "paintBrush" ||
+          item[0] === "generativeStrings"
         ) {
           return item;
         }

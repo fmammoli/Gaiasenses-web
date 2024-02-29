@@ -1,5 +1,5 @@
 "use client";
-import { useState, type ReactNode, useContext } from "react";
+import { useState, type ReactNode } from "react";
 
 import Map, {
   FullscreenControl,
@@ -10,7 +10,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import type { ViewStateChangeEvent, GeolocateResultEvent } from "react-map-gl";
 
-import { MyAudioContext } from "@/hooks/webpd-context";
 import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -27,11 +26,6 @@ export default function ClientMap({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { suspend, status } = useContext(MyAudioContext);
-
-  if (status === "playing") {
-    suspend && suspend();
-  }
 
   const [marker, setMarker] = useState({
     latitude: initialLatitude,

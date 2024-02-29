@@ -4,6 +4,7 @@ import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
 import DigitalOrganism from "./digital-organism/digital-organism";
+import GenerativeStrings from "./generative-strings/generative-strings";
 import LightningTrees from "./lightning-trees/lightning-trees";
 import Lluvia from "./lluvia/lluvia";
 import MudflatScatter from "./mudflat-scatter/muflat-scatter";
@@ -27,7 +28,8 @@ export type AvailableCompositionNames =
   | "rectangles"
   | "lightningTrees"
   | "weatherTree"
-  | "mudflatScatter";
+  | "mudflatScatter"
+  | "generativeStrings";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -40,7 +42,8 @@ export type AvailableCompositionComponents =
   | typeof PaintBrush
   | typeof Rectangles
   | typeof LightningTrees
-  | typeof WeatherTree;
+  | typeof WeatherTree
+  | typeof GenerativeStrings;
 
 export type CompositionInfo = {
   name: string;
@@ -150,6 +153,13 @@ const CompositionsInfo: CompositionsInfoType = {
     name: "mudflatScatter",
     attributes: ["temperature", "windDeg", "windSpeed"],
     Component: MudflatScatter,
+    endpoints: [""],
+    thumb: "weather-tree.png",
+  },
+  generativeStrings: {
+    name: "generativeStrings",
+    attributes: ["temperature", "humidity"],
+    Component: GenerativeStrings,
     endpoints: [""],
     thumb: "weather-tree.png",
   },
