@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
 import CompositionsInfo from "@/components/compositions/compositions-info";
+import { map } from "leaflet";
 
 export default function MarkerBase({
   children,
@@ -41,9 +42,12 @@ export default function MarkerBase({
   const onMarkerDrag = useCallback(
     (event: MarkerDragEvent) => {
       // logEvents((_events) => ({ ..._events, onDrag: event.lngLat as LngLat }));
+
+      //Wrap longitude in -180/180 range.
+      const lngLat = event.lngLat.wrap();
       setMarker({
-        latitude: event.lngLat.lat,
-        longitude: event.lngLat.lng,
+        latitude: lngLat.lat,
+        longitude: lngLat.lng,
       });
     },
     [setMarker]
@@ -78,8 +82,11 @@ export default function MarkerBase({
 
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set("initial", "false");
-      newSearchParams.set("lat", event.lngLat.lat.toString());
-      newSearchParams.set("lon", event.lngLat.lng.toString());
+
+      //wrap latitude to -180/180 range
+      const lngLat = event.lngLat.wrap();
+      newSearchParams.set("lat", lngLat.lat.toString());
+      newSearchParams.set("lon", lngLat.lng.toString());
       newSearchParams.set("compositionName", randomComposition.name);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     },

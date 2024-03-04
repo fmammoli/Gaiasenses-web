@@ -105,6 +105,13 @@ async function openWeather(
       { next: { revalidate: 7200 } }
     );
 
+    if (!res.ok) {
+      throw new Error(
+        `Response from openweather was not ok. Status: ${
+          res.status
+        } Message: ${await res.text()}`
+      ); // some people throw the response entirely
+    }
     const data = await res.json();
 
     const transformedData = {
@@ -218,7 +225,11 @@ export async function reverseGeocode(
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      throw new Error("Response was not ok"); // some people throw the response entirely
+      throw new Error(
+        `Response from reverse geocode was not ok. Status: ${
+          res.status
+        } Message: ${await res.text()}`
+      ); // some people throw the response entirely
     }
 
     const data = await res.json();
