@@ -105,6 +105,9 @@ async function openWeather(
       { next: { revalidate: 7200 } }
     );
 
+    if (!res.ok) {
+      throw new Error("Response from openweather was not ok"); // some people throw the response entirely
+    }
     const data = await res.json();
 
     const transformedData = {

@@ -13,6 +13,7 @@ import type { ViewStateChangeEvent, GeolocateResultEvent } from "react-map-gl";
 import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import InfoPanel from "./info-panel";
 
 export default function ClientMap({
   children,
@@ -84,7 +85,7 @@ export default function ClientMap({
           ></MarkerBase>
           {showPopup && children}
 
-          {/* <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel> */}
+          <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
       </div>
     </>
