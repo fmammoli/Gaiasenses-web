@@ -8,7 +8,6 @@ import {
 } from "react";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
 import CompositionsInfo from "@/components/compositions/compositions-info";
-import { map } from "leaflet";
 
 export default function MarkerBase({
   children,

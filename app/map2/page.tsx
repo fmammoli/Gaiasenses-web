@@ -9,6 +9,7 @@ import PopupLocationInfo from "./popup-location-info";
 import PopupWeatherInfo from "./popup-weather-info";
 import PopupButton from "./popup-button";
 import { Suspense } from "react";
+import FloatingHelpBox from "./floating-help-box";
 
 export default async function Page({
   searchParams,

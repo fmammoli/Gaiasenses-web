@@ -1,5 +1,6 @@
 "use client";
-import { ReactNode } from "react";
+import useTimeout from "@/hooks/use-timeout";
+import { ReactNode, useState } from "react";
 import { Popup } from "react-map-gl";
 
 export default function PopupBase({
@@ -19,6 +20,7 @@ export default function PopupBase({
       closeButton={false}
       maxWidth={"40rem"}
       anchor="bottom"
+      focusAfterOpen
     >
       {children}
     </Popup>

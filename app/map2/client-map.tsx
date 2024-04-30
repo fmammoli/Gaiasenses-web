@@ -14,6 +14,8 @@ import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import InfoPanel from "./info-panel";
+import FloatingHelpBox from "./floating-help-box";
+import PopupBase from "./popup-base";
 
 export default function ClientMap({
   children,
@@ -71,6 +73,7 @@ export default function ClientMap({
           initialViewState={{ ...marker, zoom: 1.5 }}
           mapStyle="mapbox://styles/mapbox/standard"
           projection={{ name: "globe" }}
+          onClick={() => console.log("click")}
           onZoomEnd={onZoomEnd}
         >
           <FullscreenControl containerId="total-container"></FullscreenControl>
@@ -83,10 +86,12 @@ export default function ClientMap({
             setMarker={setMarker}
             setShowPopup={setShowPopup}
           ></MarkerBase>
+
           {showPopup && children}
 
           <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
+        <FloatingHelpBox></FloatingHelpBox>
       </div>
     </>
   );
