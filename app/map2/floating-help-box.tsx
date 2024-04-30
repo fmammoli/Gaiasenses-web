@@ -1,25 +1,33 @@
 "use client";
 import useInterval from "@/hooks/use-interval";
 import useTimeout from "@/hooks/use-timeout";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 const helpOptions = [
   "Clique e arraste para girar o globo",
   "Clique e arraste o marcador para movê-lo para outro lugar",
 ];
 
-export default function FloatingHelpBox() {
+export default function FloatingHelpBox({
+  followMouse,
+  delay,
+  children,
+}: {
+  followMouse?: boolean;
+  delay: number;
+  children?: ReactNode;
+}) {
   const [mousePosition, setMousePosition] = useState<{
     x: null | number;
     y: null | number;
   }>({ x: null, y: null });
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const [helpContent, setHelpContent] = useState<0 | 1>(0);
 
   const { timeoutRef: timeout, restart: restartTimeout } = useTimeout(
     () => setShow(true),
-    10000
+    delay
   );
 
   const { intervalRef: interval, restart: restartInterval } = useInterval(
@@ -65,19 +73,29 @@ export default function FloatingHelpBox() {
 
   return (
     <div
-      className={`absolute top-0 left-0 bg-white p-2 rounded transition-opacity ${
-        show ? "opacity-100" : "opacity-0"
-      }`}
-      style={{
-        top: (mousePosition.y ?? 0) + 8 + "px",
-        left: (mousePosition.x ?? 0) + 8 + "px",
-      }}
+      className={` transition-opacity ${show ? "opacity-100" : "opacity-0"}`}
     >
-      <div className=" bg-white">
-        <p className="text-sm text-center text-gray-500">
-          {helpOptions[helpContent]}
-        </p>
-      </div>
+      {children ? (
+        children
+      ) : (
+        <div
+          className="absolute top-0 left-0 bg-white p-2 rounded"
+          style={
+            followMouse
+              ? {
+                  top: (mousePosition.y ?? 0) + 8 + "px",
+                  left: (mousePosition.x ?? 0) + 8 + "px",
+                }
+              : {}
+          }
+        >
+          <div className=" bg-white">
+            <p className="text-sm text-center text-gray-500">
+              {helpOptions[helpContent]}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
