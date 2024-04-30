@@ -14,6 +14,8 @@ import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import InfoPanel from "./info-panel";
+import FloatingHelpBox from "./floating-help-box";
+import PopupBase from "./popup-base";
 
 export default function ClientMap({
   children,
@@ -71,6 +73,7 @@ export default function ClientMap({
           initialViewState={{ ...marker, zoom: 1.5 }}
           mapStyle="mapbox://styles/mapbox/standard"
           projection={{ name: "globe" }}
+          onClick={() => console.log("click")}
           onZoomEnd={onZoomEnd}
         >
           <FullscreenControl containerId="total-container"></FullscreenControl>
@@ -83,10 +86,28 @@ export default function ClientMap({
             setMarker={setMarker}
             setShowPopup={setShowPopup}
           ></MarkerBase>
+
           {showPopup && children}
 
           <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
+        <FloatingHelpBox followMouse delay={8000}></FloatingHelpBox>
+
+        {/*       
+        <FloatingHelpBox delay={1}>
+          <div className="absolute top-1/2 p-50 left-[4rem] bg-white p-2 rounded">
+            <p className="text-md text-gray-500">
+              Clique e arraste para girar o globo
+            </p>
+          </div>
+        </FloatingHelpBox>
+        <FloatingHelpBox delay={1}>
+          <div className="absolute top-1/2 p-50 right-[4rem] bg-white p-2 rounded">
+            <p className="text-md text-gray-500">
+              Clique e arraste o marcador para movê-lo para outro lugar
+            </p>
+          </div>
+        </FloatingHelpBox> */}
       </div>
     </>
   );
