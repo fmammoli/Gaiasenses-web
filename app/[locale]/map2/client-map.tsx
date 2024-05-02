@@ -21,10 +21,12 @@ export default function ClientMap({
   children,
   initialLatitude,
   initialLongitude,
+  helpTextOptions,
 }: {
   initialLatitude: number;
   initialLongitude: number;
   children?: ReactNode;
+  helpTextOptions: string[];
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -91,7 +93,11 @@ export default function ClientMap({
 
           <InfoPanel lat={marker.latitude} lng={marker.longitude}></InfoPanel>
         </Map>
-        <FloatingHelpBox followMouse delay={8000}></FloatingHelpBox>
+        <FloatingHelpBox
+          followMouse
+          delay={8000}
+          helpTextOptions={helpTextOptions}
+        ></FloatingHelpBox>
 
         {/*       
         <FloatingHelpBox delay={1}>

@@ -6,9 +6,15 @@ import { ReactNode, useState, AnimationEvent } from "react";
 export default function TitleScreen({
   children,
   show,
+  title,
+  subtitle,
+  titleButtonText,
 }: {
   children?: ReactNode;
   show: boolean;
+  title: string;
+  subtitle: string;
+  titleButtonText: string;
 }) {
   const [state, setState] = useState<"idle" | "animating" | "ended">(
     show === false ? "ended" : "idle"
@@ -34,12 +40,12 @@ export default function TitleScreen({
     >
       <div className="max-w-full  md:max-w-[40rem] self-center justify-self-center px-2">
         <h1 className="text-white font-extrabold leading-[0.7em] text-[5rem] md:text-[10rem]">
-          Gaia Senses
+          {title}
         </h1>
       </div>
       <div className=" self-center justify-self-center max-w-full  md:max-w-[40rem] px-2 ">
         <h2 className="text-white text-[2rem] md:text-[4rem] font-pop font-semibold leading-tight md:leading-[0.9em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)]">
-          Ressonâncias Climáticas
+          {subtitle}
         </h2>
       </div>
       <div className=" self-center justify-self-center max-w-full  md:max-w-[40rem] px-2 isolation-auto">
@@ -48,7 +54,7 @@ export default function TitleScreen({
           className="text-white text-[2rem] md:text-[2rem] font-pop font-semibold leading-tight md:leading-[0.9em] [text-shadow:_0px_1px_1px_rgba(255,255,255,0.6)] z-50"
           onClick={onClick}
         >
-          Iniciar
+          {titleButtonText}
         </Button>
       </div>
     </div>

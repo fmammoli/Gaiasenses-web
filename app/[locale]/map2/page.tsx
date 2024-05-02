@@ -8,12 +8,14 @@ import PopupBase from "./popup-base";
 import PopupLocationInfo from "./popup-location-info";
 import PopupWeatherInfo from "./popup-weather-info";
 import PopupButton from "./popup-button";
-import { Suspense } from "react";
-import FloatingHelpBox from "./floating-help-box";
+
+import { getTranslations } from "next-intl/server";
 
 export default async function Page({
+  params,
   searchParams,
 }: {
+  params: { locale: string };
   searchParams: {
     lat: string;
     lon: string;
@@ -29,7 +31,12 @@ export default async function Page({
   //then I transition title-screeen from black to white, thus transitioning like a fade.
 
   // Always show the initial title screen except when initial=false is present in search params
+  const t = await getTranslations("Index");
+
   const initial = searchParams.initial === "false" ? false : true;
+
+  searchParams.lat = searchParams.lat ?? "-22.8258628";
+  searchParams.lon = searchParams.lon ?? "-47.0771057";
 
   return (
     <>
@@ -38,6 +45,7 @@ export default async function Page({
           <ClientMap
             initialLatitude={Number(searchParams.lat)}
             initialLongitude={Number(searchParams.lon)}
+            helpTextOptions={[t("help-text-1"), t("help-text-2")]}
           >
             <PopupBase
               latitude={Number(searchParams.lat)}
@@ -47,10 +55,12 @@ export default async function Page({
                 <PopupLocationInfo
                   lat={searchParams.lat}
                   lon={searchParams.lon}
+                  lang={params.locale}
                 />
                 <PopupWeatherInfo
                   lat={searchParams.lat}
                   lon={searchParams.lon}
+                  lang={params.locale}
                 ></PopupWeatherInfo>
               </div>
 
@@ -90,7 +100,14 @@ export default async function Page({
           )}
         </div>
         <div className="col-start-1 row-start-1">
-          {initial && <TitleScreen show={initial}></TitleScreen>}
+          {initial && (
+            <TitleScreen
+              show={initial}
+              title={t("title")}
+              subtitle={t("subtitle")}
+              titleButtonText={t("titleButtonText")}
+            ></TitleScreen>
+          )}
         </div>
       </div>
     </>

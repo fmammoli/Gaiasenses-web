@@ -1,22 +1,8 @@
-const path = require("path");
-const CopyPlugin = require("copy-webpack-plugin");
+const createNextIntlPlugin = require("next-intl/plugin");
+
+const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  //reactStrictMode: true,
-  webpack: (config) => {
-    config.plugins.push(
-      new CopyPlugin({
-        patterns: [
-          {
-            from: "node_modules/leaflet/dist/images",
-            to: path.resolve(__dirname, "public", "leaflet"),
-          },
-        ],
-      })
-    );
-    return config;
-  },
-};
+const nextConfig = {};
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

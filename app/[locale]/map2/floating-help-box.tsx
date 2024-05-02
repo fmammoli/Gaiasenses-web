@@ -12,10 +12,12 @@ export default function FloatingHelpBox({
   followMouse,
   delay,
   children,
+  helpTextOptions,
 }: {
   followMouse?: boolean;
   delay: number;
   children?: ReactNode;
+  helpTextOptions: string[];
 }) {
   const [mousePosition, setMousePosition] = useState<{
     x: null | number;
@@ -91,7 +93,7 @@ export default function FloatingHelpBox({
         >
           <div className=" bg-white">
             <p className="text-sm text-center text-gray-500">
-              {helpOptions[helpContent]}
+              {helpTextOptions[helpContent]}
             </p>
           </div>
         </div>

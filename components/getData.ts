@@ -95,13 +95,14 @@ export async function getFireSpots(
 
 async function openWeather(
   lat: string | number,
-  lon: string | number
+  lon: string | number,
+  lang: string
 ): Promise<RainfallResponseData> {
   const part = "minutely,hourly,daily,alerts";
 
   try {
     const res = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric&lang=pt_br`,
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=${part}&appid=${process.env.OPEN_WEATHER_API_KEY}&units=metric&lang=${lang}`,
       { next: { revalidate: 7200 } }
     );
 
@@ -175,11 +176,15 @@ async function openWeather(
 
 export async function getWeather(
   lat: string | number,
-  lon: string | number
+  lon: string | number,
+  options = { lang: "pt_br" }
 ): Promise<RainfallResponseData> {
+  if (options && options.lang === "en") options.lang = "en_us";
+  if (options && options.lang === "pt") options.lang = "pt_br";
+
   //this is the old fetch, using satellite-fetcher API
   //return getData("rainfall", lat, lon);
-  return openWeather(lat, lon);
+  return openWeather(lat, lon, options.lang);
 }
 
 export async function getLightning(

@@ -11,11 +11,13 @@ import {
 export default async function PopupWeatherInfo({
   lat,
   lon,
+  lang = "pt",
 }: {
   lat: string | number;
   lon: string | number;
+  lang: string;
 }) {
-  const weatherData = await getWeather(lat, lon);
+  const weatherData = await getWeather(lat, lon, { lang: lang });
 
   return (
     <div className="mt-2 ">

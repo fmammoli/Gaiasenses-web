@@ -3,12 +3,19 @@ import { reverseGeocode } from "@/components/getData";
 export default async function PopupLocationInfo({
   lat,
   lon,
+  lang = "pt",
 }: {
   lat: string | number;
   lon: string | number;
+  lang: string;
 }) {
   const reverseGeocodeData = await reverseGeocode(lat, lon);
-  const regionNames = new Intl.DisplayNames(["pt-br"], { type: "region" });
+  if (lang === "en") lang = "en-us";
+  if (lang === "pt") lang = "pt-br";
+
+  const regionNames = new Intl.DisplayNames([lang], {
+    type: "region",
+  });
   if (reverseGeocodeData) {
     return (
       <div>
