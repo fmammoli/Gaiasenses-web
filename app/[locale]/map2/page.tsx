@@ -66,7 +66,7 @@ export default async function Page({
 
               <PopupButton compositionName={searchParams.compositionName}>
                 <p>
-                  Clique para ver{" "}
+                  {t("compositionButton")}
                   <span className="capitalize">
                     {searchParams.compositionName}
                   </span>

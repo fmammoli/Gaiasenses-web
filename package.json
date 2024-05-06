@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.4",
     "@p5-wrapper/next": "^1.0.3",
     "@p5-wrapper/react": "^4.4.0",
     "@radix-ui/react-collapsible": "^1.0.3",
@@ -25,6 +26,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.284.0",
     "mapbox-gl": "^3.3.0",
+    "negotiator": "^0.6.3",
     "next": "14.2.3",
     "next-intl": "^3.12.0",
     "next-themes": "^0.2.1",
@@ -35,7 +37,6 @@
     "react-h5-audio-player": "^3.9.1",
     "react-leaflet": "^4.2.1",
     "react-map-gl": "^7.1.7",
-    "react-spring": "^9.7.3",
     "sharp": "^0.32.6",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
@@ -46,6 +47,7 @@
     "@types/audioworklet": "^0.0.50",
     "@types/leaflet": "^1.9.12",
     "@types/mapbox-gl": "^2.7.21",
+    "@types/negotiator": "^0.6.3",
     "@types/node": "^20.12.7",
     "@types/p5": "^1.7.6",
     "@types/react": "^18.3.1",

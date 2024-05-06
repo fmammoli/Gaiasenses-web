@@ -1,5 +1,4 @@
 import "../globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { AudioContextProvider } from "@/hooks/webpd-context";

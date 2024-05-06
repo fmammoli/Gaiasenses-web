@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function RootPage() {
-  redirect("/en/map2");
+  redirect("/pt/map2");
 }

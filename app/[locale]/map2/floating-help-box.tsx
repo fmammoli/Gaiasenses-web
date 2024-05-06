@@ -24,7 +24,7 @@ export default function FloatingHelpBox({
     y: null | number;
   }>({ x: null, y: null });
 
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const [helpContent, setHelpContent] = useState<0 | 1>(0);
 
   const { timeoutRef: timeout, restart: restartTimeout } = useTimeout(
@@ -85,8 +85,8 @@ export default function FloatingHelpBox({
           style={
             followMouse
               ? {
-                  top: (mousePosition.y ?? 0) + 8 + "px",
-                  left: (mousePosition.x ?? 0) + 8 + "px",
+                  top: (mousePosition.y ?? 200) + 8 + "px",
+                  left: (mousePosition.x ?? 200) + 8 + "px",
                 }
               : {}
           }

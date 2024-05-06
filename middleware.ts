@@ -1,15 +1,43 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
 import createMiddleware from "next-intl/middleware";
+import Negotiator from "negotiator";
+import { match } from "@formatjs/intl-localematcher";
 
 export default createMiddleware({
   // A list of all locales that are supported
-  locales: ["en", "pt"],
+  locales: ["pt", "en"],
 
   // Used when no locale matches
-  defaultLocale: "en",
+  defaultLocale: "pt",
 });
+
+//Not working yet
+//Too many redirects
+// export function middleware(request: NextRequest) {
+//   if (request.nextUrl.pathname.split("/").slice(-1)[0] === "map2") {
+//     const header = {
+//       "accept-language": request.headers.get("accept-language") ?? "en",
+//     };
+//     const languages = new Negotiator({ headers: header }).languages();
+//     const locales = ["pt", "en"];
+//     const defaultLocale = "en";
+
+//     const res = match(languages, locales, defaultLocale);
+
+//     const { protocol, host, pathname, searchParams } = request.nextUrl;
+//     const lastPathnameItem = pathname.split("/").slice(-1)[0];
+//     const newSearchParams =
+//       searchParams.size > 0 ? `?${searchParams.toString()}` : "";
+
+//     const urlString = `${protocol}//${host}/${res}/${lastPathnameItem}${newSearchParams}`;
+
+//     const response = NextResponse.redirect(new URL(urlString));
+//     return response;
+//   }
+//   return NextResponse.redirect(new URL(request.nextUrl.toString()));
+// }
 
 // export function middleware(request: NextRequest) {
 //   console.log("Middleware start");
