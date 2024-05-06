@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/card";
 import { AvailableCompositionNames } from "@/components/compositions/compositions-info";
 
-import lluviaThumb from "../public/lluvia.png";
-import colorFlowerThumb from "../public/color-flower.png";
-import zigzagThumb from "../public/zig-zag.png";
-import stormEyeThumb from "../public/storm-eye.png";
+import lluviaThumb from "../../public/lluvia.png";
+import colorFlowerThumb from "../../public/color-flower.png";
+import zigzagThumb from "../../public/zig-zag.png";
+import stormEyeThumb from "../../public/storm-eye.png";
 
 import {
   getWeather,
