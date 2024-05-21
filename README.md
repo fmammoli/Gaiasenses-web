@@ -1,5 +1,21 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Installing
+
+Install dependencies:
+```bash
+npm install
+# or
+pnpm install
+```
+
+Then, create the enviornmental variables for OpenWeather API and MapBox API.
+On your root folder, create the file `.env.local`:
+```
+OPEN_WEATHER_API_KEY= open weather API key
+NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN= MapBox API public access token
+```
+
 ## Getting Started
 
 First, run the development server:
