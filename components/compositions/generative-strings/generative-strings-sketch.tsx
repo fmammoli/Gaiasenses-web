@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-
 import p5Types from "p5";
 
 //This wrapper was found in https://aleksati.net/posts/how-to-use-p5js-with-nextjs-in-2024
