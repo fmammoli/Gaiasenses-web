@@ -289,10 +289,9 @@ const sketch: P5jsSketch = (p, parentRef, temp) => {
     p5.noStroke();
     p5.fill(255, 255, 255, 200);
     p5.textSize(14);
-    p5.text("Press Mouse to Release more balls.", 20, 30);
     p5.textSize(10);
     p5.fill(255, 255, 255, 100);
-    p5.text("Created by Che-Yu Wu\n2018/10/21", 20, 50);
+    
     p5.pop();
 
     p5.noFill();

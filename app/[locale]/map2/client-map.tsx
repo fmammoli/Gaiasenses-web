@@ -15,19 +15,20 @@ import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import InfoPanel from "./info-panel";
 import FloatingHelpBox from "./floating-help-box";
-import PopupBase from "./popup-base";
 
 export default function ClientMap({
   children,
   initialLatitude,
   initialLongitude,
   helpTextOptions,
-}: {
+  initialShowPopup,
+}: Readonly<{
   initialLatitude: number;
   initialLongitude: number;
   children?: ReactNode;
   helpTextOptions: string[];
-}) {
+  initialShowPopup: boolean
+}>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function ClientMap({
     longitude: initialLongitude,
   });
 
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(initialShowPopup);
 
   //make a slow pitch, it increases as it zooms from a specific zoom value
   const onZoomEnd = (e: ViewStateChangeEvent) => {
@@ -65,10 +66,10 @@ export default function ClientMap({
     newSearchParams.set("lon", e.coords.longitude.toString());
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
-
+  console.log(showPopup)
+  
   return (
-    <>
-      <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
+    <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
@@ -115,6 +116,5 @@ export default function ClientMap({
           </div>
         </FloatingHelpBox> */}
       </div>
-    </>
   );
 }

@@ -32,7 +32,7 @@ export default function FadeContainer({
         newParams.set("initial", "false");
         const timeout = setTimeout(() => {
           router.replace(`${pathname}?${newParams.toString()}`);
-        }, 60000);
+        }, 60000 * 5);
         return () => {
           clearTimeout(timeout);
         };

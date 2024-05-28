@@ -38,14 +38,17 @@ export default async function Page({
   searchParams.lat = searchParams.lat ?? "-22.8258628";
   searchParams.lon = searchParams.lon ?? "-47.0771057";
 
+  const initialShowPopup = searchParams.compositionName && !initial ? true : false
+
+  console.log(initialShowPopup)
   return (
-    <>
-      <div className="grid grid-cols-1 grid-rows-1 min-h-svh">
+    <div className="grid grid-cols-1 grid-rows-1 min-h-svh">
         <div className="col-start-1 row-start-1">
           <ClientMap
             initialLatitude={Number(searchParams.lat)}
             initialLongitude={Number(searchParams.lon)}
             helpTextOptions={[t("help-text-1"), t("help-text-2")]}
+            initialShowPopup={initialShowPopup}
           >
             <PopupBase
               latitude={Number(searchParams.lat)}
@@ -110,6 +113,5 @@ export default async function Page({
           )}
         </div>
       </div>
-    </>
   );
 }

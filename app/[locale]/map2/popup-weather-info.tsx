@@ -12,11 +12,11 @@ export default async function PopupWeatherInfo({
   lat,
   lon,
   lang = "pt",
-}: {
+}: Readonly<{
   lat: string | number;
   lon: string | number;
   lang: string;
-}) {
+}>) {
   const weatherData = await getWeather(lat, lon, { lang: lang });
 
   return (
