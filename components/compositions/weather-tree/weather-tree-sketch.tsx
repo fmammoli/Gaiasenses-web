@@ -1,5 +1,5 @@
 "use client";
-import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
 export type WeatherTreeSketchProps = {
