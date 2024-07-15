@@ -66,7 +66,7 @@ export default function ClientMap({
     newSearchParams.set("lon", e.coords.longitude.toString());
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
-  console.log(showPopup)
+  //console.log(showPopup)
   
   return (
     <div className={`h-svh relative isolate bg-black`} id={"total-container"}>

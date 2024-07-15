@@ -43,7 +43,7 @@ export default function CountrySelect() {
       );
     }
   }
-  console.log(initial);
+  //console.log(initial);
   return (
     <Combobox
       options={options}

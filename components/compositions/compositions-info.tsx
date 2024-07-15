@@ -1,4 +1,3 @@
-import Bonfire from "./bonfire/bonfire";
 import ChaosTree from "./chaos-tree/chaos-tree";
 import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
@@ -20,7 +19,6 @@ export type AvailableCompositionNames =
   | "colorFlower"
   | "stormEye"
   | "curves"
-  | "bonfire"
   | "chaosTree"
   | "cloudBubble"
   | "digitalOrganism"
@@ -35,7 +33,6 @@ export type AvailableCompositionComponents =
   | typeof Lluvia
   | typeof Zigzag
   | typeof Curves
-  | typeof Bonfire
   | typeof ChaosTree
   | typeof CloudBubble
   | typeof DigitalOrganism
@@ -92,13 +89,6 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Curves,
     endpoints: ["rainfall"],
     thumb: "curves.png",
-  },
-  bonfire: {
-    name: "bonfire",
-    attributes: ["fireCount"],
-    Component: Bonfire,
-    endpoints: ["fire"],
-    thumb: "bonfire.png",
   },
   chaosTree: {
     name: "chaosTree",

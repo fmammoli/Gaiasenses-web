@@ -5,9 +5,39 @@ import {
   type ReactNode,
   type SetStateAction,
   useCallback,
+  useState,
 } from "react";
 import { Marker, type MarkerDragEvent } from "react-map-gl";
 import CompositionsInfo from "@/components/compositions/compositions-info";
+
+function* shuffle(array: any[]) {
+
+  var i = array.length;
+
+  while (i--) {
+      const rand = Math.random() * (i+1)
+      console.log(rand)
+      yield array.splice(Math.floor(rand), 1)[0];
+  }
+
+}
+
+const comps = Object.entries(CompositionsInfo).filter((item) => {
+  if (
+    item[0] === "zigzag" ||
+    item[0] === "stormEye" ||
+    item[0] === "curves" ||
+    item[0] === "bonfire" ||
+    item[0] === "digitalOrganism" ||
+    item[0] === "mudflatScatter" ||
+    item[0] === "cloudBubble" ||
+    item[0] === "paintBrush" ||
+    item[0] === "generativeStrings"
+  ) {
+    return item;
+  }
+});
+
 
 export default function MarkerBase({
   children,
@@ -27,6 +57,8 @@ export default function MarkerBase({
   >;
   setShowPopup: Dispatch<SetStateAction<boolean>>;
 }) {
+  
+  const [shuffled, setShuffled] = useState(shuffle([...comps]))
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -55,30 +87,15 @@ export default function MarkerBase({
   const onMarkerDragEnd = useCallback(
     async (event: MarkerDragEvent) => {
       setShowPopup(true);
-      const comps = Object.entries(CompositionsInfo).filter((item) => {
-        if (
-          item[0] === "zigzag" ||
-          item[0] === "stormEye" ||
-          item[0] === "curves" ||
-          item[0] === "bonfire" ||
-          item[0] === "digitalOrganism" ||
-          item[0] === "mudflatScatter" ||
-          item[0] === "cloudBubble" ||
-          item[0] === "paintBrush" ||
-          item[0] === "generativeStrings"
-        ) {
-          return item;
-        }
-      });
-
-      const randomComposition =
-        comps[Math.floor(Math.random() * Object.entries(comps).length)][1];
-
-      // logEvents((_events) => ({
-      //   ..._events,
-      //   onDragEnd: event.lngLat as LngLat,
-      // }));
-
+      let randomComposition = shuffled.next().value
+      
+      if(randomComposition === undefined){
+        console.log("is undefiend")
+        const newShuffle = shuffle([...comps])
+        randomComposition = newShuffle.next().value
+        setShuffled(newShuffle)
+      }
+      
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set("initial", "false");
 
@@ -86,10 +103,10 @@ export default function MarkerBase({
       const lngLat = event.lngLat.wrap();
       newSearchParams.set("lat", lngLat.lat.toString());
       newSearchParams.set("lon", lngLat.lng.toString());
-      newSearchParams.set("compositionName", randomComposition.name);
+      newSearchParams.set("compositionName", randomComposition[1].name);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     },
-    [pathname, searchParams, router, setShowPopup]
+    [pathname, searchParams, router, setShowPopup, shuffled, setShuffled]
   );
 
   return (
