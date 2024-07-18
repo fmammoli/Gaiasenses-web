@@ -23,6 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^0.2.1",
+    "joy-con-webhid": "^0.7.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.284.0",
     "mapbox-gl": "^3.3.0",

@@ -1,20 +1,21 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 
-import Map, {
+import {Map,
   FullscreenControl,
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import type { ViewStateChangeEvent, GeolocateResultEvent } from "react-map-gl";
+import type { ViewStateChangeEvent, GeolocateResultEvent, MapRef } from "react-map-gl";
 
 import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import InfoPanel from "./info-panel";
 import FloatingHelpBox from "./floating-help-box";
+import Rotate from "./rotate";
 
 export default function ClientMap({
   children,
@@ -32,13 +33,14 @@ export default function ClientMap({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  const mapRef = useRef<MapRef | null>(null)
   const [marker, setMarker] = useState({
     latitude: initialLatitude,
     longitude: initialLongitude,
   });
 
   const [showPopup, setShowPopup] = useState(initialShowPopup);
+
 
   //make a slow pitch, it increases as it zooms from a specific zoom value
   const onZoomEnd = (e: ViewStateChangeEvent) => {
@@ -68,6 +70,8 @@ export default function ClientMap({
   }
   //console.log(showPopup)
   
+  const [isInteracting, setIsInteracting] = useState(false)
+
   return (
     <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
         <Map
@@ -78,7 +82,10 @@ export default function ClientMap({
           projection={{ name: "globe" }}
           onClick={() => console.log("click")}
           onZoomEnd={onZoomEnd}
-        >
+          ref={mapRef}
+          
+        > 
+          <Rotate shouldRotate={false}></Rotate>
           <FullscreenControl containerId="total-container"></FullscreenControl>
           <LightControl></LightControl>
           <NavigationControl></NavigationControl>
