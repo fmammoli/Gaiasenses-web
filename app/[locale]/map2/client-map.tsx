@@ -69,8 +69,10 @@ export default function ClientMap({
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
   //console.log(showPopup)
-  
-  const [isInteracting, setIsInteracting] = useState(false)
+
+  function rotateMarker(lat: number, lng:number){
+    setMarker({latitude:lat, longitude:lng})
+  }
 
   return (
     <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
@@ -85,7 +87,7 @@ export default function ClientMap({
           ref={mapRef}
           
         > 
-          <Rotate shouldRotate={false}></Rotate>
+          <Rotate shouldRotate={false} setMarker={rotateMarker}></Rotate>
           <FullscreenControl containerId="total-container"></FullscreenControl>
           <LightControl></LightControl>
           <NavigationControl></NavigationControl>

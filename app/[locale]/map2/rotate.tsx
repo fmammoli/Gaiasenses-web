@@ -5,7 +5,7 @@ import { useMap } from "react-map-gl"
 import * as JoyCon from "joy-con-webhid"
 
 
-export default function Rotate({shouldRotate = true}:{shouldRotate: boolean}){
+export default function Rotate({shouldRotate = true, setMarker}:{shouldRotate: boolean, setMarker:(lat:number, lng:number)=>void}){
     const userInterationRef = useRef(false)
     const lastInteraction = useRef(Date.now())
     //const [lastInteraction, setLastInteraction] = useState(new Date())
@@ -181,6 +181,7 @@ export default function Rotate({shouldRotate = true}:{shouldRotate: boolean}){
                     //center.lat = beta;
                     
                     mapRef.current.setCenter(center);
+                    setMarker(center.lat, center.lng)
                    }
                 }
               });
