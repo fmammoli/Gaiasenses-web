@@ -1,21 +1,48 @@
 "use client";
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import {Map,
   FullscreenControl,
   NavigationControl,
   GeolocateControl,
+  Marker,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import type { ViewStateChangeEvent, GeolocateResultEvent, MapRef } from "react-map-gl";
 
-import MarkerBase from "./marker-base";
 import LightControl from "./light-control";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import InfoPanel from "./info-panel";
 import FloatingHelpBox from "./floating-help-box";
 import Rotate from "./rotate";
+import CompositionsInfo from "@/components/compositions/compositions-info";
+
+function* shuffle(array: any[]) {
+  var i = array.length;
+  while (i--) {
+      const rand = Math.random() * (i+1)
+      yield array.splice(Math.floor(rand), 1)[0];
+  }
+
+}
+
+const comps = Object.entries(CompositionsInfo).filter((item) => {
+  if (
+    item[0] === "zigzag" ||
+    item[0] === "stormEye" ||
+    item[0] === "curves" ||
+    item[0] === "bonfire" ||
+    item[0] === "digitalOrganism" ||
+    item[0] === "mudflatScatter" ||
+    item[0] === "cloudBubble" ||
+    item[0] === "paintBrush" ||
+    item[0] === "generativeStrings"
+  ) {
+    return item;
+  }
+});
+
 
 export default function ClientMap({
   children,
@@ -34,10 +61,7 @@ export default function ClientMap({
   const searchParams = useSearchParams();
   const router = useRouter();
   const mapRef = useRef<MapRef | null>(null)
-  const [marker, setMarker] = useState({
-    latitude: initialLatitude,
-    longitude: initialLongitude,
-  });
+  const [marker, setMarker] = useState<{latitude:number, longitude: number}>({latitude: 0, longitude: 0});
 
   const [showPopup, setShowPopup] = useState(initialShowPopup);
 
@@ -68,36 +92,81 @@ export default function ClientMap({
     newSearchParams.set("lon", e.coords.longitude.toString());
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
-  //console.log(showPopup)
 
-  function rotateMarker(lat: number, lng:number){
-    setMarker({latitude:lat, longitude:lng})
-  }
+  const prevMarker = useRef<{ latitude?: number; longitude?: number; } | null>(null);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const [shuffled, setShuffled] = useState(shuffle([...comps]))
+
+  useEffect(()=>{
+    console.log("new Marker position")
+    if(timerRef.current){
+      clearTimeout(timerRef.current)
+    }
+    prevMarker.current = {...marker}
+
+    timerRef.current = setTimeout(()=>{
+      if(prevMarker.current && marker && 
+        prevMarker.current.latitude === marker.latitude && 
+        prevMarker.current.longitude === marker.longitude){
+          console.log("marker have not moved for 5 seconds")
+          setShowPopup(true)
+
+          let randomComposition = shuffled.next().value
+      
+          if(randomComposition === undefined){
+            console.log("is undefiend")
+            const newShuffle = shuffle([...comps])
+            randomComposition = newShuffle.next().value
+            setShuffled(newShuffle)
+          }
+
+          const newSearchParams = new URLSearchParams(searchParams.toString());
+          newSearchParams.set("initial", "false");
+
+          newSearchParams.set("lat", marker.latitude.toString());
+          newSearchParams.set("lon", marker.longitude.toString());
+          newSearchParams.set("compositionName", "zigzag");
+          router.replace(`${pathname}?${newSearchParams.toString()}`);
+
+      }
+      console.log("moved")
+    }, 3000);
+
+  },[marker, pathname, router, searchParams, shuffled])
 
   return (
     <div className={`h-svh relative isolate bg-black`} id={"total-container"}>
         <Map
           reuseMaps
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN}
-          initialViewState={{ ...marker, zoom: 1.5 }}
+          initialViewState={{ ...marker, zoom: 1.5}}
           mapStyle="mapbox://styles/mapbox/standard"
           projection={{ name: "globe" }}
-          onClick={() => console.log("click")}
           onZoomEnd={onZoomEnd}
           ref={mapRef}
+          onDblClick={(e)=>{
+            setMarker({latitude: e.lngLat.lat, longitude: e.lngLat.wrap().lng})
+            console.log(mapRef)
+            mapRef.current?.easeTo({center:e.lngLat.wrap()})
+          }}
+          doubleClickZoom={false}
+          onMove={(e)=>{
+            console.log("moving")
+            const center = e.target.getCenter();
+            setMarker({latitude: parseInt(center.lat.toString()), longitude: parseInt(center.lng.toString())})
+            setShowPopup(false)
+          }}
           
         > 
-          <Rotate shouldRotate={false} setMarker={rotateMarker}></Rotate>
+          <Rotate></Rotate>
           <FullscreenControl containerId="total-container"></FullscreenControl>
           <LightControl></LightControl>
           <NavigationControl></NavigationControl>
           <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
-          <MarkerBase
-            longitude={marker.longitude}
-            latitude={marker.latitude}
-            setMarker={setMarker}
-            setShowPopup={setShowPopup}
-          ></MarkerBase>
+          
+          <Marker longitude={marker.longitude} latitude={marker.latitude}></Marker>
 
           {showPopup && children}
 
