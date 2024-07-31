@@ -107,30 +107,33 @@ export default function ClientMap({
     prevMarker.current = {...marker}
 
     timerRef.current = setTimeout(()=>{
-      if(prevMarker.current && marker && 
-        prevMarker.current.latitude === marker.latitude && 
-        prevMarker.current.longitude === marker.longitude){
-          console.log("marker have not moved for 5 seconds")
-          setShowPopup(true)
-
-          let randomComposition = shuffled.next().value
-      
-          if(randomComposition === undefined){
-            console.log("is undefiend")
-            const newShuffle = shuffle([...comps])
-            randomComposition = newShuffle.next().value
-            setShuffled(newShuffle)
-          }
-
-          const newSearchParams = new URLSearchParams(searchParams.toString());
-          newSearchParams.set("initial", "false");
-
-          newSearchParams.set("lat", marker.latitude.toString());
-          newSearchParams.set("lon", marker.longitude.toString());
-          newSearchParams.set("compositionName", "zigzag");
-          router.replace(`${pathname}?${newSearchParams.toString()}`);
-
+      if(searchParams.get("mode") !== "composition" && showPopup === false){
+        if(prevMarker.current && marker && 
+          prevMarker.current.latitude === marker.latitude && 
+          prevMarker.current.longitude === marker.longitude){
+            console.log("marker have not moved for 5 seconds")
+            setShowPopup(true)
+  
+            let randomComposition = shuffled.next().value
+        
+            if(randomComposition === undefined){
+              console.log("is undefiend")
+              const newShuffle = shuffle([...comps])
+              randomComposition = newShuffle.next().value
+              setShuffled(newShuffle)
+            }
+  
+            const newSearchParams = new URLSearchParams(searchParams.toString());
+            newSearchParams.set("initial", "false");
+  
+            newSearchParams.set("lat", marker.latitude.toString());
+            newSearchParams.set("lon", marker.longitude.toString());
+            newSearchParams.set("compositionName", randomComposition[1].name);
+            router.replace(`${pathname}?${newSearchParams.toString()}`);
+  
+        }
       }
+      
       console.log("moved")
     }, 3000);
 
@@ -156,7 +159,10 @@ export default function ClientMap({
             console.log("moving")
             const center = e.target.getCenter();
             setMarker({latitude: parseInt(center.lat.toString()), longitude: parseInt(center.lng.toString())})
-            setShowPopup(false)
+            if(showPopup) {
+              setShowPopup(false)
+            }
+            
           }}
           
         > 
@@ -177,22 +183,6 @@ export default function ClientMap({
           delay={8000}
           helpTextOptions={helpTextOptions}
         ></FloatingHelpBox>
-
-        {/*       
-        <FloatingHelpBox delay={1}>
-          <div className="absolute top-1/2 p-50 left-[4rem] bg-white p-2 rounded">
-            <p className="text-md text-gray-500">
-              Clique e arraste para girar o globo
-            </p>
-          </div>
-        </FloatingHelpBox>
-        <FloatingHelpBox delay={1}>
-          <div className="absolute top-1/2 p-50 right-[4rem] bg-white p-2 rounded">
-            <p className="text-md text-gray-500">
-              Clique e arraste o marcador para movê-lo para outro lugar
-            </p>
-          </div>
-        </FloatingHelpBox> */}
       </div>
   );
 }
