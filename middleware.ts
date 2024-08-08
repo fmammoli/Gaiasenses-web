@@ -1,17 +1,42 @@
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
-
 import createMiddleware from "next-intl/middleware";
-import Negotiator from "negotiator";
-import { match } from "@formatjs/intl-localematcher";
+import { NextRequest, NextResponse } from "next/server";
+import pickRandomComposition from "./app/[locale]/map3/composition-picker";
 
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales: ["pt", "en"],
 
-  // Used when no locale matches
-  defaultLocale: "pt",
-});
+export default async function middleware(request: NextRequest){
+  // Step 1: Use the incoming request (example)
+  const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
+ 
+  const handleI18nRouting = createMiddleware({
+    locales: ["pt", "en"],
+    defaultLocale:"pt"
+  });
+  const {geo} = request;
+  const randomComposition = pickRandomComposition()
+
+  request.nextUrl.searchParams.set("lat",geo?.latitude || "-23.5528381")
+  request.nextUrl.searchParams.set("lng",geo?.longitude || "-46.6621533")
+  if(request.nextUrl.searchParams.get("composition") === null){
+    request.nextUrl.searchParams.set("composition", randomComposition)
+  }
+
+  console.log(JSON.stringify(request.nextUrl))
+  
+  const response = handleI18nRouting(request);
+  
+  response.headers.set("x-your-custom-locale", defaultLocale);
+  
+  return response
+
+}
+
+// export default createMiddleware({
+//   // A list of all locales that are supported
+//   locales: ["pt", "en"],
+
+//   // Used when no locale matches
+//   defaultLocale: "pt",
+// });
 
 //Not working yet
 //Too many redirects

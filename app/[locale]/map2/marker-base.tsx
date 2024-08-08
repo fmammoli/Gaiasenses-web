@@ -86,7 +86,7 @@ export default function MarkerBase({
 
   const onMarkerDragEnd = useCallback(
     async (event: MarkerDragEvent) => {
-      setShowPopup(true);
+      
       let randomComposition = shuffled.next().value
       
       if(randomComposition === undefined){
@@ -105,9 +105,15 @@ export default function MarkerBase({
       newSearchParams.set("lon", lngLat.lng.toString());
       newSearchParams.set("compositionName", randomComposition[1].name);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
+      setShowPopup(true);
     },
     [pathname, searchParams, router, setShowPopup, shuffled, setShuffled]
   );
+
+  function handleClick(){
+    console.log("marker clicked")
+    setShowPopup(true)
+  }
 
   return (
     <Marker
@@ -117,6 +123,7 @@ export default function MarkerBase({
       onDragStart={onMarkerDragStart}
       onDrag={onMarkerDrag}
       onDragEnd={onMarkerDragEnd}
+      onClick={handleClick}
     ></Marker>
   );
 }
