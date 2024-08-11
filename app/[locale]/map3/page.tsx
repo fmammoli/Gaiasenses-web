@@ -8,7 +8,7 @@ import TitleScreen from "../map2/title-screen";
 import { getTranslations } from "next-intl/server";
 
 
-export const compositionOptions = [
+const compositionOptions = [
   "zigzag",
   "stormEye",
   "curves",
