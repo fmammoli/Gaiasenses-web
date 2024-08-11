@@ -162,11 +162,13 @@ export default function ClientMap({
             if(showPopup) {
               setShowPopup(false)
             }
-            
           }}
-          
+          onIdle={()=>console.log("idle")}
         > 
           <Rotate></Rotate>
+
+          
+          
           <FullscreenControl containerId="total-container"></FullscreenControl>
           <LightControl></LightControl>
           <NavigationControl></NavigationControl>
