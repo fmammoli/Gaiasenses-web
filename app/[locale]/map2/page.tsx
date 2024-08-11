@@ -48,7 +48,7 @@ export default async function Page({
             initialLatitude={Number(searchParams.lat)}
             initialLongitude={Number(searchParams.lon)}
             helpTextOptions={[t("help-text-1"), t("help-text-2")]}
-            initialShowPopup={initialShowPopup}
+            initialShowPopup={true}
           >
             <PopupBase
               latitude={Number(searchParams.lat)}

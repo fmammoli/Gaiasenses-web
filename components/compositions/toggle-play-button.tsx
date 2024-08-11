@@ -38,7 +38,7 @@ export default function TogglePlayButton({
     newParams.set("mode", "map");
     //newParams.delete("compositionName");
     //newParams.set("play", "false");
-    newParams.set("today", "false");
+    //newParams.set("today", "true");
     newParams.set("initial", "false");
     router.replace(`${pathname}?${newParams.toString()}`);
   }

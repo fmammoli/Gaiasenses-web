@@ -76,8 +76,9 @@ export default function ClientMap({
           initialViewState={{ ...marker, zoom: 1.5 }}
           mapStyle="mapbox://styles/mapbox/standard"
           projection={{ name: "globe" }}
-          onClick={() => console.log("click")}
           onZoomEnd={onZoomEnd}
+          onIdle={()=>console.log("idle")}
+          
         >
           <FullscreenControl containerId="total-container"></FullscreenControl>
           <LightControl></LightControl>
