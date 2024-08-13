@@ -23,6 +23,10 @@ export default async function middleware(request: NextRequest){
     request.nextUrl.searchParams.set("composition", "stormEye")
   }
 
+  if(request.nextUrl.searchParams.get("mode") === null){
+    request.nextUrl.searchParams.set("mode", "map")
+  }
+
   //console.log(JSON.stringify(request.nextUrl))
   
   const response = handleI18nRouting(request);
