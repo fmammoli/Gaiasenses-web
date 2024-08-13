@@ -41,8 +41,8 @@ const comps = Object.entries(CompositionsInfo).filter((item) => {
 
 export default function MarkerBase({
   children,
-  latitude,
-  longitude,
+  latitude = 0,
+  longitude = 0,
   setMarker,
   setShowPopup,
 }: {

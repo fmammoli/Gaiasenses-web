@@ -16,6 +16,8 @@ import Map, {
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
+import JoyconConnectButton from "../switch/joycon-connect-button";
+import Rotate from "../map2/rotate";
 import JoyconControls from "../switch/joycon-controls";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -42,7 +44,7 @@ function* shuffle(array: any[]) {
 
   while (i--) {
       const rand = Math.random() * (i+1)
-      console.log(rand)
+      //console.log(rand)
       yield array.splice(Math.floor(rand), 1)[0];
   }
 }
@@ -66,24 +68,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
 
   const mapRef = useRef<MapRef>(null);
 
-  function handleDrag(event: MarkerDragEvent) {
-    clearTimeout(idleTimer!);
-    setIsIdle(false);
-    
-    clearTimeout(idleTimerRedirect!);
-    setIsIdleRedirect(false);
-
-    const wrappedLatLng = event.lngLat.wrap()
-    console.log(mapRef.current)
-    
-    setLatlng([wrappedLatLng.lat, wrappedLatLng.lng])
-    
-  }
-
-  function handleDragStart() {
-    setShowPopup(false);
-  }
-
   function updatePopupPosition(lat:number, lng:number){
     const newSearchParams = new URLSearchParams(searchParams.toString());
     
@@ -93,7 +77,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     let randomComposition = shuffled.next().value
 
     if(randomComposition === undefined){
-      console.log("is undefiend")
       const newShuffle = shuffle([...comps])
       randomComposition = newShuffle.next().value
       setShuffled(newShuffle)
@@ -106,7 +89,23 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
 
     setIdleTimerRedirect(setTimeout(()=>{
       setIsIdleRedirect(true)
-    }, 10000))
+    }, 7000))
+  }
+
+  function handleDrag(event: MarkerDragEvent) {
+    clearTimeout(idleTimer!);
+    setIsIdle(false);
+    
+    clearTimeout(idleTimerRedirect!);
+    setIsIdleRedirect(false);
+
+    const wrappedLatLng = event.lngLat.wrap()
+
+    setLatlng([wrappedLatLng.lat, wrappedLatLng.lng])
+  }
+
+  function handleDragStart() {
+    setShowPopup(false);
   }
 
   function handleDragEnd(event: MarkerDragEvent){
@@ -134,11 +133,20 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
   const [isIdleRedirect, setIsIdleRedirect] = useState(false)
   const [idleTimerRedirect, setIdleTimerRedirect] = useState<NodeJS.Timeout | null>(null)
 
+
+  const [isIdlePopup, setIsIdlePopup] = useState(false)
+  const [idleTimerPopup, setIdleTimerPopup] = useState<NodeJS.Timeout | null>(null)
+
   function handleIdle(){
     console.log("idle")
     setIdleTimer(setTimeout(()=>{
-      setIsIdle(true)
-    }, 30000))
+      setIsIdle(true);
+    }, 30000));
+
+    setIdleTimerPopup(setTimeout(()=>{
+      setIsIdlePopup(true);
+      updatePopupPosition(latlng[0], latlng[1])
+    }, 3000));
   }
 
   function handleMove(e: ViewStateChangeEvent){
@@ -148,14 +156,25 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     clearTimeout(idleTimerRedirect!)
     setIsIdleRedirect(false)
     
+    clearTimeout(idleTimerPopup!)
+    setIsIdlePopup(false)
+    setShowPopup(false)
+    
+    if(searchParams.get("mode") === "player"){
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set("mode","map");
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+    }
+    
+
     const center = e.target.getCenter();
     setLatlng([parseFloat(center.lat.toString()), parseFloat(center.lng.toString())])
-    setShowPopup(false)
   }
 
   function handleMoveEnd(e:ViewStateChangeEvent) {
     const lngLat = e.target.getCenter().wrap()
-    updatePopupPosition(lngLat.lat, lngLat.lng);
+    setLatlng([lngLat.lat, lngLat.lng]);
+    console.log("move end")
   }
 
   useEffect(()=>{
@@ -163,6 +182,12 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
       console.log("isIdle for 5s")
     }
   },[isIdle])
+
+  useEffect(()=>{
+    if(isIdlePopup){
+      console.log("isIdle should show Popup")
+    }
+  },[isIdlePopup])
 
   useEffect(()=>{
     if(isIdleRedirect){
@@ -187,6 +212,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
           <p className="w-8">|</p>
           <p className="w-40">Lng: {latlng[1].toFixed(8)}</p>
         </div>
+        <JoyconConnectButton></JoyconConnectButton>
       </div>
       <div>
         <AnimatePresence>
@@ -215,6 +241,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         onIdle={handleIdle}
         onMoveEnd={handleMoveEnd}
       >
+        <JoyconControls></JoyconControls>
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
@@ -233,7 +260,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
           }}
         ></Marker>
         
-        {showPopup && (
+        {isIdlePopup && (
           <Popup latitude={latlng[0]} longitude={latlng[1]}
             anchor="bottom"
             offset={36}

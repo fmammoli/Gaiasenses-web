@@ -38,9 +38,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.0.2(@types/react@18.3.2)(react@18.3.1)
-      '@tanstack/react-query':
-        specifier: ^5.51.23
-        version: 5.51.23(react@18.3.1)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -53,6 +50,9 @@ importers:
       framer-motion:
         specifier: ^11.3.24
         version: 11.3.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      joy-con-webhid:
+        specifier: ^0.7.0
+        version: 0.7.0
       lucide-react:
         specifier: ^0.284.0
         version: 0.284.0(react@18.3.1)
@@ -89,6 +89,9 @@ importers:
       react-map-gl:
         specifier: ^7.1.7
         version: 7.1.7(mapbox-gl@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-three-map:
+        specifier: ^0.8.2
+        version: 0.8.2(@react-three/fiber@8.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.167.1))(mapbox-gl@3.3.0)(react-map-gl@7.1.7(mapbox-gl@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(three@0.167.1)
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
@@ -102,8 +105,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(tailwindcss@3.4.3)
       use-debounce:
-        specifier: ^10.0.2
-        version: 10.0.2(react@18.3.1)
+        specifier: ^9.0.4
+        version: 9.0.4(react@18.3.1)
     devDependencies:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.51.15
@@ -784,6 +787,31 @@ packages:
   '@radix-ui/rect@1.0.1':
     resolution: {integrity: sha512-fyrgCaedtvMg9NK3en0pnOYJdtfwxUcNolezkNPUsoX57X8oQk+NkqcvzHXD2uKNij6GXmWU9NDru2IWjrO4BQ==}
 
+  '@react-three/fiber@8.17.5':
+    resolution: {integrity: sha512-7uqtTWQrNIKW6wbgF0CQiDuo7uHoRd96lGBKsdRa+j/s268kqO4MBsxynLUpg6F/+mir5SEt9zJ3Up+lOjz/dg==}
+    peerDependencies:
+      expo: '>=43.0'
+      expo-asset: '>=8.4'
+      expo-file-system: '>=11.0'
+      expo-gl: '>=11.0'
+      react: '>=18.0'
+      react-dom: '>=18.0'
+      react-native: '>=0.64'
+      three: '>=0.133'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      expo-asset:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-gl:
+        optional: true
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+
   '@rushstack/eslint-patch@1.10.3':
     resolution: {integrity: sha512-qC/xYId4NMebE6w/V33Fh9gWxLgURiNYgVNObbJl2LZv0GUUItCcCqC5axQSwRaAgaxl2mELq1rMzlswaQ0Zxg==}
 
@@ -798,16 +826,11 @@ packages:
     peerDependencies:
       eslint: ^8 || ^9
 
-  '@tanstack/query-core@5.51.21':
-    resolution: {integrity: sha512-POQxm42IUp6n89kKWF4IZi18v3fxQWFRolvBA6phNVmA8psdfB1MvDnGacCJdS+EOX12w/CyHM62z//rHmYmvw==}
-
-  '@tanstack/react-query@5.51.23':
-    resolution: {integrity: sha512-CfJCfX45nnVIZjQBRYYtvVMIsGgWLKLYC4xcUiYEey671n1alvTZoCBaU9B85O8mF/tx9LPyrI04A6Bs2THv4A==}
-    peerDependencies:
-      react: ^18.0.0
-
   '@types/audioworklet@0.0.50':
     resolution: {integrity: sha512-Wic6k+tczhJZz4yq2ianEowIF/xH10wI9ac8sBDh27Jvs+WIvXIeM+nWPPRITFwSKuLZKlvVjfLiNmUjfy4koA==}
+
+  '@types/debounce@1.2.4':
+    resolution: {integrity: sha512-jBqiORIzKDOToaF63Fm//haOCHuwQuLa2202RK4MozpA6lh93eCBc+/8+wZn5OzjJt3ySdc+74SXWXB55Ewtyw==}
 
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -851,11 +874,20 @@ packages:
   '@types/react-map-gl@6.1.6':
     resolution: {integrity: sha512-nrczNIcLmyhj53sYdAGqqAzRJg0lnGUZKdp1YohJfAzM5ialyo2iQxVxo0zpPPXe6oRfxlUTzHMjWGL2wt+EFA==}
 
+  '@types/react-reconciler@0.26.7':
+    resolution: {integrity: sha512-mBDYl8x+oyPX/VBb3E638N0B7xG+SPk/EAMcVPeexqus/5aTpTphQi0curhhshOqRrc9t6OPoJfEUkbymse/lQ==}
+
+  '@types/react-reconciler@0.28.8':
+    resolution: {integrity: sha512-SN9c4kxXZonFhbX4hJrZy37yw9e7EIxcpHCxQv5JUS18wDE5ovkQKlqQEkufdJCCMfuI9BnjUJvhYeJ9x5Ra7g==}
+
   '@types/react@18.3.2':
     resolution: {integrity: sha512-Btgg89dAnqD4vV7R3hlwOxgqobUQKgx3MmrQRi0yYbs/P0ym8XozIAlkqVilPqHQwXs4e9Tf63rrCgl58BcO4w==}
 
   '@types/viewport-mercator-project@6.1.6':
     resolution: {integrity: sha512-uWrbqhRXFeiT6CAvRjf0BkQKRkKED+ofrPhglKpUktQML3463dEPiA4iwe7cZQs6m49Zo/g03rL7ChMLiE5Z8w==}
+
+  '@types/webxr@0.5.19':
+    resolution: {integrity: sha512-4hxA+NwohSgImdTSlPXEqDqqFktNgmTXQ05ff1uWam05tNGroCMp4G+4XVl6qWm1p7GQ/9oD41kAYsSssF6Mzw==}
 
   '@typescript-eslint/parser@7.2.0':
     resolution: {integrity: sha512-5FKsVcHTk6TafQKQbuIVkXq58Fnbkd2wDL4LB7AURN7RUOu1utVP+G8+6u3ZhEroW3DF6hyo3ZEXxgKgp4KeCg==}
@@ -983,6 +1015,9 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  ahrs@1.3.3:
+    resolution: {integrity: sha512-zmjZmXdsBWdhl+wtp+GSK/aKXtGvrfB9PHs25iIqbwH9w0xa0iE9ofTMlpxZIDTHcbm3W3HJ87/wBWYvcOcA1A==}
 
   ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
@@ -1163,6 +1198,9 @@ packages:
   buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
+  buffer@6.0.3:
+    resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
+
   busboy@1.6.0:
     resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
     engines: {node: '>=10.16.0'}
@@ -1285,6 +1323,9 @@ packages:
   data-view-byte-offset@1.0.0:
     resolution: {integrity: sha512-t/Ygsytq+R995EJ5PZlD4Cu56sWa8InXySaViRzw9apusqsOO2bQP+SbYzAhR0pFKoB+43lYy8rWban9JSuXnA==}
     engines: {node: '>= 0.4'}
+
+  debounce@1.2.1:
+    resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -1906,6 +1947,11 @@ packages:
   iterator.prototype@1.1.2:
     resolution: {integrity: sha512-DR33HMMr8EzwuRL8Y9D3u2BMj8+RqSE850jfGu59kS7tbmPLzGkZmVSfyCFSDxuZiEY6Rzt3T2NA/qU+NwVj1w==}
 
+  its-fine@1.2.5:
+    resolution: {integrity: sha512-fXtDA0X0t0eBYAGLVM5YsgJGsJ5jEmqZEPrGbzdf5awjv0xE7nqv3TVnvtUF060Tkes15DbDAKW/I48vsb6SyA==}
+    peerDependencies:
+      react: '>=18.0'
+
   jackspeak@2.3.6:
     resolution: {integrity: sha512-N3yCS/NegsOBokc8GAdM8UcmfsKiSS8cipheD/nivzr700H+nsMOxJjQnvwOcRYVuFkdH0wGUvW2WbXGmrZGbQ==}
     engines: {node: '>=14'}
@@ -1917,6 +1963,9 @@ packages:
   jiti@1.21.0:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
     hasBin: true
+
+  joy-con-webhid@0.7.0:
+    resolution: {integrity: sha512-b2moggBtTt19857SQWo0P2ru4HpTEDgA2y1hY40pPw5oScWw9tCbp+2Wmv1iDEm2FMnL/6CioiJ1J2/DeGot5Q==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2369,6 +2418,12 @@ packages:
       maplibre-gl:
         optional: true
 
+  react-reconciler@0.27.0:
+    resolution: {integrity: sha512-HmMDKciQjYmBRGuuhIaKA1ba/7a+UsM5FzOZsMO2JYHt9Jh8reCb7j1eDC95NOyUlKM9KRyvdx0flBuDvYSBoA==}
+    engines: {node: '>=0.10.0'}
+    peerDependencies:
+      react: ^18.0.0
+
   react-remove-scroll-bar@2.3.6:
     resolution: {integrity: sha512-DtSYaao4mBmX+HDo5YWYdBWQwYIQQshUV/dVxFxK+KM26Wjwp1gZ6rv6OC3oujI6Bfu6Xyg3TwK533AQutsn/g==}
     engines: {node: '>=10'}
@@ -2407,6 +2462,21 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  react-three-map@0.8.2:
+    resolution: {integrity: sha512-y7P0uNOQftIawsSvbquC9DWlWPFYfk1EintCyQk45ihDt6VXCxkX/vlLwZLADDCAScQA5xH1LuR5G2NRtl1ysg==}
+    peerDependencies:
+      '@react-three/fiber': '>=8.13'
+      mapbox-gl: '>=2.15'
+      maplibre-gl: '>=3.2'
+      react: '>=18.0'
+      react-map-gl: '>=7.1'
+      three: '>=0.133'
+    peerDependenciesMeta:
+      mapbox-gl:
+        optional: true
+      maplibre-gl:
         optional: true
 
   react@18.3.1:
@@ -2481,6 +2551,9 @@ packages:
   safe-regex-test@1.0.3:
     resolution: {integrity: sha512-CdASjNJPvRa7roO6Ra/gLYBTzYzzPyyBXxIMdGW3USQLyjWEls2RgW5UBTXaQVp+OrpeCK3bLem8smtmheoRuw==}
     engines: {node: '>= 0.4'}
+
+  scheduler@0.21.0:
+    resolution: {integrity: sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==}
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
@@ -2671,6 +2744,11 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  suspend-react@0.1.3:
+    resolution: {integrity: sha512-aqldKgX9aZqpoDp3e8/BZ8Dm7x1pJl+qI3ZKxDN0i/IQTWUwBx/ManmlVJ3wowqbno6c2bmiIfs+Um6LbsjJyQ==}
+    peerDependencies:
+      react: '>=17.0'
+
   tailwind-merge@1.14.0:
     resolution: {integrity: sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==}
 
@@ -2736,6 +2814,9 @@ packages:
 
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
+
+  three@0.167.1:
+    resolution: {integrity: sha512-gYTLJA/UQip6J/tJvl91YYqlZF47+D/kxiWrbTon35ZHlXEN0VOo+Qke2walF1/x92v55H6enomymg4Dak52kw==}
 
   tiny-lru@11.2.6:
     resolution: {integrity: sha512-0PU3c9PjMnltZaFo2sGYv/nnJsMjG0Cxx8X6FXHPPGjFyoo1SJDxvUXW1207rdiSxYizf31roo+GrkIByQeZoA==}
@@ -2833,9 +2914,9 @@ packages:
       '@types/react':
         optional: true
 
-  use-debounce@10.0.2:
-    resolution: {integrity: sha512-MwBiJK2dk+2qhMDVDCPRPeLuIekKfH2t1UYMnrW9pwcJJGFDbTLliSMBz2UKGmE1PJs8l3XoMqbIU1MemMAJ8g==}
-    engines: {node: '>= 16.0.0'}
+  use-debounce@9.0.4:
+    resolution: {integrity: sha512-6X8H/mikbrt0XE8e+JXRtZ8yYVvKkdYRfmIhWZYsP8rcNs9hk3APV8Ua2mFkKRLcJKVdnX2/Vwrmg2GWKUQEaQ==}
+    engines: {node: '>= 10.0.0'}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -2921,6 +3002,15 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zustand@3.7.2:
+    resolution: {integrity: sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      react: '>=16.8'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
 snapshots:
 
@@ -3598,6 +3688,25 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.5
 
+  '@react-three/fiber@8.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.167.1)':
+    dependencies:
+      '@babel/runtime': 7.24.5
+      '@types/debounce': 1.2.4
+      '@types/react-reconciler': 0.26.7
+      '@types/webxr': 0.5.19
+      base64-js: 1.5.1
+      buffer: 6.0.3
+      debounce: 1.2.1
+      its-fine: 1.2.5(react@18.3.1)
+      react: 18.3.1
+      react-reconciler: 0.27.0(react@18.3.1)
+      scheduler: 0.21.0
+      suspend-react: 0.1.3(react@18.3.1)
+      three: 0.167.1
+      zustand: 3.7.2(react@18.3.1)
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
+
   '@rushstack/eslint-patch@1.10.3': {}
 
   '@swc/counter@0.1.3': {}
@@ -3615,14 +3724,9 @@ snapshots:
       - supports-color
       - typescript
 
-  '@tanstack/query-core@5.51.21': {}
-
-  '@tanstack/react-query@5.51.23(react@18.3.1)':
-    dependencies:
-      '@tanstack/query-core': 5.51.21
-      react: 18.3.1
-
   '@types/audioworklet@0.0.50': {}
+
+  '@types/debounce@1.2.4': {}
 
   '@types/eslint-scope@3.7.7':
     dependencies:
@@ -3671,6 +3775,14 @@ snapshots:
       '@types/react': 18.3.2
       '@types/viewport-mercator-project': 6.1.6
 
+  '@types/react-reconciler@0.26.7':
+    dependencies:
+      '@types/react': 18.3.2
+
+  '@types/react-reconciler@0.28.8':
+    dependencies:
+      '@types/react': 18.3.2
+
   '@types/react@18.3.2':
     dependencies:
       '@types/prop-types': 15.7.12
@@ -3679,6 +3791,8 @@ snapshots:
   '@types/viewport-mercator-project@6.1.6':
     dependencies:
       gl-matrix: 3.4.3
+
+  '@types/webxr@0.5.19': {}
 
   '@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.4.5)':
     dependencies:
@@ -3849,6 +3963,8 @@ snapshots:
       acorn: 8.11.3
 
   acorn@8.11.3: {}
+
+  ahrs@1.3.3: {}
 
   ajv-formats@2.1.1(ajv@8.13.0):
     optionalDependencies:
@@ -4070,6 +4186,11 @@ snapshots:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  buffer@6.0.3:
+    dependencies:
+      base64-js: 1.5.1
+      ieee754: 1.2.1
+
   busboy@1.6.0:
     dependencies:
       streamsearch: 1.1.0
@@ -4201,6 +4322,8 @@ snapshots:
       call-bind: 1.0.7
       es-errors: 1.3.0
       is-data-view: 1.0.1
+
+  debounce@1.2.1: {}
 
   debug@3.2.7:
     dependencies:
@@ -4945,6 +5068,11 @@ snapshots:
       reflect.getprototypeof: 1.0.6
       set-function-name: 2.0.2
 
+  its-fine@1.2.5(react@18.3.1):
+    dependencies:
+      '@types/react-reconciler': 0.28.8
+      react: 18.3.1
+
   jackspeak@2.3.6:
     dependencies:
       '@isaacs/cliui': 8.0.2
@@ -4958,6 +5086,10 @@ snapshots:
       supports-color: 8.1.1
 
   jiti@1.21.0: {}
+
+  joy-con-webhid@0.7.0:
+    dependencies:
+      ahrs: 1.3.3
 
   js-tokens@4.0.0: {}
 
@@ -5404,6 +5536,12 @@ snapshots:
     optionalDependencies:
       mapbox-gl: 3.3.0
 
+  react-reconciler@0.27.0(react@18.3.1):
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.3.1
+      scheduler: 0.21.0
+
   react-remove-scroll-bar@2.3.6(@types/react@18.3.2)(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -5442,6 +5580,15 @@ snapshots:
       tslib: 2.6.2
     optionalDependencies:
       '@types/react': 18.3.2
+
+  react-three-map@0.8.2(@react-three/fiber@8.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.167.1))(mapbox-gl@3.3.0)(react-map-gl@7.1.7(mapbox-gl@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(three@0.167.1):
+    dependencies:
+      '@react-three/fiber': 8.17.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.167.1)
+      react: 18.3.1
+      react-map-gl: 7.1.7(mapbox-gl@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      three: 0.167.1
+    optionalDependencies:
+      mapbox-gl: 3.3.0
 
   react@18.3.1:
     dependencies:
@@ -5528,6 +5675,10 @@ snapshots:
       call-bind: 1.0.7
       es-errors: 1.3.0
       is-regex: 1.1.4
+
+  scheduler@0.21.0:
+    dependencies:
+      loose-envify: 1.4.0
 
   scheduler@0.23.2:
     dependencies:
@@ -5749,6 +5900,10 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
+  suspend-react@0.1.3(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
   tailwind-merge@1.14.0: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.3):
@@ -5842,6 +5997,8 @@ snapshots:
   thenify@3.3.1:
     dependencies:
       any-promise: 1.3.0
+
+  three@0.167.1: {}
 
   tiny-lru@11.2.6: {}
 
@@ -5951,7 +6108,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.2
 
-  use-debounce@10.0.2(react@18.3.1):
+  use-debounce@9.0.4(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -6076,3 +6233,7 @@ snapshots:
   yaml@2.4.2: {}
 
   yocto-queue@0.1.0: {}
+
+  zustand@3.7.2(react@18.3.1):
+    optionalDependencies:
+      react: 18.3.1
