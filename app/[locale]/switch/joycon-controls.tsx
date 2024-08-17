@@ -13,6 +13,7 @@ export default function JoyconControls(){
   const mapRef = useMap()
   
   const prevActualOrientation = useRef({alpha:0, beta:0, gamma:0})
+  
   useEffect(()=>{
     if(!window.navigator) return
     
@@ -26,7 +27,6 @@ export default function JoyconControls(){
 
         let newBeta = prevActualOrientation.current.beta
         if(Math.abs(Math.abs(beta) - Math.abs(prevActualOrientation.current.beta)) > 2){
-          console.log("variation")
           newBeta = beta;
         }
 
@@ -47,13 +47,9 @@ export default function JoyconControls(){
           if(center.lat !== Math.round(newBeta)){
             center.lat = Math.round(newBeta)
             latChange = true;
-            //console.log("changed")
           }            
           if(lngChange || latChange){
-            //console.log("new center")
             mapRef.current.setCenter(center.wrap());
-          } else {
-            //console.log("same center")
           }
         }
         prevActualOrientation.current = {alpha, beta, gamma}
@@ -87,6 +83,9 @@ export default function JoyconControls(){
 
     return () =>{
       clearInterval(interval)
+      if(joyCon){
+        joyCon.removeEventListener('hidinput', handleHidinput);
+      }
     }
 
   },[mapRef])

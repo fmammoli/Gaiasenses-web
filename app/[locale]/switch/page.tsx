@@ -79,8 +79,6 @@ export default async function Page({params, searchParams}:PageProps){
         >
           {compositionComponent}
         </CompositionModal>
-
-        
       </div>
     )
 }

@@ -9,7 +9,6 @@ import Map, {
     Popup,
     GeolocateResultEvent,
     ViewStateChangeEvent,
-    LngLat,
     MapRef,
   } from "react-map-gl";
   import "mapbox-gl/dist/mapbox-gl.css";
@@ -17,7 +16,6 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import JoyconConnectButton from "../switch/joycon-connect-button";
-import Rotate from "../map2/rotate";
 import JoyconControls from "../switch/joycon-controls";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -138,7 +136,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
   const [idleTimerPopup, setIdleTimerPopup] = useState<NodeJS.Timeout | null>(null)
 
   function handleIdle(){
-    console.log("idle")
     setIdleTimer(setTimeout(()=>{
       setIsIdle(true);
     }, 30000));
@@ -166,7 +163,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     }
     
-
     const center = e.target.getCenter();
     setLatlng([parseFloat(center.lat.toString()), parseFloat(center.lng.toString())])
   }
@@ -174,24 +170,14 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
   function handleMoveEnd(e:ViewStateChangeEvent) {
     const lngLat = e.target.getCenter().wrap()
     setLatlng([lngLat.lat, lngLat.lng]);
-    console.log("move end")
+  }
+
+  function handlePopupClose() {
+    setShowPopup(false)
   }
 
   useEffect(()=>{
-    if(isIdle){
-      console.log("isIdle for 5s")
-    }
-  },[isIdle])
-
-  useEffect(()=>{
-    if(isIdlePopup){
-      console.log("isIdle should show Popup")
-    }
-  },[isIdlePopup])
-
-  useEffect(()=>{
     if(isIdleRedirect){
-      console.log("isIdle for 10s")
       const newSearchParams = new URLSearchParams(searchParams.toString());
       
       if(newSearchParams.get("mode") === "map"){
@@ -264,10 +250,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
           <Popup latitude={latlng[0]} longitude={latlng[1]}
             anchor="bottom"
             offset={36}
-            onClose={() => {
-              console.log("on close")
-              setShowPopup(false)
-            }}
+            onClose={handlePopupClose}
             closeOnClick={true}
             closeButton={false}
             maxWidth="40rem"
