@@ -18,10 +18,6 @@ export default async function middleware(request: NextRequest){
   if(request.nextUrl.searchParams.get("lng") === null){
     request.nextUrl.searchParams.set("lng",geo?.longitude || "-46.6621533")
   }
-  
-  if(request.nextUrl.searchParams.get("composition") === null){
-    request.nextUrl.searchParams.set("composition", "stormEye")
-  }
 
   if(request.nextUrl.searchParams.get("mode") === null){
     request.nextUrl.searchParams.set("mode", "map")

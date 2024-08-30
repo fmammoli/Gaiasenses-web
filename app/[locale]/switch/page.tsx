@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-
-
 import Link from "next/link";
-
 import CompositionsInfo, { CompositionsInfoType } from "@/components/compositions/compositions-info";
 import TitleScreen from "../map2/title-screen";
 import { getTranslations } from "next-intl/server";
@@ -19,10 +16,12 @@ const compositionOptions = [
   "mudflatScatter",
   "cloudBubble",
   "paintBrush",
-  "generativeStrings"
+  "generativeStrings",
+  "nightRain",
+  "windLines"
   
 ]
-const DEFAULT_COMPOSITION = "stormEye";
+const DEFAULT_COMPOSITION = "nightRain";
 
 type PageProps = {
     params: {locale:string, url:string},
