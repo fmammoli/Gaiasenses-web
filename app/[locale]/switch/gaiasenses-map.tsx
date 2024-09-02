@@ -30,7 +30,9 @@ const comps = Object.entries(CompositionsInfo).filter((item) => {
     item[0] === "mudflatScatter" ||
     item[0] === "cloudBubble" ||
     item[0] === "paintBrush" ||
-    item[0] === "generativeStrings"
+    item[0] === "generativeStrings" ||
+    item[0] === "nightRain" ||
+    item[0] === "windLines"
   ) {
     return item;
   }

@@ -28,7 +28,9 @@ const comps = Object.entries(CompositionsInfo).filter((item) => {
     item[0] === "mudflatScatter" ||
     item[0] === "cloudBubble" ||
     item[0] === "paintBrush" ||
-    item[0] === "generativeStrings"
+    item[0] === "generativeStrings" ||
+    item[0] === "nightRain" ||
+    item[0] === "windLines"
   ) {
     return item;
   }
@@ -40,7 +42,6 @@ function* shuffle(array: any[]) {
 
   while (i--) {
       const rand = Math.random() * (i+1)
-      console.log(rand)
       yield array.splice(Math.floor(rand), 1)[0];
   }
 }
@@ -72,7 +73,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     setIsIdleRedirect(false);
 
     const wrappedLatLng = event.lngLat.wrap()
-    console.log(mapRef.current)
     
     setLatlng([wrappedLatLng.lat, wrappedLatLng.lng])
     
@@ -89,14 +89,14 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     newSearchParams.set("lng", lng.toString());
 
     let randomComposition = shuffled.next().value
-
+    
     if(randomComposition === undefined){
-      console.log("is undefiend")
+      //console.log("is undefiend")
       const newShuffle = shuffle([...comps])
       randomComposition = newShuffle.next().value
       setShuffled(newShuffle)
     }
-
+    console.log(randomComposition)
     newSearchParams.set("composition", randomComposition[0]);
     newSearchParams.set("mode", "map");
     router.replace(`${pathname}?${newSearchParams.toString()}`);
@@ -133,7 +133,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
   const [idleTimerRedirect, setIdleTimerRedirect] = useState<NodeJS.Timeout | null>(null)
 
   function handleIdle(){
-    console.log("idle")
+    //console.log("idle")
     setIdleTimer(setTimeout(()=>{
       setIsIdle(true)
     }, 30000))
