@@ -16,10 +16,12 @@ const compositionOptions = [
   "mudflatScatter",
   "cloudBubble",
   "paintBrush",
-  "generativeStrings"
+  "generativeStrings",
+  "nightRain",
+  "windLines"
   
 ]
-const DEFAULT_COMPOSITION = "stormEye";
+const DEFAULT_COMPOSITION = "nightRain";
 
 type PageProps = {
     params: {locale:string, url:string},

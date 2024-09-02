@@ -12,6 +12,8 @@ import Rectangles from "./rectangles/rectangles";
 import StormEye from "./storm-eye/storm-eye";
 import WeatherTree from "./weather-tree/weather-tree";
 import Zigzag from "./zigzag/zigzag";
+import NightRain from "./night-rain/night-rain";
+import WindLines from "./wind-lines/wind-lines";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -27,7 +29,9 @@ export type AvailableCompositionNames =
   | "lightningTrees"
   | "weatherTree"
   | "mudflatScatter"
-  | "generativeStrings";
+  | "generativeStrings"
+  | "nightRain"
+  | "windLines";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -40,7 +44,9 @@ export type AvailableCompositionComponents =
   | typeof Rectangles
   | typeof LightningTrees
   | typeof WeatherTree
-  | typeof GenerativeStrings;
+  | typeof GenerativeStrings
+  | typeof NightRain
+  | typeof WindLines;
 
 export type CompositionInfo = {
   name: string;
@@ -152,6 +158,20 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: GenerativeStrings,
     endpoints: [""],
     thumb: "weather-tree.png",
+  },
+  nightRain: { 
+    name: "nightRain", 
+    attributes: ["rain", "temp"], 
+    Component: NightRain, 
+    endpoints: [""], 
+    thumb: "night-rain.png",
+  },
+  windLines: { 
+    name: "windLines", 
+    attributes: ["speed"], 
+    Component: WindLines, 
+    endpoints: [""], 
+    thumb: "wind-lines.png",
   },
 };
 
