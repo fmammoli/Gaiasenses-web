@@ -61,7 +61,7 @@ export default async function Page({params, searchParams}:PageProps){
               lang={params.locale}
             >
               <div className="flex gap-1">
-                <Link href={{query:newQuery}} className="w-full"><Button className="w-full capitalize" variant={"default"}>{composition}</Button></Link>
+                <Link href={{query:newQuery}} className="w-full"><Button className="w-full capitalize" variant={"outline"}>{composition}</Button></Link>
                 <CompositionDropdown searchParams={searchParams}></CompositionDropdown>
               </div>
               
