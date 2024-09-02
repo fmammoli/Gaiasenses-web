@@ -6,21 +6,10 @@ import { getTranslations } from "next-intl/server";
 import PopupContent from "../map3/popup-content";
 import CompositionModal from "../map3/composition-modal";
 import GaiasensesMap from "./gaiasenses-map";
+import { CompositionDropdown } from "../map3/composition-dropdown";
 
+const compositionOptions = Object.entries(CompositionsInfo).map(item => item[0])
 
-const compositionOptions = [
-  "zigzag",
-  "stormEye",
-  "curves",
-  "digitalOrganism",
-  "mudflatScatter",
-  "cloudBubble",
-  "paintBrush",
-  "generativeStrings",
-  "nightRain",
-  "windLines"
-  
-]
 const DEFAULT_COMPOSITION = "nightRain";
 
 type PageProps = {
@@ -59,7 +48,11 @@ export default async function Page({params, searchParams}:PageProps){
               lng={lng}
               lang={params.locale}
             >
-              <Link href={{query:newQuery}}><Button className="w-full capitalize" variant={"outline"}>{composition}</Button></Link>
+               <div className="flex gap-1">
+                <Link href={{query:newQuery}} className="w-full"><Button className="w-full capitalize" variant={"default"}>{composition}</Button></Link>
+                <CompositionDropdown searchParams={searchParams}></CompositionDropdown>
+              </div>
+              
             </PopupContent>
           </GaiasensesMap>
         </div>
