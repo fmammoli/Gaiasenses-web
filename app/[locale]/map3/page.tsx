@@ -55,16 +55,19 @@ export default async function Page({params, searchParams}:PageProps){
       <div className="grid grid-cols-1 grid-rows-1">
         <div className="col-start-1 row-start-1 isolate">
           <GaiasensesMap initialLat={lat} initialLng={lng}>
-            <PopupContent 
+            <PopupContent
               lat={lat}
               lng={lng}
               lang={params.locale}
             >
               <div className="flex gap-1">
-                <Link href={{query:newQuery}} className="w-full"><Button className="w-full capitalize" variant={"outline"}>{composition}</Button></Link>
+                <Link href={{query:newQuery}} className="w-full">
+                  <Button className="w-full capitalize" variant={"outline"}>
+                    {composition}
+                  </Button>
+                </Link>
                 <CompositionDropdown searchParams={searchParams}></CompositionDropdown>
               </div>
-              
             </PopupContent>
           </GaiasensesMap>
         </div>

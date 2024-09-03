@@ -16,6 +16,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
+import PopupLoading from "./popup-loading";
 
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
@@ -96,7 +97,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
       randomComposition = newShuffle.next().value
       setShuffled(newShuffle)
     }
-    console.log(randomComposition)
+    //console.log(randomComposition)
     newSearchParams.set("composition", randomComposition[0]);
     newSearchParams.set("mode", "map");
     router.replace(`${pathname}?${newSearchParams.toString()}`);
@@ -154,6 +155,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
   function handleMoveEnd(e:ViewStateChangeEvent) {
     const lngLat = e.target.getCenter().wrap()
     updatePopupPosition(lngLat.lat, lngLat.lng);
+    
   }
 
   useEffect(()=>{
@@ -176,7 +178,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
       }
     }
   },[isIdleRedirect, searchParams, router, pathname, idleTimerRedirect])
-
+  //console.log(initialLat, " ", latlng[0])
   return(
     <div style={{height:"100svh", width:"100svw"}}>
       <div className="absolute top-0 z-[1] m-4">
@@ -243,7 +245,14 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
             closeButton={false}
             maxWidth="40rem"
           >
-            {children}
+            {
+              initialLat === latlng[0] && initialLng === latlng[1]
+              ? children
+              //Popuploading is not working that well
+              //: <PopupLoading></PopupLoading>
+              : children
+
+            }
           </Popup>
         )}
       </Map>

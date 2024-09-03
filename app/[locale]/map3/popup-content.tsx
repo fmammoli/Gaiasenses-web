@@ -1,6 +1,7 @@
 import { ReactNode, Suspense } from "react"
 import PopupLocationInfo from "./popup-location-info"
 import PopupWeatherInfo from "./popup-weather-info"
+import PopupLoading from "./popup-loading"
 
 type DataPopupProps = {
     lat:number,
@@ -13,15 +14,13 @@ type DataPopupProps = {
 export default async function PopupContent({lat, lng, lang, children}:DataPopupProps){
     return(
       <div>
-        <Suspense fallback={<p>Loading Location</p>}>
+        <Suspense fallback={<PopupLoading></PopupLoading>}>
           <PopupLocationInfo lat={lat} lng={lng} lang={lang}></PopupLocationInfo>
-        </Suspense>
-        <Suspense fallback={<p>Loading weather info</p>}>
           <PopupWeatherInfo lat={lat} lon={lng} lang={lang}></PopupWeatherInfo>
+          <div className="mt-4">
+            {children}
+          </div>
         </Suspense>
-        <div className="mt-4">
-          {children}
-        </div>
         
       </div>
     )
