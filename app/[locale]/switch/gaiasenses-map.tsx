@@ -263,7 +263,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         </AnimatePresence>
       </div>
       <div>
-        <GlobeDetectorWithWorker></GlobeDetectorWithWorker>
+        
       </div>
       <Map
         ref={mapRef}
@@ -276,6 +276,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         onIdle={handleIdle}
         onMoveEnd={handleMoveEnd}
       >
+        <GlobeDetectorWithWorker></GlobeDetectorWithWorker>
         <JoyconControls></JoyconControls>
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>

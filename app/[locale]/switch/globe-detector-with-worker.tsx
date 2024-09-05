@@ -1,4 +1,6 @@
+import { map } from "leaflet";
 import { useEffect, useRef, useState } from "react";
+import { useMap } from "react-map-gl";
 import Webcam from "react-webcam";
 
 export default function GlobeDetector() {
@@ -8,6 +10,10 @@ export default function GlobeDetector() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastVideoTimeRef = useRef(-1);
 
+  const mapRef = useMap();
+
+  const prevArea = useRef(0)
+
   useEffect(() => {
     // Initialize the worker
     const objectDetectorWorker = new Worker(new URL('./worker.js', import.meta.url));
@@ -16,7 +22,29 @@ export default function GlobeDetector() {
       if (e.data.action === "loaded") {
         setIsWorkerReady(true);
       } else if (e.data.action === "result") {
-        console.log(e.data.detection.detections);
+        //console.log(e.data.detection.detections);
+        if(e.data.detection.detections.length > 0) {
+            const res = e.data.detection.detections[0]
+            const area = (res.boundingBox?.height || 1)  * (res.boundingBox?.width || 1);
+            //console.log(`${area} - ${prevArea.current} = ${Math.abs(area - prevArea.current)}` );
+            
+            if(area - prevArea.current > 400) {
+              mapRef.current?.isZooming() ? null : mapRef.current?.zoomIn();
+            } 
+            if(area - prevArea.current < -400) {
+              mapRef.current?.isZooming() ? null : mapRef.current?.zoomOut();
+            } 
+
+            if(Math.abs(area - prevArea.current) > 2000) {
+              // console.log("change zoom")
+              // if(area > 15000) {
+              //   mapRef.current?.zoomTo(7);
+              // } else {
+              //   mapRef.current?.zoomTo(3);
+              // }
+            }
+            prevArea.current = area;;
+        }
       }
     };
 
@@ -33,10 +61,10 @@ export default function GlobeDetector() {
     if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
       const video = webcamRef.current.video;
       const canvas = canvasRef.current;
-
+      
       // Set canvas dimensions to match the video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = 320;
+      canvas.height = 320;
 
       const ctx = canvas.getContext("2d");
       if (ctx) {
