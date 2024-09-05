@@ -192,6 +192,9 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     }
   },[isIdleRedirect, searchParams, router, pathname, idleTimerRedirect])
 
+  
+
+
   return(
     <div style={{height:"100svh", width:"100svw"}}>
       <div className="absolute top-0 z-[1] m-4">
