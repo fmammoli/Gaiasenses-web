@@ -15,7 +15,7 @@ export default function GlobeDetector(){
       );
       let detector = await ObjectDetector.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite`
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite`
         },
         scoreThreshold: 0.3,
         runningMode: "VIDEO",
@@ -53,6 +53,6 @@ export default function GlobeDetector(){
   },[objectDetector, webcamRef])
 
   return(
-    <Webcam height={300} width={300} ref={webcamRef} className="absolute -z-10"></Webcam>  
+    <Webcam height={320} width={320} ref={webcamRef} className="absolute -z-10"></Webcam>  
   )
 }

@@ -21,6 +21,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FilesetResolver, ObjectDetector } from "@mediapipe/tasks-vision"
 import Webcam from "react-webcam";
 import GlobeDetector from "./globe-detector";
+import GlobeDetectorWithWorker from "./globe-detector-with-worker";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -262,7 +263,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         </AnimatePresence>
       </div>
       <div>
-        <GlobeDetector></GlobeDetector>
+        <GlobeDetectorWithWorker></GlobeDetectorWithWorker>
       </div>
       <Map
         ref={mapRef}
