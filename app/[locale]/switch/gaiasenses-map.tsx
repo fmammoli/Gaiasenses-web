@@ -18,7 +18,8 @@ import CompositionsInfo from "@/components/compositions/compositions-info";
 import JoyconConnectButton from "../switch/joycon-connect-button";
 import JoyconControls from "../switch/joycon-controls";
 import { AnimatePresence, motion } from "framer-motion";
-
+import { FilesetResolver, ObjectDetector } from "@mediapipe/tasks-vision"
+import Webcam from "react-webcam";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -192,9 +193,90 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     }
   },[isIdleRedirect, searchParams, router, pathname, idleTimerRedirect])
 
+  const [objectDetector, setObjectDetector] = useState<ObjectDetector>();
+  const detectorRef = useRef<ObjectDetector>();
+
+  useEffect(()=>{
+    async function loadObjectDetector(){
+      const vision = await FilesetResolver.forVisionTasks(
+        // path/to/wasm/root
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+      );
+      let detector = await ObjectDetector.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite`
+        },
+        scoreThreshold: 0.3,
+        runningMode: "VIDEO",
+        categoryAllowlist: ["remote","cell phone"],
+
+      });
+      detectorRef.current = detector;
+      setObjectDetector(detector)
+    }
+    loadObjectDetector()
+  },[])
+
+  const webcamRef = useRef<Webcam>(null)
+
+  const lastVideoTimeRef = useRef(-1)
+  
+  const hypotRef = useRef(0)
+
+  useEffect(()=>{
+    function predictWebcam(){
+      //console.log(objectDetector)
+      if(webcamRef.current && webcamRef.current.video && objectDetector){
+        let startTimeMs = performance.now();
+        if(webcamRef.current.video?.currentTime !== lastVideoTimeRef.current){
+          lastVideoTimeRef.current = webcamRef.current.video.currentTime;
+          const detection = objectDetector.detectForVideo(webcamRef.current.video, startTimeMs);
+          console.log(detection.detections);
+        }
+        requestAnimationFrame(predictWebcam);
+      }
+    }
+    predictWebcam()
+  },[objectDetector, webcamRef])
   
 
+  // useEffect(()=>{
+    
+  //   function predictWebcam() {
+  //     if(video && objectDetector){
+  //       let startTimeMs = performance.now();
+  
+  //       if (video.currentTime !== lastVideoTimeRef.current) {
+  //         lastVideoTimeRef.current = video.currentTime;
+          
+  //         const detection = objectDetector.detectForVideo(video, startTimeMs);
+          
+  //         //console.log(detection.detections.map(item => item.categories[0].categoryName)[1])
+  //         const res =  detection.detections.filter(item => item.categories[0].categoryName === "remote" || item.categories[0].categoryName === "cell phone")[0]
+  //         if(res && res.boundingBox ){
+  //           hypotRef.current = Math.hypot(res.boundingBox?.height || 1, res.boundingBox?.width || 1);
+  //           console.log(hypotRef.current)
+  //           if(hypotRef.current > 200) {
+  //             mapRef.current?.setZoom(7)
+  //           } else {
+  //             mapRef.current?.setZoom(5)
+  //           }
+            
+  //           //setBoundingBox(res.boundingBox)
+  //         }
+          
+  //       }
+      
+  //       requestAnimationFrame(() => {
+  //         predictWebcam();
+  //       });
+  //     }
+  //   }
+  //   predictWebcam()
+  // },[video, objectDetector])
 
+
+  
   return(
     <div style={{height:"100svh", width:"100svw"}}>
       <div className="absolute top-0 z-[1] m-4">
@@ -220,6 +302,9 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
           </motion.div>
           )}
         </AnimatePresence>
+      </div>
+      <div>
+        <Webcam height={"100%"} width={"100%"} ref={webcamRef} className="absolute -z-10"></Webcam>  
       </div>
       <Map
         ref={mapRef}
