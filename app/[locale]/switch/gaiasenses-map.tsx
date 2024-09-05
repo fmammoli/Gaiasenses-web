@@ -20,6 +20,7 @@ import JoyconControls from "../switch/joycon-controls";
 import { AnimatePresence, motion } from "framer-motion";
 import { FilesetResolver, ObjectDetector } from "@mediapipe/tasks-vision"
 import Webcam from "react-webcam";
+import GlobeDetector from "./globe-detector";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -193,51 +194,8 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
     }
   },[isIdleRedirect, searchParams, router, pathname, idleTimerRedirect])
 
-  const [objectDetector, setObjectDetector] = useState<ObjectDetector>();
-  const detectorRef = useRef<ObjectDetector>();
-
-  useEffect(()=>{
-    async function loadObjectDetector(){
-      const vision = await FilesetResolver.forVisionTasks(
-        // path/to/wasm/root
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-      );
-      let detector = await ObjectDetector.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/object_detector/efficientdet_lite0_uint8.tflite`
-        },
-        scoreThreshold: 0.3,
-        runningMode: "VIDEO",
-        categoryAllowlist: ["remote","cell phone"],
-
-      });
-      detectorRef.current = detector;
-      setObjectDetector(detector)
-    }
-    loadObjectDetector()
-  },[])
-
-  const webcamRef = useRef<Webcam>(null)
-
-  const lastVideoTimeRef = useRef(-1)
   
-  const hypotRef = useRef(0)
 
-  useEffect(()=>{
-    function predictWebcam(){
-      //console.log(objectDetector)
-      if(webcamRef.current && webcamRef.current.video && objectDetector){
-        let startTimeMs = performance.now();
-        if(webcamRef.current.video?.currentTime !== lastVideoTimeRef.current){
-          lastVideoTimeRef.current = webcamRef.current.video.currentTime;
-          const detection = objectDetector.detectForVideo(webcamRef.current.video, startTimeMs);
-          console.log(detection.detections);
-        }
-        requestAnimationFrame(predictWebcam);
-      }
-    }
-    predictWebcam()
-  },[objectDetector, webcamRef])
   
 
   // useEffect(()=>{
@@ -304,7 +262,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         </AnimatePresence>
       </div>
       <div>
-        <Webcam height={"100%"} width={"100%"} ref={webcamRef} className="absolute -z-10"></Webcam>  
+        <GlobeDetector></GlobeDetector>
       </div>
       <Map
         ref={mapRef}
