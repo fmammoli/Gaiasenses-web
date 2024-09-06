@@ -55,7 +55,7 @@ export default function GlobeDetector() {
             addArea(area);
 
             if(isStopped()) {
-              console.log("stopped")
+              //console.log("stopped")
             } else {
               //min mean area = 1000, max mean area = 60000
               const mean = areaBufferRef.current.reduce((a, b) => a + b, 0) / areaBufferRef.current.length;

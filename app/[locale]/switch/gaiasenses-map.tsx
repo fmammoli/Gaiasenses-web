@@ -18,9 +18,6 @@ import CompositionsInfo from "@/components/compositions/compositions-info";
 import JoyconConnectButton from "../switch/joycon-connect-button";
 import JoyconControls from "../switch/joycon-controls";
 import { AnimatePresence, motion } from "framer-motion";
-import { FilesetResolver, ObjectDetector } from "@mediapipe/tasks-vision"
-import Webcam from "react-webcam";
-import GlobeDetector from "./globe-detector";
 import GlobeDetectorWithWorker from "./globe-detector-with-worker";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
@@ -194,47 +191,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
       }
     }
   },[isIdleRedirect, searchParams, router, pathname, idleTimerRedirect])
-
-  
-
-  
-
-  // useEffect(()=>{
-    
-  //   function predictWebcam() {
-  //     if(video && objectDetector){
-  //       let startTimeMs = performance.now();
-  
-  //       if (video.currentTime !== lastVideoTimeRef.current) {
-  //         lastVideoTimeRef.current = video.currentTime;
-          
-  //         const detection = objectDetector.detectForVideo(video, startTimeMs);
-          
-  //         //console.log(detection.detections.map(item => item.categories[0].categoryName)[1])
-  //         const res =  detection.detections.filter(item => item.categories[0].categoryName === "remote" || item.categories[0].categoryName === "cell phone")[0]
-  //         if(res && res.boundingBox ){
-  //           hypotRef.current = Math.hypot(res.boundingBox?.height || 1, res.boundingBox?.width || 1);
-  //           console.log(hypotRef.current)
-  //           if(hypotRef.current > 200) {
-  //             mapRef.current?.setZoom(7)
-  //           } else {
-  //             mapRef.current?.setZoom(5)
-  //           }
-            
-  //           //setBoundingBox(res.boundingBox)
-  //         }
-          
-  //       }
-      
-  //       requestAnimationFrame(() => {
-  //         predictWebcam();
-  //       });
-  //     }
-  //   }
-  //   predictWebcam()
-  // },[video, objectDetector])
-
-
   
   return(
     <div style={{height:"100svh", width:"100svw"}}>
@@ -261,9 +217,6 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
           </motion.div>
           )}
         </AnimatePresence>
-      </div>
-      <div>
-        
       </div>
       <Map
         ref={mapRef}
