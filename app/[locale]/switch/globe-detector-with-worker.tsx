@@ -1,7 +1,11 @@
-import { map } from "leaflet";
+
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "react-map-gl";
 import Webcam from "react-webcam";
+
+function mapRange(value: number, minInput: number, maxInput:number, minOutput:number, maxOutput:number) {
+  return minOutput + ((value - minInput) * (maxOutput - minOutput)) / (maxInput - minInput);
+}
 
 export default function GlobeDetector() {
   const [worker, setWorker] = useState<Worker | null>(null);
@@ -12,7 +16,28 @@ export default function GlobeDetector() {
 
   const mapRef = useMap();
 
-  const prevArea = useRef(0)
+  const prevArea = useRef(0);
+  const prevZoom = useRef(0);
+  
+  const areaBufferRef = useRef<number[]>([]);
+  
+  
+  function addArea(newArea: number){
+    if(areaBufferRef.current.length > 5) {
+      areaBufferRef.current.shift();
+    }
+    areaBufferRef.current.push(newArea);
+    return areaBufferRef.current;
+  }
+
+  function isStopped() {
+    //console.log(areaBufferRef.current.reduce((a, b) => a + b, 0) / areaBufferRef.current.length)
+    const mean = areaBufferRef.current.reduce((a, b) => a + b, 0) / areaBufferRef.current.length;
+    const range = 200;
+    if(mean > prevArea.current - range && mean < prevArea.current + range ){
+      return true
+    }
+  }
 
   useEffect(() => {
     // Initialize the worker
@@ -27,22 +52,37 @@ export default function GlobeDetector() {
             const res = e.data.detection.detections[0]
             const area = (res.boundingBox?.height || 1)  * (res.boundingBox?.width || 1);
             //console.log(`${area} - ${prevArea.current} = ${Math.abs(area - prevArea.current)}` );
-            
-            if(area - prevArea.current > 400) {
-              mapRef.current?.isZooming() ? null : mapRef.current?.zoomIn();
-            } 
-            if(area - prevArea.current < -400) {
-              mapRef.current?.isZooming() ? null : mapRef.current?.zoomOut();
-            } 
+            addArea(area);
 
-            if(Math.abs(area - prevArea.current) > 2000) {
-              // console.log("change zoom")
-              // if(area > 15000) {
-              //   mapRef.current?.zoomTo(7);
-              // } else {
-              //   mapRef.current?.zoomTo(3);
-              // }
+            if(isStopped()) {
+              console.log("stopped")
+            } else {
+              //min mean area = 1000, max mean area = 60000
+              const mean = areaBufferRef.current.reduce((a, b) => a + b, 0) / areaBufferRef.current.length;
+              //console.log(mean)
+              //for person
+              //const mappedValue = mapRange(mean, 15000, 90000, 0, 15);
+              //for cell phone
+              const mappedValue = mapRange(mean, 1000, 60000, 0, 15);
+              const zoom = Math.floor(mappedValue);
+              //console.log(zoom)
+              if(zoom !== prevZoom.current){
+                !mapRef.current?.isZooming() && mapRef.current?.zoomTo(Math.floor(mappedValue))
+              }
+              prevZoom.current = zoom;
             }
+
+            //console.log(areaBufferRef.current);
+            // if(Math.abs(area - prevArea.current) > 500) {
+            //   if(area - prevArea.current > 0){
+            //     //!mapRef.current?.isZooming() && mapRef.current?.zoomIn()
+            //     console.log("zoom in")
+            //   } else {
+            //     console.log("zoom out")
+            //     //!mapRef.current?.isZooming() && mapRef.current?.zoomOut()
+            //   }
+            // }
+
             prevArea.current = area;;
         }
       }
@@ -55,7 +95,7 @@ export default function GlobeDetector() {
     return () => {
       objectDetectorWorker.terminate();
     };
-  }, []);
+  }, [mapRef]);
 
   const getFrameFromVideo = () => {
     if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
@@ -66,7 +106,7 @@ export default function GlobeDetector() {
       canvas.width = 320;
       canvas.height = 320;
 
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", {willReadFrequently: true});
       if (ctx) {
         // Draw the current video frame onto the canvas
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);

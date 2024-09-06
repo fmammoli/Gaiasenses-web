@@ -275,6 +275,7 @@ export default function GaiasensesMap({children, initialLat, initialLng}:Gaiasen
         onMove={handleMove}
         onIdle={handleIdle}
         onMoveEnd={handleMoveEnd}
+        maxZoom={15}
       >
         <GlobeDetectorWithWorker></GlobeDetectorWithWorker>
         <JoyconControls></JoyconControls>
