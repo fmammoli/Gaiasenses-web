@@ -39,6 +39,7 @@ export default function LocaleLayout({
           disableTransitionOnChange
         >
         </ThemeProvider> */}
+        
         <AudioContextProvider>{children}</AudioContextProvider>
       </body>
     </html>
