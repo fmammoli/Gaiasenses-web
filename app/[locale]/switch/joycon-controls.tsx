@@ -21,6 +21,7 @@ export default function JoyconControls(){
   
   const prevAvgBeta = useRef(0);
   const prevAvgAlpha = useRef(0);
+  const prevAvgGamma = useRef(0);
 
   function addToBuffer(buffer:number[], value:number){
     if(buffer.length > 30){
@@ -43,25 +44,46 @@ export default function JoyconControls(){
       if(detail.actualOrientation){
         
         const {alpha, beta, gamma} = detail.actualOrientation;
+
+        const {actualOrientationQuaternion: aoq} = detail;
+
         addToBuffer(alphaBuffer.current, parseFloat(alpha));
         addToBuffer(betaBuffer.current, parseFloat(beta));
-        const averageBeta = getAverage(betaBuffer.current);
+        addToBuffer(gammaBuffer.current, parseFloat(gamma));
         const averageAlpha = getAverage(alphaBuffer.current);
+        const averageBeta = getAverage(betaBuffer.current);
+        const averageGamma = getAverage(gammaBuffer.current);
         
         if(mapRef.current){
-          const center = mapRef.current.getCenter();
-          //console.log(Math.abs(Math.abs(averageAlpha) - Math.abs(prevAvgAlpha.current)))
-          center.lat = averageBeta;
-          center.lng = center.lng + getAverage(alphaBuffer.current)/80;
-          mapRef.current.setCenter(center.wrap());
-          //Now is always updating, should set center only if the change is bigger than a range
-          if(Math.abs(Math.abs(averageBeta) - Math.abs(prevAvgBeta.current)) > 0.02 || Math.abs(Math.abs(averageAlpha) - Math.abs(prevAvgAlpha.current)) > 0.01){
-            console.log("true")
-            //mapRef.current.setCenter(center.wrap());
+          const absAvgAlpha = Math.abs(averageAlpha);
+          const isAlphaStationary = absAvgAlpha > 0.01 && absAvgAlpha < 0.50;
+
+          const absAvgBeta = Math.abs(averageBeta);
+          const betaAvgDiff = Math.abs(absAvgBeta - Math.abs(prevAvgBeta.current));
+          const isAvgBetaStationary = betaAvgDiff < 0.05;
+
+          const absAvgGamma = Math.abs(averageGamma);
+
+          //console.log("beta stop: ",isAvgBetaStationary);
+          //setInfoText(`Alpha: ${absAvgAlpha.toFixed(2)} Beta: ${averageBeta.toFixed(2)} Gamma: ${averageGamma.toFixed(2)}`);
+          setInfoText(`Alpha: ${aoq.alpha} Beta: ${aoq.beta} Gamma: ${aoq.gamma}`);
+          
+          if(isAlphaStationary && isAvgBetaStationary){
+            console.log("is stopped")
+          } else {
+            const center = mapRef.current.getCenter();
+            //console.log(Math.abs(Math.abs(averageAlpha) - Math.abs(prevAvgAlpha.current)))
+            const zoom = mapRef.current.getZoom();
+            center.lat = averageBeta;
+            center.lng = center.lng + getAverage(alphaBuffer.current)/60;
+            //center.lng = getAverage(gammaBuffer.current);
+            mapRef.current.setCenter(center.wrap());
+            //mapRef.current.flyTo({center: center.wrap(), essential: true})
           }
           
           prevAvgAlpha.current = averageAlpha;
           prevAvgBeta.current = averageBeta;
+          prevAvgGamma.current = averageGamma;
         }
 
         // let newBeta = prevActualOrientation.current.beta

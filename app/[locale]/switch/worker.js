@@ -17,9 +17,9 @@ onmessage = async (e) => {
         baseOptions: {
           modelAssetPath: `https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite`,
         },
-        scoreThreshold: 0.4,
+        scoreThreshold: 0.2,
         runningMode: "VIDEO",
-        categoryAllowlist: ["cell phone"],
+        categoryAllowlist: ["person"],
       });
 
       // Notify the main thread that the object detector is ready
