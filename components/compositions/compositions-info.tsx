@@ -14,6 +14,7 @@ import WeatherTree from "./weather-tree/weather-tree";
 import Zigzag from "./zigzag/zigzag";
 import NightRain from "./night-rain/night-rain";
 import WindLines from "./wind-lines/wind-lines";
+import LightningBolts from "./lightning-bolts/lightning-bolts";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -31,7 +32,8 @@ export type AvailableCompositionNames =
   | "mudflatScatter"
   | "generativeStrings"
   | "nightRain"
-  | "windLines";
+  | "windLines"
+  | "lightningBolts";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -46,7 +48,8 @@ export type AvailableCompositionComponents =
   | typeof WeatherTree
   | typeof GenerativeStrings
   | typeof NightRain
-  | typeof WindLines;
+  | typeof WindLines
+  | typeof LightningBolts;
 
 export type CompositionInfo = {
   name: string;
@@ -172,6 +175,13 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: WindLines, 
     endpoints: [""], 
     thumb: "wind-lines.png",
+  },
+  lightningBolts: {
+    name: "lightningBolts",
+    attributes: ["boltCount"],
+    Component: LightningBolts,
+    endpoints: [""],
+    thumb: "lightning-bolts.png",
   },
 };
 
