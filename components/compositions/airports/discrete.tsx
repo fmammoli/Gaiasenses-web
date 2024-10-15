@@ -12,7 +12,7 @@ export default function Discrete() {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  async function play() {
+  async function buildDiscreteMusic() {
     await Tone.start();
     function makeSynth() {
       const envelope: RecursivePartial<Omit<Tone.EnvelopeOptions, "context">> =
@@ -132,6 +132,10 @@ export default function Discrete() {
 
     Tone.getTransport().start();
     setIsPlaying(true);
+  }
+
+  async function play() {
+    buildDiscreteMusic();
   }
 
   async function stop() {
