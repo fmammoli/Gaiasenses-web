@@ -36,15 +36,6 @@ export default function SatSketch({ lat, lon }: SatSketch) {
           className={"animate-my-rotate-hue"}
         ></Image>
       )}
-
-      {/* {url && (
-        <Image
-          src={url}
-          alt={""}
-          width={size.width}
-          height={size.height}
-        ></Image>
-      )} */}
     </div>
   );
 }

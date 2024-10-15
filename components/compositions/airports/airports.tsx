@@ -16,15 +16,6 @@ export default async function Airports(props: AirportsProps) {
   return (
     <Composition>
       {/* <AirportsSketch></AirportsSketch> */}
-      {/* <Image
-        src={`https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${
-          props.lon
-        },${props.lat},14,0/${1000}x${1000}@2x?access_token=${ACCESS_TOKEN}`}
-        alt={""}
-        width={1000}
-        height={1000}
-        className={"animate-my-rotate-hue"}
-      ></Image> */}
       <SatSketch lat={props.lat} lon={props.lon}></SatSketch>
       <Discrete></Discrete>
       {/* <ItsGonnaRain></ItsGonnaRain> */}
