@@ -14,7 +14,7 @@ const compositionOptions = Object.entries(CompositionsInfo).map(
   (item) => item[0]
 );
 
-const DEFAULT_COMPOSITION = "nightRain";
+const DEFAULT_COMPOSITION = "windLines";
 
 type PageProps = {
   params: { locale: string; url: string };

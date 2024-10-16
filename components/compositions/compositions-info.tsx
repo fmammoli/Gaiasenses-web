@@ -15,6 +15,7 @@ import Zigzag from "./zigzag/zigzag";
 import NightRain from "./night-rain/night-rain";
 import WindLines from "./wind-lines/wind-lines";
 import LightningBolts from "./lightning-bolts/lightning-bolts";
+import Airports from "./airports/airports";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -33,7 +34,8 @@ export type AvailableCompositionNames =
   | "generativeStrings"
   | "nightRain"
   | "windLines"
-  | "lightningBolts";
+  | "lightningBolts"
+  | "airports";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -162,18 +164,18 @@ const CompositionsInfo: CompositionsInfoType = {
     endpoints: [""],
     thumb: "weather-tree.png",
   },
-  nightRain: { 
-    name: "nightRain", 
-    attributes: ["rain", "temp"], 
-    Component: NightRain, 
-    endpoints: [""], 
+  nightRain: {
+    name: "nightRain",
+    attributes: ["rain", "temp"],
+    Component: NightRain,
+    endpoints: [""],
     thumb: "night-rain.png",
   },
-  windLines: { 
-    name: "windLines", 
-    attributes: ["speed"], 
-    Component: WindLines, 
-    endpoints: [""], 
+  windLines: {
+    name: "windLines",
+    attributes: ["speed"],
+    Component: WindLines,
+    endpoints: [""],
     thumb: "wind-lines.png",
   },
   lightningBolts: {
@@ -182,6 +184,13 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: LightningBolts,
     endpoints: [""],
     thumb: "lightning-bolts.png",
+  },
+  airports: {
+    name: "Airports",
+    attributes: ["lat", "lon"],
+    Component: Airports,
+    endpoints: [],
+    thumb: "",
   },
 };
 
