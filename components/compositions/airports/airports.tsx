@@ -1,4 +1,6 @@
 import Composition from "../composition";
+import CompositionControls from "../composition-controls";
+import TogglePlayButton from "../toggle-play-button";
 import Discrete from "./discrete";
 import SatSketch from "./SatSketch";
 import Image from "next/image";
@@ -11,13 +13,11 @@ export type AirportsProps = {
 };
 export default async function Airports(props: AirportsProps) {
   console.log(props);
-  const ACCESS_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_API_ACCESS_TOKEN;
-  console.log(props);
   return (
     <Composition>
       {/* <AirportsSketch></AirportsSketch> */}
       <SatSketch lat={props.lat} lon={props.lon}></SatSketch>
-      <Discrete></Discrete>
+      <Discrete play={props.play}></Discrete>
       {/* <ItsGonnaRain></ItsGonnaRain> */}
     </Composition>
   );

@@ -1,12 +1,15 @@
 "use client";
-
+// An implementation of Brian Eno's 1975 Discrete Music
+// Based on
+//https://teropa.info/blog/2016/07/28/javascript-systems-music.html#putting-it-together-launching-the-loops
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Tone from "tone";
 import { RecursivePartial } from "tone/build/esm/core/util/Interface";
+import TogglePlayButton from "../toggle-play-button";
 
-export default function Discrete() {
+export default function Discrete({ play }: { play: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -130,13 +133,20 @@ export default function Discrete() {
       rightSynth.triggerAttackRelease("G4", "0:2", "+23:2");
     }, "37m").start(0);
 
+    //Tone.getTransport().bpm.value = 240;
     Tone.getTransport().start();
+
     setIsPlaying(true);
+    console.log("play");
   }
 
-  async function play() {
+  async function playMusic() {
     buildDiscreteMusic();
   }
+
+  useEffect(() => {
+    buildDiscreteMusic();
+  }, []);
 
   async function stop() {
     Tone.getTransport().pause();
@@ -156,20 +166,27 @@ export default function Discrete() {
   }
 
   return (
-    <div className="absolute top-1/2 left-1/2">
-      <div className="bg-white p-2">
-        <div>
-          <p>Discrete Music form Brian Eno - 1975</p>
-        </div>
+    <>
+      <div className="absolute bottom-0 right-0">
+        <div className="bg-white p-2">
+          <div>
+            <p>Discrete Music form Brian Eno - 1975</p>
+          </div>
 
-        <div>
-          {isPlaying ? (
-            <Button onClick={stop}>Stop</Button>
-          ) : (
-            <Button onClick={play}>Play</Button>
-          )}
+          {/* <div>
+            {isPlaying ? (
+              <Button onClick={stop}>Stop</Button>
+            ) : (
+              <Button onClick={playMusic}>Play</Button>
+            )}
+          </div> */}
         </div>
       </div>
-    </div>
+      <TogglePlayButton
+        play={play}
+        onPlay={playMusic}
+        onPause={stop}
+      ></TogglePlayButton>
+    </>
   );
 }

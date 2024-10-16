@@ -24,7 +24,7 @@ export default function SatSketch({ lat, lon }: SatSketch) {
       );
     }
   }, [ref, setUrl, setSize, lat, lon, ACCESS_TOKEN, size.width, size.height]);
-  console.log(url);
+
   return (
     <div className="h-full flex justify-center bg-black" ref={ref}>
       {url && (
