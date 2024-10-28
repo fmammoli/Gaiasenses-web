@@ -113,6 +113,10 @@ module.exports = {
           from: { backgroundColor: "black" },
           to: { backgroundColor: "white" },
         },
+        "rotate-hue": {
+          from: { filter: "hue-rotate(0deg)", opacity: 0 },
+          to: { filter: "hue-rotate(360deg)", opacity: 1 },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -125,9 +129,11 @@ module.exports = {
         "composition-fade-2":
           "f-s 22s cubic-bezier(.47,.63,.23,1.4) 0s 2 alternate forwards running",
         "my-fade-in": "fade 4s ease-in-out 1s 1 normal forwards running",
+        "my-long-fade-in": "fade 30s ease-in-out 1s 1 normal forwards running",
         "my-fade-out": "my-fade-out-k 1s both",
         "background-color-fade":
           "black-to-white 4s ease-out 0s 1 normal both running",
+        "my-rotate-hue": "rotate-hue 40s infinite alternate linear",
       },
       transitionDuration: {
         "10s": "4000ms",
