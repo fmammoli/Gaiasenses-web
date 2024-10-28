@@ -15,6 +15,7 @@ import Zigzag from "./zigzag/zigzag";
 import NightRain from "./night-rain/night-rain";
 import WindLines from "./wind-lines/wind-lines";
 import LightningBolts from "./lightning-bolts/lightning-bolts";
+import BurningTrees from "./burning-trees/burning-trees";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -33,7 +34,8 @@ export type AvailableCompositionNames =
   | "generativeStrings"
   | "nightRain"
   | "windLines"
-  | "lightningBolts";
+  | "lightningBolts"
+  | "burningTrees";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -49,7 +51,8 @@ export type AvailableCompositionComponents =
   | typeof GenerativeStrings
   | typeof NightRain
   | typeof WindLines
-  | typeof LightningBolts;
+  | typeof LightningBolts
+  | typeof BurningTrees;
 
 export type CompositionInfo = {
   name: string;
@@ -182,6 +185,13 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: LightningBolts,
     endpoints: [""],
     thumb: "lightning-bolts.png",
+  },
+  burningTrees: {
+    name: "burningTrees",
+    attributes: ["fireNumber"],
+    Component: BurningTrees,
+    endpoints: [""],
+    thumb: "burning-trees.png",
   },
 };
 

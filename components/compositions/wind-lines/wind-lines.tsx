@@ -1,10 +1,10 @@
 import Composition from "../composition";
-import WindLinesSketch from "./wind-lines-sketch";
+import WindLinesRESketch from "./wind-lines-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 import { getWeather } from "@/components/getData";
 
-export type WindLinesProps = {
+export type WindLinesREProps = {
   lat: string;
   lon: string;
   speed?: number;
@@ -13,7 +13,7 @@ export type WindLinesProps = {
   today?: boolean;
 };
 
-export default async function WindLines(props: WindLinesProps) {
+export default async function WindLinesRE(props: WindLinesREProps) {
   let speed = props.speed ?? 0;
 
   try {
@@ -27,7 +27,7 @@ export default async function WindLines(props: WindLinesProps) {
 
   return (
     <Composition>
-	    <WindLinesSketch speed={speed} play={props.play} />
+	    <WindLinesRESketch speed={speed} play={props.play} />
         <CompositionControls play={props.play} />
         {props.debug && <DebugPanel></DebugPanel>}
     </Composition>

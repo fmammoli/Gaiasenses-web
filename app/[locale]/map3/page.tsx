@@ -20,7 +20,8 @@ const compositionOptions = Object.entries(CompositionsInfo).map(item => item[0])
 //   "generativeStrings",
 //   "nightRain",
 //   "windLines",
-//   "lightningBolts"
+//   "lightningBolts",
+//   "burningTrees"
   
 // ]
 const DEFAULT_COMPOSITION = "nightRain";

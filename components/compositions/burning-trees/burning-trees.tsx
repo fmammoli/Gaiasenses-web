@@ -1,25 +1,25 @@
+import { getFireSpots } from "@/components/getData";
 import Composition from "../composition";
-import LightningBoltsSketch from "./lightning-bolts-sketch";
+import BurningTreesSketch from "./burning-trees-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
-import { getLightning } from "@/components/getData";
 
-export type LightningBoltsProps = {
+export type BurningTreesProps = {
   lat: string;
   lon: string;
-  boltCount?: number;
+  fireNumber?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
 };
 
-export default async function LightningBolts(props: LightningBoltsProps) {
-  let boltCount = props.boltCount ?? 0;
+export default async function BurningTrees(props: BurningTreesProps) {
+  let fireNumber = props.fireNumber ?? 0;
 
   try {
     if (props.today) {
-      const data = await getLightning(props.lat, props.lon, 100); 
-      boltCount = data.count;
+      const fireData = await getFireSpots(props.lat, props.lon, 100);
+      fireNumber = fireData.count;
     }
   } catch (error) {
     console.log(error);
@@ -27,7 +27,7 @@ export default async function LightningBolts(props: LightningBoltsProps) {
 
   return (
     <Composition>
-	      <LightningBoltsSketch boltCount={boltCount} play={props.play} />
+	    <BurningTreesSketch fireNumber={fireNumber} play={props.play} />
         <CompositionControls play={props.play} />
         {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
