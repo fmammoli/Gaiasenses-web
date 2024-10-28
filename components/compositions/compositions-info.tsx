@@ -37,7 +37,7 @@ export type AvailableCompositionNames =
   | "windLines"
   | "lightningBolts"
   | "burningTrees"
-  | "irports";
+  | "airports";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
