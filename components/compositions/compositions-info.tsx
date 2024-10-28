@@ -36,7 +36,7 @@ export type AvailableCompositionNames =
   | "nightRain"
   | "windLines"
   | "lightningBolts"
-  | "burningTrees";
+  | "burningTrees"
   | "airports";
 
 export type AvailableCompositionComponents =
@@ -54,7 +54,8 @@ export type AvailableCompositionComponents =
   | typeof NightRain
   | typeof WindLines
   | typeof LightningBolts
-  | typeof BurningTrees;
+  | typeof BurningTrees
+  | typeof airports;
 
 export type CompositionInfo = {
   name: string;
