@@ -37,7 +37,7 @@ export type AvailableCompositionNames =
   | "windLines"
   | "lightningBolts"
   | "burningTrees"
-  | "airports";
+  | "irports";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -55,7 +55,7 @@ export type AvailableCompositionComponents =
   | typeof WindLines
   | typeof LightningBolts
   | typeof BurningTrees
-  | typeof airports;
+  | typeof Airports;
 
 export type CompositionInfo = {
   name: string;
