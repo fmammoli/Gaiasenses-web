@@ -2,7 +2,8 @@ import "../globals.css";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { AudioContextProvider } from "@/hooks/webpd-context";
-
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -41,6 +42,8 @@ export default function LocaleLayout({
         </ThemeProvider> */}
         
         <AudioContextProvider>{children}</AudioContextProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
