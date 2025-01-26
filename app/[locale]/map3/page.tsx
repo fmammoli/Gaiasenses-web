@@ -9,6 +9,26 @@ import CompositionsInfo, {
 import TitleScreen from "./title-screen";
 import { getTranslations } from "next-intl/server";
 import { CompositionDropdown } from "./composition-dropdown";
+import InfoModal from "./info-modal";
+
+function stringToBoolean(value: string | undefined): boolean {
+  if (value === undefined) {
+    return false;
+  }
+  switch (value.toLowerCase().trim()) {
+    case "true":
+    case "yes":
+    case "1":
+      return true;
+    case "false":
+    case "no":
+    case "0":
+    case null:
+      return false;
+    default:
+      return false;
+  }
+}
 
 const compositionOptions = Object.entries(CompositionsInfo).map(
   (item) => item[0]
@@ -36,6 +56,7 @@ type PageProps = {
     lng?: string;
     composition?: string;
     mode?: string;
+    info?: string;
   };
 };
 
@@ -68,10 +89,16 @@ export default async function Page({ params, searchParams }: PageProps) {
     play: true,
   });
 
+  const isInfoOpen = stringToBoolean(searchParams.info);
+
   return (
     <div className="grid grid-cols-1 grid-rows-1">
       <div className="col-start-1 row-start-1 isolate">
-        <GaiasensesMap initialLat={lat} initialLng={lng}>
+        <GaiasensesMap
+          initialLat={lat}
+          initialLng={lng}
+          InfoButtonText={t("infoButtonText")}
+        >
           <PopupContent lat={lat} lng={lng} lang={params.locale}>
             <div className="flex gap-1">
               <Link href={{ query: newQuery }} className="w-full">
@@ -105,6 +132,47 @@ export default async function Page({ params, searchParams }: PageProps) {
       >
         {compositionComponent}
       </CompositionModal>
+      <InfoModal
+        isOpen={isInfoOpen}
+        closeButton={
+          <Link href={{ query: { ...searchParams, info: false } }} replace>
+            X
+          </Link>
+        }
+      >
+        <div className="max-w-96 flex flex-col gap-4 pb-8 text-lg text-justify mx-auto">
+          <h1 className="text-6xl font-bold text-center py-12">GaiaSenses</h1>
+          <p>{t("aboutTextp1")}</p>
+
+          <p>{t("aboutTextp2")}</p>
+
+          <p>{t("aboutTextp3")}</p>
+
+          <h2 className="text-2xl font-bold">{t("creditsText")}</h2>
+
+          <div>
+            <p className="font-bold">{t("ctiText")}</p>
+            <p className="italic">{t("discfText")}</p>
+          </div>
+
+          <div>
+            <p className="font-bold">{t("coordinatorText")}</p>
+            <p>Artemis Moroni</p>
+          </div>
+
+          <div>
+            <p className="font-bold">{t("development")}</p>
+            <p>Lucas de Oliveira</p>
+            <p>Henrique Cazarim</p> <p>Alvaro Costa</p>
+            <p>Pedro Trama</p> <p>Felipe Mammoli</p>
+          </div>
+
+          <div>
+            <p className="font-bold">{t("sound")}</p>
+            <p>Gabriel Dincao</p> <p>Laureana Stelmastchuk</p>
+          </div>
+        </div>
+      </InfoModal>
     </div>
   );
 }
