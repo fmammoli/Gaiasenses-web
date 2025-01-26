@@ -49,12 +49,14 @@ type GaiasensesMapProps = {
   children: ReactNode;
   initialLat: number;
   initialLng: number;
+  InfoButtonText: string;
 };
 
 export default function GaiasensesMap({
   children,
   initialLat,
   initialLng,
+  InfoButtonText,
 }: GaiasensesMapProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -205,7 +207,7 @@ export default function GaiasensesMap({
             }}
             replace
           >
-            Information
+            {InfoButtonText}
           </Link>
         </div>
       </div>

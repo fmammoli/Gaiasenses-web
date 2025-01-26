@@ -93,7 +93,11 @@ export default async function Page({ params, searchParams }: PageProps) {
   return (
     <div className="grid grid-cols-1 grid-rows-1">
       <div className="col-start-1 row-start-1 isolate">
-        <GaiasensesMap initialLat={lat} initialLng={lng}>
+        <GaiasensesMap
+          initialLat={lat}
+          initialLng={lng}
+          InfoButtonText={t("infoButtonText")}
+        >
           <PopupContent lat={lat} lng={lng} lang={params.locale}>
             <div className="flex gap-1">
               <Link href={{ query: newQuery }} className="w-full">
@@ -137,65 +141,33 @@ export default async function Page({ params, searchParams }: PageProps) {
       >
         <div className="max-w-96 flex flex-col gap-4 pb-8 text-lg text-justify mx-auto">
           <h1 className="text-6xl font-bold text-center py-12">GaiaSenses</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non
-            pretium sem. Donec efficitur gravida semper. Ut at sollicitudin ex.
-            Vestibulum mauris nibh, cursus et congue et, consectetur in libero.
-            Nunc sodales mattis lorem, eget lobortis libero tincidunt et.
-            Phasellus ullamcorper vestibulum tellus eu consequat. Suspendisse
-            ultricies nisl ut ante congue scelerisque. Quisque in lectus sit
-            amet ipsum egestas euismod ut sit amet ante. Pellentesque fermentum
-            imperdiet velit, nec dapibus elit vehicula eu. Donec suscipit
-            convallis feugiat. Vivamus sed nunc odio. Ut elit lectus, suscipit
-            ac justo posuere, sollicitudin dapibus ex. Suspendisse lobortis
-            pretium efficitur. Curabitur in eros consectetur, vehicula sapien
-            at, accumsan enim. Vestibulum consequat imperdiet dolor, nec tempor
-            urna mattis quis.
-          </p>
+          <p>{t("aboutTextp1")}</p>
 
-          <p>
-            Etiam dapibus luctus laoreet. In hac habitasse platea dictumst. Sed
-            elit nibh, pulvinar eget rhoncus ac, dignissim quis nulla. Integer
-            elit orci, accumsan maximus dictum sed, rutrum vel dui. Praesent
-            euismod sapien non neque suscipit elementum. Etiam pretium sodales
-            lorem, in consequat nunc. Vestibulum nec velit euismod, vulputate
-            enim ut, egestas tellus. Aenean consequat lorem ultrices turpis
-            sollicitudin congue. Nam varius quis leo a elementum. Vivamus eros
-            nibh, dictum ut blandit eget, ornare non felis.
-          </p>
+          <p>{t("aboutTextp2")}</p>
 
-          <p>
-            Pellentesque pharetra vel arcu sed ornare. Donec tortor nisi,
-            vehicula eu lacinia a, dictum a augue. Proin vitae tempor lorem.
-            Aliquam erat volutpat. Nunc accumsan urna vitae augue placerat
-            congue. In hac habitasse platea dictumst. Nullam iaculis, justo ac
-            laoreet vulputate, lectus nulla scelerisque velit, id euismod mi
-            metus id arcu. Vivamus at varius risus. Aliquam scelerisque enim at
-            tempus pulvinar. Donec a ornare ipsum.
-          </p>
+          <p>{t("aboutTextp3")}</p>
 
-          <h2 className="text-2xl font-bold">Credits</h2>
+          <h2 className="text-2xl font-bold">{t("creditsText")}</h2>
 
           <div>
-            <p className="font-bold">
-              Institute of Information Technology - Renato Archer
-            </p>
-            <p className="italic">Cyberphysical Systems Laboratory</p>
+            <p className="font-bold">{t("ctiText")}</p>
+            <p className="italic">{t("discfText")}</p>
           </div>
 
           <div>
-            <p className="font-bold">Coordination:</p> <p>Artemis Moroni</p>
+            <p className="font-bold">{t("coordinatorText")}</p>
+            <p>Artemis Moroni</p>
           </div>
 
           <div>
-            <p className="font-bold">Platform Development:</p>{" "}
+            <p className="font-bold">{t("development")}</p>
             <p>Lucas de Oliveira</p>
             <p>Henrique Cazarim</p> <p>Alvaro Costa</p>
             <p>Pedro Trama</p> <p>Felipe Mammoli</p>
           </div>
 
           <div>
-            <p className="font-bold">Sound Development:</p>{" "}
+            <p className="font-bold">{t("sound")}</p>
             <p>Gabriel Dincao</p> <p>Laureana Stelmastchuk</p>
           </div>
         </div>

@@ -6,6 +6,15 @@
     "help-text-1": "Clique e arraste para girar o globo",
     "help-text-2": "Clique e arraste o marcador para movê-lo para outro lugar",
     "compositionButton": "Clique Aqui ",
-    "informationButton": "Sobre"
+    "infoButtonText": "Sobre",
+    "ctiText": "Centro de Tecnologia da Informação - Renato Archer",
+    "discfText": "Divisão de Sistemas Ciberfísicos",
+    "creditsText": "Equipe",
+    "aboutTextp1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non pretium sem. Donec efficitur gravida semper. Ut at sollicitudin ex. Vestibulum mauris nibh, cursus et congue et, consectetur in libero. Nunc sodales mattis lorem, eget lobortis libero tincidunt et. Phasellus ullamcorper vestibulum tellus eu consequat. Suspendisse ultricies nisl ut ante congue scelerisque. Quisque in lectus sit amet ipsum egestas euismod ut sit amet ante. Pellentesque fermentum imperdiet velit, nec dapibus elit vehicula eu. Donec suscipit convallis feugiat. Vivamus sed nunc odio. Ut elit lectus, suscipit ac justo posuere, sollicitudin dapibus ex. Suspendisse lobortis pretium efficitur. Curabitur in eros consectetur, vehicula sapien at, accumsan enim. Vestibulum consequat imperdiet dolor, nec tempor urna mattis quis.",
+    "aboutTextp2": "Etiam dapibus luctus laoreet. In hac habitasse platea dictumst. Sed elit nibh, pulvinar eget rhoncus ac, dignissim quis nulla. Integer elit orci, accumsan maximus dictum sed, rutrum vel dui. Praesent euismod sapien non neque suscipit elementum. Etiam pretium sodales lorem, in consequat nunc. Vestibulum nec velit euismod, vulputate enim ut, egestas tellus. Aenean consequat lorem ultrices turpis sollicitudin congue. Nam varius quis leo a elementum. Vivamus eros nibh, dictum ut blandit eget, ornare non felis.",
+    "aboutTextp3": "Pellentesque pharetra vel arcu sed ornare. Donec tortor nisi, vehicula eu lacinia a, dictum a augue. Proin vitae tempor lorem. Aliquam erat volutpat. Nunc accumsan urna vitae augue placerat congue. In hac habitasse platea dictumst. Nullam iaculis, justo ac laoreet vulputate, lectus nulla scelerisque velit, id euismod mi metus id arcu. Vivamus at varius risus. Aliquam scelerisque enim at tempus pulvinar. Donec a ornare ipsum.",
+    "coordinatorText": "Coordenação:",
+    "development": "Desenvolvimento:",
+    "sound": "Produção Sonora:"
   }
 }
