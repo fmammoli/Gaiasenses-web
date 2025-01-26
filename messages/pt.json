@@ -5,6 +5,7 @@
     "titleButtonText": "Iniciar",
     "help-text-1": "Clique e arraste para girar o globo",
     "help-text-2": "Clique e arraste o marcador para movê-lo para outro lugar",
-    "compositionButton": "Clique Aqui "
+    "compositionButton": "Clique Aqui ",
+    "informationButton": "Sobre"
   }
 }

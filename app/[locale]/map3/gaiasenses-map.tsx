@@ -16,6 +16,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -188,6 +189,7 @@ export default function GaiasensesMap({
     }
   }, [isIdleRedirect, searchParams, router, pathname, idleTimerRedirect]);
 
+  console.log(searchParams);
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] m-4">
@@ -195,6 +197,16 @@ export default function GaiasensesMap({
           <p className="w-24 text-sm">Lat: {latlng[0].toFixed(5)} </p>
           <p className="w-4 text-xs">|</p>
           <p className="w-28 text-sm">Lng: {latlng[1].toFixed(5)}</p>
+        </div>
+        <div className=" bg-gray-400 bg-opacity-50 text-white p-2 rounded-sm w-fit mt-2">
+          <Link
+            href={{
+              query: { ...Object.fromEntries(searchParams), info: true },
+            }}
+            replace
+          >
+            Information
+          </Link>
         </div>
       </div>
       <div>

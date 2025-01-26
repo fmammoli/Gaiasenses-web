@@ -5,6 +5,7 @@
     "titleButtonText": "Start",
     "help-text-1": "Click and drag to spin the globe",
     "help-text-2": "Click and drag the Marker to move it somewhere else",
-    "compositionButton": "Click here "
+    "compositionButton": "Click here ",
+    "informationButton": "About"
   }
 }
