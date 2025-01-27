@@ -32,7 +32,7 @@ export default function InfoModal({
               exit={{ opacity: 0 }}
               transition={{ delay: 1.3 }}
             >
-              <div className="flex justify-end p-4">{closeButton}</div>
+              <div className="flex justify-end p-8">{closeButton}</div>
               {children}
             </motion.div>
           </motion.div>

@@ -140,13 +140,10 @@ export default async function Page({ params, searchParams }: PageProps) {
           </Link>
         }
       >
-        <div className="max-w-96 flex flex-col gap-4 pb-8 text-lg text-justify mx-auto">
-          <h1 className="text-6xl font-bold text-center py-12">GaiaSenses</h1>
+        <div className="max-w-lg flex flex-col gap-4 pb-8 text-lg text-justify mx-auto">
+          <h1 className="text-5xl font-bold text-center py-12">GaiaSenses</h1>
+
           <p>{t("aboutTextp1")}</p>
-
-          <p>{t("aboutTextp2")}</p>
-
-          <p>{t("aboutTextp3")}</p>
 
           <h2 className="text-2xl font-bold">{t("creditsText")}</h2>
 
@@ -170,6 +167,24 @@ export default async function Page({ params, searchParams }: PageProps) {
           <div>
             <p className="font-bold">{t("sound")}</p>
             <p>Gabriel Dincao</p> <p>Laureana Stelmastchuk</p>
+          </div>
+
+          <div>
+            <p className="font-bold">{t("compositionCredits")}</p>
+            {Object.entries(CompositionsInfo).map((value, index) => (
+              <div className="flex" key={index}>
+                <Link
+                  className={`hover:underline ${
+                    value[1].openProcessingLink ? "" : "pointer-events-none"
+                  }`}
+                  href={value[1].openProcessingLink ?? ""}
+                  aria-disabled={value[1].openProcessingLink ? false : true}
+                  target="blank"
+                >
+                  {value[1].name}, <span>{value[1].author}</span>
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </InfoModal>
