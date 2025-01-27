@@ -16,7 +16,7 @@ export default function InfoButton() {
           replace
         >
           <div className="bg-white w-[29px] h-[29px] rounded-sm flex justify-center items-center hover:bg-gray-200">
-            <Info width={22} height={22} />
+            <Info width={22} height={22} strokeWidth={2.5} />
           </div>
         </Link>
       </div>
