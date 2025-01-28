@@ -145,6 +145,8 @@ export default async function Page({ params, searchParams }: PageProps) {
 
           <p>{t("aboutTextp1")}</p>
 
+          <p>{t("aboutTextp2")}</p>
+
           <h2 className="text-2xl font-bold">{t("creditsText")}</h2>
 
           <div>
@@ -161,7 +163,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             <p className="font-bold">{t("development")}</p>
             <p>Lucas de Oliveira</p>
             <p>Henrique Cazarim</p> <p>Alvaro Costa</p>
-            <p>Pedro Trama</p> <p>Felipe Mammoli</p>
+            <p>Pedro Trama</p> <p>Sara Freitas</p> <p>Felipe Mammoli</p>
           </div>
 
           <div>
@@ -169,6 +171,10 @@ export default async function Page({ params, searchParams }: PageProps) {
             <p>Gabriel Dincao</p> <p>Laureana Stelmastchuk</p>
           </div>
 
+          <div>
+            <p className="font-bold">{t("acknowledgement")}</p>
+            <p>{t("acknowledgementText")}</p>
+          </div>
           <div>
             <p className="font-bold">{t("compositionCredits")}</p>
             {Object.entries(CompositionsInfo).map((value, index) => (
