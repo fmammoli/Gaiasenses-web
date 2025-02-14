@@ -66,6 +66,8 @@ export type CompositionInfo = {
   Component: AvailableCompositionComponents;
   endpoints: string[];
   thumb: string;
+  author?: string;
+  openProcessingLink?: string;
 };
 
 export type CompositionsInfoType = {
@@ -79,6 +81,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Lluvia,
     endpoints: ["rainfall"],
     thumb: "lluvia.png",
+    openProcessingLink: "https://openprocessing.org/sketch/386391",
+    author: " AK Stuxnet",
   },
   zigzag: {
     name: "zigzag",
@@ -86,6 +90,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Zigzag,
     endpoints: ["rainfall", "lightning"],
     thumb: "zig-zag.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1643288",
+    author: " garabatospr",
   },
   colorFlower: {
     name: "colorFlower",
@@ -93,6 +99,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: ColorFlower,
     endpoints: [""],
     thumb: "color-flower.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1929051",
+    author: "Aaron Reuland (a_ soluble_fish",
   },
   stormEye: {
     name: "stormEye",
@@ -100,6 +108,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: StormEye,
     endpoints: [""],
     thumb: "storm-eye.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1936782",
+    author: "Mandelgen",
   },
   curves: {
     name: "curves",
@@ -107,6 +117,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Curves,
     endpoints: ["rainfall"],
     thumb: "curves.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1176431",
+    author: "Pedro Alexis Mendoza Llanos ",
   },
   chaosTree: {
     name: "chaosTree",
@@ -121,6 +133,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: CloudBubble,
     endpoints: ["rainfall"],
     thumb: "cloud-bubble.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1786759",
+    author: "Naoki Tsutae",
   },
   digitalOrganism: {
     name: "digitalOrganism",
@@ -128,6 +142,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: DigitalOrganism,
     endpoints: ["rainfall"],
     thumb: "digital-organism.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1864228",
+    author: "Naoki Tsutae",
   },
   paintBrush: {
     name: "paintBrush",
@@ -135,6 +151,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: PaintBrush,
     endpoints: ["rainfall"],
     thumb: "paint-brush.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1645787",
+    author: "Aaron Reuland (a_ soluble_fish)",
   },
   rectangles: {
     name: "rectangles",
@@ -142,6 +160,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Rectangles,
     endpoints: ["rainfall"],
     thumb: "rectangles.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1274144",
+    author: " Desire Sanchez",
   },
   lightningTrees: {
     name: "lightningTrees",
@@ -149,6 +169,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: LightningTrees,
     endpoints: ["lightning"],
     thumb: "lightning-trees.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1203202",
+    author: "Roni Kaufman",
   },
   weatherTree: {
     name: "weatherTree",
@@ -156,6 +178,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: WeatherTree,
     endpoints: [""],
     thumb: "weather-tree.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1780681",
+    author: "Gazi",
   },
   mudflatScatter: {
     name: "mudflatScatter",
@@ -163,6 +187,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: MudflatScatter,
     endpoints: [""],
     thumb: "weather-tree.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1982410",
+    author: "Aaron Reuland (a_ soluble_fish) ",
   },
   generativeStrings: {
     name: "generativeStrings",
@@ -177,6 +203,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: NightRain,
     endpoints: [""],
     thumb: "night-rain.png",
+    openProcessingLink: "https://openprocessing.org/sketch/2318784",
+    author: "Richard Bourne",
   },
   windLines: {
     name: "windLines",
@@ -184,6 +212,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: WindLines,
     endpoints: [""],
     thumb: "wind-lines.png",
+    openProcessingLink: "https://openprocessing.org/sketch/894918",
+    author: "735902144",
   },
   lightningBolts: {
     name: "lightningBolts",
@@ -191,6 +221,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: LightningBolts,
     endpoints: [""],
     thumb: "lightning-bolts.png",
+    openProcessingLink: "https://openprocessing.org/sketch/639075",
+    author: "Gweltaz Duval-Guennoc",
   },
   burningTrees: {
     name: "burningTrees",
@@ -198,6 +230,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: BurningTrees,
     endpoints: [""],
     thumb: "burning-trees.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1749652",
+    author: "はぅ君",
   },
   airports: {
     name: "Airports",
@@ -205,6 +239,7 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: Airports,
     endpoints: [],
     thumb: "",
+    author: "Felipe Mammoli",
   },
   riverLines: { 
     name: "riverLines", 
