@@ -17,6 +17,7 @@ import WindLines from "./wind-lines/wind-lines";
 import LightningBolts from "./lightning-bolts/lightning-bolts";
 import BurningTrees from "./burning-trees/burning-trees";
 import Airports from "./airports/airports";
+import RiverLines from "./river-lines/river-lines";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -37,7 +38,8 @@ export type AvailableCompositionNames =
   | "windLines"
   | "lightningBolts"
   | "burningTrees"
-  | "airports";
+  | "airports"
+  | "riverLines";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -55,7 +57,8 @@ export type AvailableCompositionComponents =
   | typeof WindLines
   | typeof LightningBolts
   | typeof BurningTrees
-  | typeof Airports;
+  | typeof Airports
+  | typeof RiverLines;
 
 export type CompositionInfo = {
   name: string;
@@ -237,6 +240,13 @@ const CompositionsInfo: CompositionsInfoType = {
     endpoints: [],
     thumb: "",
     author: "Felipe Mammoli",
+  },
+  riverLines: { 
+    name: "riverLines", 
+    attributes: ["rain", "temp"],
+    Component: RiverLines,
+    endpoints: [],
+    thumb: "river-lines.png",
   },
 };
 
