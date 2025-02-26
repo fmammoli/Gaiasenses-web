@@ -18,6 +18,7 @@ import LightningBolts from "./lightning-bolts/lightning-bolts";
 import BurningTrees from "./burning-trees/burning-trees";
 import Airports from "./airports/airports";
 import RiverLines from "./river-lines/river-lines";
+import Attractor from "./attractor/attractor";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -39,7 +40,8 @@ export type AvailableCompositionNames =
   | "lightningBolts"
   | "burningTrees"
   | "airports"
-  | "riverLines";
+  | "riverLines"
+  | "attractor";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -58,7 +60,8 @@ export type AvailableCompositionComponents =
   | typeof LightningBolts
   | typeof BurningTrees
   | typeof Airports
-  | typeof RiverLines;
+  | typeof RiverLines
+  | typeof Attractor;
 
 export type CompositionInfo = {
   name: string;
@@ -247,6 +250,15 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: RiverLines,
     endpoints: [],
     thumb: "river-lines.png",
+  },
+  attractor: { 
+    name: "attractor", 
+    attributes: ["lightningCount"],
+    Component: Attractor,
+    endpoints: [],
+    thumb: "attractor.png",
+    openProcessingLink: "https://openprocessing.org/sketch/394718",
+    author:"Masaki Yamabe",
   },
 };
 
