@@ -46,9 +46,10 @@ const compositionOptions = Object.entries(CompositionsInfo).map(
 //   "windLines",
 //   "lightningBolts",
 //   "burningTrees",
-//   "riverLines"
+//   "riverLines",
+//   "attractor"
 // ]
-const DEFAULT_COMPOSITION = "stormEye";
+const DEFAULT_COMPOSITION = "attractor";
 
 type PageProps = {
   params: { locale: string; url: string };
