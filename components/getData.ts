@@ -56,7 +56,7 @@ export default async function getData(
   dist?: number
 ) {
   const res = await fetch(
-    `https://satellite-fetcher.up.railway.app/${endpoint}?lat=${lat}&lon=${lon}${
+    `https://7ghevyl79d.execute-api.sa-east-1.amazonaws.com/prod/${endpoint}?lat=${lat}&lon=${lon}${
       dist ? `&dist=${dist}` : ""
     }`,
     { next: { revalidate: 7200 } }
