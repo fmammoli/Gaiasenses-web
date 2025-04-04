@@ -4,6 +4,15 @@ import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 import { getLightning } from "@/components/getData";
 
+const low = '/audios/lightningBolts_Low.mp3'
+const high = '/audios/lightningBolts_High.mp3'
+
+function getAudio(boltCount: number){
+  if(boltCount == 0){return undefined;}
+  if(boltCount >= 1 && boltCount < 4){return low;}
+  if(boltCount >= 4){return high;}
+}
+
 export type LightningBoltsProps = {
   lat: string;
   lon: string;
@@ -15,6 +24,7 @@ export type LightningBoltsProps = {
 
 export default async function LightningBolts(props: LightningBoltsProps) {
   let boltCount = props.boltCount ?? 0;
+  let lightningBoltsAudio;
 
   try {
     if (props.today) {
@@ -25,10 +35,12 @@ export default async function LightningBolts(props: LightningBoltsProps) {
     console.log(error);
   }
 
+  lightningBoltsAudio = getAudio(boltCount);
+
   return (
     <Composition>
 	      <LightningBoltsSketch boltCount={boltCount} play={props.play} />
-        <CompositionControls play={props.play} />
+        <CompositionControls play={props.play} mp3 patchPath={lightningBoltsAudio}/>
         {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

@@ -4,6 +4,14 @@ import BurningTreesSketch from "./burning-trees-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 
+const noFire = "/audios/burningTrees_noFire.mp3";
+const fireNoise = "/audios/burningTrees_Fire.mp3" ;
+
+function getAudio(fireNumber: number){
+  if (fireNumber == 0){return noFire;}
+  else{return fireNoise}
+}
+
 export type BurningTreesProps = {
   lat: string;
   lon: string;
@@ -15,6 +23,7 @@ export type BurningTreesProps = {
 
 export default async function BurningTrees(props: BurningTreesProps) {
   let fireNumber = props.fireNumber ?? 0;
+  let burningTreesAudio;
 
   try {
     if (props.today) {
@@ -25,10 +34,12 @@ export default async function BurningTrees(props: BurningTreesProps) {
     console.log(error);
   }
 
+  burningTreesAudio = getAudio(fireNumber)
+
   return (
     <Composition>
 	    <BurningTreesSketch fireNumber={fireNumber} play={props.play} />
-        <CompositionControls play={props.play} />
+        <CompositionControls play={props.play} mp3 patchPath={burningTreesAudio}/>
         {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );

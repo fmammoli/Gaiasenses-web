@@ -12,7 +12,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningBoltsSketchProps>) {
 //inspired by https://openprocessing.org/sketch/639075
 let bolts: ChaoticLine[] = [];
 let boltTimer = 0;  
-let boltCount = 3; //tie to satellite
+let boltCount = 0; 
 let boltInterval = 35 / boltCount;
 
 let [width, height] = [p5.windowWidth, p5.windowHeight];
