@@ -8,7 +8,7 @@ const weakCurrent = '/audios/riverLines_weak.wav';
 const strongCurrent = '/audios/riverLines_strong.wav';
 
 function getAudio(humidity: number){
-  if(humidity > 0 && humidity >= 30){return weakCurrent}
+  if(humidity > 0 && humidity <= 30){return weakCurrent}
   if(humidity > 30 && humidity <= 100){return strongCurrent} 
 }
 
