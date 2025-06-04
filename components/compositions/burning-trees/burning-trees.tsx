@@ -4,8 +4,8 @@ import BurningTreesSketch from "./burning-trees-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 
-const noFire = "/audios/burningTrees_noFire.mp3";
-const fireNoise = "/audios/burningTrees_Fire.mp3" ;
+const noFire = "/audios/burningTrees_noFire.wav";
+const fireNoise = "/audios/burningTrees_audio.mp3" ;
 
 function getAudio(fireNumber: number){
   if (fireNumber == 0){return noFire;}
