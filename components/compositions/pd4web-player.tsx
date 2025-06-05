@@ -2,19 +2,23 @@
 import { useEffect, useRef } from "react";
 import TogglePlayButton from "./toggle-play-button";
 
-// This is for adding Pd4Web to the global this type
+// Extend globalThis to include Pd4WebAudioWorkletNode
 declare global {
-  var Pd4Web: InstanceType<Pd4WebModuleType["Pd4Web"]> | undefined;
-  var Pd4WebAudioWorkletNode: AudioWorkletNode | undefined;
+  interface GlobalThis {
+    Pd4WebAudioWorkletNode?: AudioWorkletNode;
+    Pd4Web?: InstanceType<Pd4WebModuleType["Pd4Web"]>;
+    Pd4WebModule?: (opts: { packageName: string }) => Promise<Pd4WebModuleType>;
+  }
 }
 
-type Pd4WebModuleType = {
+// This is for adding Pd4Web to the global this type
+export type Pd4WebModuleType = {
   Pd4Web: new () => {
     // Internal handle (optional, for advanced use)
     $$?: any;
 
     // Main API methods
-    init: () => Promise<void> | void;
+    init: () => Promise<void>;
     addGuiReceiver: (arg0: any) => void;
     bindReceiver: (arg0: any) => void;
     noteOn: (arg0: any, arg1: any, arg2: any) => void;
@@ -46,8 +50,8 @@ type Pd4WebModuleType = {
 };
 
 interface Pd4WebPlayerProps {
-  packageName?: string;
-  play?: boolean;
+  packageName: string;
+  play: boolean;
 }
 
 export default function Pd4WebPlayer({
@@ -64,7 +68,9 @@ export default function Pd4WebPlayer({
     navigator.serviceWorker.ready.then(() => {
       console.log("Service worker is ready");
       scriptRef.current = document.createElement("script");
-      scriptRef.current.src = "/pd4web/pd4web.js";
+      console.log(packageName.split("/"));
+      console.log(`/${packageName.split("/")[1]}/pd4web.js`);
+      scriptRef.current.src = `/${packageName.split("/")[1]}/pd4web.js`;
       scriptRef.current.async = true;
       scriptRef.current.onload = () => {
         const Pd4WebModule = (globalThis as any).Pd4WebModule as
@@ -76,7 +82,9 @@ export default function Pd4WebPlayer({
             //TODO
             // For some reasing the globalThis.Pd4WebAudioWorkletNode is not available at this moment
             //pd4webAudioWorkletNodeRef.current = globalThis.Pd4WebAudioWorkletNode(
-            pd4webRef.current = globalThis.Pd4Web;
+            pd4webRef.current = globalThis.Pd4Web as InstanceType<
+              Pd4WebModuleType["Pd4Web"]
+            >;
             if (pd4webRef.current && !initializedRef.current) {
               pd4webRef.current.init();
               initializedRef.current = true;
@@ -116,14 +124,13 @@ export default function Pd4WebPlayer({
   };
 
   const suspendAudio = () => {
-    console.log(pd4webAudioWorkletNodeRef.current);
     if (pd4webRef.current && initializedRef.current && globalThis.Pd4Web) {
       console.log("Pd4Web suspend called");
       //TODO
       //This should probably be a ref but I didn't managed to make it work,
       //should come back to this later
       //pd4webRef.current.suspendAudio(); This does not work for some reaseon
-      globalThis.Pd4WebAudioWorkletNode?.disconnect();
+      (globalThis as GlobalThis).Pd4WebAudioWorkletNode?.disconnect();
       initializedRef.current = false;
     }
   };

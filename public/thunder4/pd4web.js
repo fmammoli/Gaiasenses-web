@@ -102,7 +102,6 @@ var Pd4WebModule = (() => {
             return;
           }
           Module["dataFileDownloads"] ??= {};
-          console.log(packageName);
           fetch(packageName)
             .catch((cause) =>
               Promise.reject(
@@ -627,10 +626,10 @@ var Pd4WebModule = (() => {
     var isDataURI = (filename) => filename.startsWith(dataURIPrefix);
     var isFileURI = (filename) => filename.startsWith("file://");
     function findWasmBinary() {
-      var f = "pd4web.wasm";
-      if (!isDataURI(f)) {
-        return locateFile(f);
-      }
+      var f = "/pd4web/pd4web.wasm";
+      // if (!isDataURI(f)) {
+      //   return locateFile(f);
+      // }
       return f;
     }
     var wasmBinaryFile;
@@ -843,7 +842,6 @@ var Pd4WebModule = (() => {
       }
     }
     function _JS_suspendAudioWorkLet(audioContext) {
-      console.log("Suspending audio context");
       Pd4WebAudioContext = emscriptenGetAudioObject(audioContext);
       Pd4WebAudioContext.suspend();
     }
@@ -3656,7 +3654,7 @@ var Pd4WebModule = (() => {
       if (!audioWorklet) {
         return audioWorkletCreationFailed();
       }
-      console.log(Module["packageName"]);
+
       audioWorklet
         //Aslo had to add this line to access pd4web.aw.js from root public folder
         .addModule("/pd4web/pd4web.aw.js")
