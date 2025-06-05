@@ -2,6 +2,7 @@ import "../globals.css";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { AudioContextProvider } from "@/hooks/webpd-context";
+import RegisterPd4WebSW from "@/components/register-pd4web-sw";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 const montserrat = Montserrat({
@@ -40,8 +41,9 @@ export default function LocaleLayout({
           disableTransitionOnChange
         >
         </ThemeProvider> */}
-        
+        <RegisterPd4WebSW></RegisterPd4WebSW>
         <AudioContextProvider>{children}</AudioContextProvider>
+
         <Analytics />
         <SpeedInsights />
       </body>

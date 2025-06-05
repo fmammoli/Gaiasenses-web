@@ -55,13 +55,17 @@ export default async function getData(
   lon: string,
   dist?: number
 ) {
+  console.log(
+    `https://7ghevyl79d.execute-api.sa-east-1.amazonaws.com/prod/${endpoint}?lat=${lat}&lon=${lon}${
+      dist ? `&dist=${dist}` : ""
+    }`
+  );
   const res = await fetch(
     `https://7ghevyl79d.execute-api.sa-east-1.amazonaws.com/prod/${endpoint}?lat=${lat}&lon=${lon}${
       dist ? `&dist=${dist}` : ""
     }`,
     { next: { revalidate: 7200 } }
   );
-
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
@@ -81,7 +85,6 @@ export default async function getData(
       } got status ${res.status}; ${res.statusText}`
     );
   }
-
   return res.json();
 }
 

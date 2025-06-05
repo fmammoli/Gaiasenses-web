@@ -3,6 +3,8 @@ import AttractorSketch from "./attractor-sketch";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 import { getLightning } from "@/components/getData";
+import Pd4WebPlayer from "../pd4web-player";
+import usePd4Web from "@/hooks/use-pd4web";
 
 export type AttractorProps = {
   lat: string;
@@ -15,7 +17,7 @@ export type AttractorProps = {
 
 export default async function Attractor(props: AttractorProps) {
   let lightningCount = props.lightningCount ?? 0;
-
+  const packageName = "/thunder4/pd4web.data";
   try {
     if (props.today) {
       const data = await getLightning(props.lat, props.lon, 100);
@@ -28,8 +30,8 @@ export default async function Attractor(props: AttractorProps) {
   return (
     <Composition>
       <AttractorSketch lightningCount={lightningCount} play={props.play} />
-            <CompositionControls play={props.play} />
-            {props.debug && <DebugPanel></DebugPanel>}
+      <Pd4WebPlayer packageName={packageName} play={props.play} />
+      {props.debug && <DebugPanel></DebugPanel>}
     </Composition>
   );
 }

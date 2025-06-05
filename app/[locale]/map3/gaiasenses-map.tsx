@@ -103,7 +103,7 @@ export default function GaiasensesMap({
       randomComposition = newShuffle.next().value;
       setShuffled(newShuffle);
     }
-    console.log(randomComposition);
+    //console.log(randomComposition);
     newSearchParams.set("composition", randomComposition[0]);
     newSearchParams.set("mode", "map");
     router.replace(`${pathname}?${newSearchParams.toString()}`);
@@ -192,7 +192,7 @@ export default function GaiasensesMap({
     }
   }, [isIdleRedirect, searchParams, router, pathname, idleTimerRedirect]);
 
-  console.log(searchParams);
+  //console.log(searchParams);
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] ">
