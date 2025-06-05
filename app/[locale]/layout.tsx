@@ -42,7 +42,8 @@ export default function LocaleLayout({
         >
         </ThemeProvider> */}
         <RegisterPd4WebSW></RegisterPd4WebSW>
-        {children}
+        <AudioContextProvider>{children}</AudioContextProvider>
+
         <Analytics />
         <SpeedInsights />
       </body>

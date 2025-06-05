@@ -4,8 +4,6 @@ var Pd4WebModule = (() => {
   if (typeof __filename != "undefined") _scriptName = _scriptName || __filename;
   return function (moduleArg = {}) {
     var moduleRtn;
-    console.log(moduleArg);
-
     var Module = moduleArg;
     var readyPromiseResolve, readyPromiseReject;
     var readyPromise = new Promise((resolve, reject) => {
@@ -845,6 +843,7 @@ var Pd4WebModule = (() => {
       }
     }
     function _JS_suspendAudioWorkLet(audioContext) {
+      console.log("Suspending audio context");
       Pd4WebAudioContext = emscriptenGetAudioObject(audioContext);
       Pd4WebAudioContext.suspend();
     }
