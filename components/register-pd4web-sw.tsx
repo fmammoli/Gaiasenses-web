@@ -8,7 +8,7 @@ export default function RegisterPd4webSW() {
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register("/pd4web.threads.js")
+        .register("/pd4web/pd4web.threads.js", { scope: "/" })
         .then((registration) => {
           console.log(
             "Service Worker registered with scope:",
