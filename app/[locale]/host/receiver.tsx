@@ -87,7 +87,8 @@ export default function Receiver() {
   };
 
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
-    if (detectedCodes && detectedCodes[0]?.rawValue && !offer) {
+    console.log("Detected codes:", detectedCodes);
+    if (detectedCodes && detectedCodes[0]?.rawValue) {
       handleAnswerInput(detectedCodes[0].rawValue);
     }
   };
@@ -107,9 +108,8 @@ export default function Receiver() {
 
       <H2>Paste the controller answer here</H2>
       <Scanner
-        onScan={handleScan}
+        onScan={(e) => console.log("Scanner result:", e)}
         onError={console.error}
-        formats={["qr_code"]}
         components={{
           torch: true,
           zoom: true,

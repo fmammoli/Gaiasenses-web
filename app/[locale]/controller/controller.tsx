@@ -205,7 +205,7 @@ export default function Controller() {
             <QRCodeSVG
               size={200}
               className="mx-auto"
-              value={JSON.stringify(offer)}
+              value={JSON.stringify(answer)}
             />
           </button>
           {/* <p>{JSON.stringify(answer)}</p> */}
