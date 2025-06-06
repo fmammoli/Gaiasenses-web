@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
 import { H2 } from "@/components/ui/h2";
+import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 
@@ -95,10 +96,30 @@ export default function Controller() {
     }
   };
 
+  type DeviceOrientationEvent = {
+    alpha: number | null; // rotation around z-axis
+    beta: number | null; // rotation around x-axis
+    gamma: number | null; // rotation around y-axis
+  };
+  const [orientation, setOrientation] = useState<DeviceOrientationEvent | null>(
+    null
+  );
   // Add this function to handle device orientation (gyroscope) data
   function handleOrientationEvent(event: DeviceOrientationEvent) {
     // alpha: rotation around z-axis, beta: x-axis, gamma: y-axis
-    console.log("Gyroscope:", {
+    const orientation = console.log("Gyroscope:", {
+      alpha: event.alpha,
+      beta: event.beta,
+      gamma: event.gamma,
+    });
+    dcRef.current?.send(
+      JSON.stringify({
+        alpha: event.alpha,
+        beta: event.beta,
+        gamma: event.gamma,
+      })
+    );
+    setOrientation({
       alpha: event.alpha,
       beta: event.beta,
       gamma: event.gamma,
@@ -129,7 +150,8 @@ export default function Controller() {
             );
             window.addEventListener(
               "deviceorientation",
-              handleOrientationEvent as EventListener,
+              (event) =>
+                handleOrientationEvent(event as DeviceOrientationEvent),
               true
             );
           } else {
@@ -148,9 +170,15 @@ export default function Controller() {
       );
       window.addEventListener(
         "deviceorientation",
-        handleOrientationEvent as EventListener,
+        (event) => handleOrientationEvent(event as DeviceOrientationEvent),
         true
       );
+    }
+  };
+
+  const handleScan = (detectedCodes: IDetectedBarcode[]) => {
+    if (detectedCodes && detectedCodes[0]?.rawValue && !offer) {
+      handleOfferInput(detectedCodes[0].rawValue);
     }
   };
 
@@ -158,6 +186,17 @@ export default function Controller() {
     <div className="p-4">
       <H1>This is the controller</H1>
       <H2>Paste the receiver offer here:</H2>
+      <Scanner
+        onScan={handleScan}
+        onError={console.error}
+        formats={["qr_code"]}
+        components={{
+          torch: true,
+          zoom: true,
+          finder: true,
+        }}
+        classNames={{ container: "max-w-xs mx-auto" }}
+      />
       <textarea onBlur={(e) => handleOfferInput(e.target.value)} />
       {answer && (
         <div>
@@ -182,6 +221,14 @@ export default function Controller() {
         >
           Enable Motion Detection
         </button>
+      )}
+      {motionEnabled && (
+        <div>
+          <H2>Orientation</H2>
+          <p>alpha: {orientation?.alpha}</p>
+          <p>beta: {orientation?.beta}</p>
+          <p>gamma: {orientation?.gamma}</p>
+        </div>
       )}
     </div>
   );

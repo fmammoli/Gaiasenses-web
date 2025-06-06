@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react"; // npm install qrcode.react
 import { H1 } from "@/components/ui/h1";
 import { H2 } from "@/components/ui/h2";
+import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 
 const iceServers = {
   iceServers: [
@@ -36,8 +37,11 @@ const iceServers = {
 export default function Receiver() {
   const [offer, setOffer] = useState<RTCSessionDescriptionInit | null>(null);
 
+  const [dcOpen, setDcOpen] = useState(false);
   const lcRef = useRef<RTCPeerConnection | null>(null);
   const dcRef = useRef<RTCDataChannel | null>(null);
+
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     console.log("Initializing WebRTC Receiver...");
@@ -46,10 +50,14 @@ export default function Receiver() {
     const dc = lc.createDataChannel("gaiaChannel");
     dcRef.current = dc;
 
-    dc.onmessage = (e) => console.log("Received message:", e.data);
+    dc.onmessage = (e) => {
+      console.log("Received message:", e.data);
+      setMessage(e.data);
+    };
     dc.onopen = () => {
       console.log("Data channel is open (receiver)!!!");
       alert("Data channel is open (receiver)!!!");
+      setDcOpen(true);
     };
 
     lc.onicecandidate = (e) => {
@@ -78,6 +86,12 @@ export default function Receiver() {
     }
   };
 
+  const handleScan = (detectedCodes: IDetectedBarcode[]) => {
+    if (detectedCodes && detectedCodes[0]?.rawValue && !offer) {
+      handleAnswerInput(detectedCodes[0].rawValue);
+    }
+  };
+
   return (
     <div className="p-4">
       <H1>This is the receiver</H1>
@@ -92,7 +106,21 @@ export default function Receiver() {
       {/* <p>{JSON.stringify(offer)}</p> */}
 
       <H2>Paste the controller answer here</H2>
+      <Scanner
+        onScan={handleScan}
+        onError={console.error}
+        formats={["qr_code"]}
+        components={{
+          torch: true,
+          zoom: true,
+          finder: true,
+        }}
+        classNames={{ container: "max-w-xs mx-auto" }}
+      />
       <textarea onBlur={(e) => handleAnswerInput(e.target.value)} />
+      <div>
+        <p>{message}</p>
+      </div>
     </div>
   );
 }
