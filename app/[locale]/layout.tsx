@@ -5,6 +5,8 @@ import { AudioContextProvider } from "@/hooks/webpd-context";
 import RegisterPd4WebSW from "@/components/register-pd4web-sw";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { OrientationProvider } from "@/hooks/orientation-context";
+import { WebRTCProvider } from "@/hooks/webrtc-context";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -42,8 +44,11 @@ export default function LocaleLayout({
         >
         </ThemeProvider> */}
         <RegisterPd4WebSW></RegisterPd4WebSW>
-        <AudioContextProvider>{children}</AudioContextProvider>
-
+        <OrientationProvider>
+          <WebRTCProvider>
+            <AudioContextProvider>{children}</AudioContextProvider>
+          </WebRTCProvider>
+        </OrientationProvider>
         <Analytics />
         <SpeedInsights />
       </body>

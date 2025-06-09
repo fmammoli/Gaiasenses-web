@@ -16,8 +16,14 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
+
 import InfoButton from "./info-button";
+import { useOrientation } from "@/hooks/orientation-context";
+import ReceiverDialog from "./receiver-dialog";
+// @ts-ignore
+
+import { useOrientationSmoother } from "./use-orientation-smoother";
+import OrientationControl from "./orientation-control";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -70,7 +76,8 @@ export default function GaiasensesMap({
     initialLng,
   ]);
   const [showPopup, setShowPopup] = useState<boolean>(true);
-
+  const orientationIdleTimer = useRef<NodeJS.Timeout | null>(null);
+  const ORIENTATION_IDLE_DELAY = 500; // ms
   const mapRef = useRef<MapRef>(null);
 
   function handleDrag(event: MarkerDragEvent) {
@@ -98,22 +105,22 @@ export default function GaiasensesMap({
     let randomComposition = shuffled.next().value;
 
     if (randomComposition === undefined) {
-      //console.log("is undefiend")
       const newShuffle = shuffle([...comps]);
       randomComposition = newShuffle.next().value;
       setShuffled(newShuffle);
     }
-    //console.log(randomComposition);
     newSearchParams.set("composition", randomComposition[0]);
     newSearchParams.set("mode", "map");
     router.replace(`${pathname}?${newSearchParams.toString()}`);
-    setShowPopup(true);
 
-    // setIdleTimerRedirect(
-    //   setTimeout(() => {
-    //     setIsIdleRedirect(true);
-    //   }, 10000)
-    // );
+    // Debounced popup logic
+    setShowPopup(false);
+
+    if (orientationIdleTimer.current)
+      clearTimeout(orientationIdleTimer.current);
+    orientationIdleTimer.current = setTimeout(() => {
+      setShowPopup(true);
+    }, ORIENTATION_IDLE_DELAY);
   }
 
   function handleDragEnd(event: MarkerDragEvent) {
@@ -167,6 +174,7 @@ export default function GaiasensesMap({
   }
 
   function handleMoveEnd(e: ViewStateChangeEvent) {
+    console.log("move end");
     const lngLat = e.target.getCenter().wrap();
     updatePopupPosition(lngLat.lat, lngLat.lng);
   }
@@ -201,6 +209,9 @@ export default function GaiasensesMap({
           <p className="w-4 text-xs">|</p>
           <p className="w-28 text-sm">Lng: {latlng[1].toFixed(5)}</p>
         </div>
+      </div>
+      <div>
+        <ReceiverDialog></ReceiverDialog>
       </div>
       <div>
         <InfoButton></InfoButton>
@@ -240,6 +251,7 @@ export default function GaiasensesMap({
       >
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
+        <OrientationControl></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
           latitude={latlng[0]}

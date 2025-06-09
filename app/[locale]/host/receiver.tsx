@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react"; // npm install qrcode.react
-import { H1 } from "@/components/ui/h1";
-import { H2 } from "@/components/ui/h2";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
+import { useOrientation } from "@/hooks/orientation-context";
+import { useWebRTC } from "@/hooks/webrtc-context";
 
 const iceServers = {
   iceServers: [
@@ -37,44 +37,77 @@ const iceServers = {
 export default function Receiver() {
   const [offer, setOffer] = useState<RTCSessionDescriptionInit | null>(null);
 
-  const [dcOpen, setDcOpen] = useState(false);
-  const lcRef = useRef<RTCPeerConnection | null>(null);
-  const dcRef = useRef<RTCDataChannel | null>(null);
+  //const [dcOpen, setDcOpen] = useState(false);
+  //const lcRef = useRef<RTCPeerConnection | null>(null);
+  //const dcRef = useRef<RTCDataChannel | null>(null);
 
   const [message, setMessage] = useState("");
 
+  const { pcRef: lcRef, dcRef, dcOpen, setDcOpen } = useWebRTC();
+
+  const { setOrientation } = useOrientation();
+
   useEffect(() => {
     console.log("Initializing WebRTC Receiver...");
-    const lc = new RTCPeerConnection(iceServers);
-    lcRef.current = lc;
-    const dc = lc.createDataChannel("gaiaChannel");
-    dcRef.current = dc;
+    lcRef.current = new RTCPeerConnection(iceServers);
+    const lc = lcRef.current;
+    dcRef.current = lc.createDataChannel("gaiaChannel");
+    const dc = dcRef.current;
 
-    dc.onmessage = (e) => {
-      console.log("Received message:", e.data);
-      setMessage(e.data);
-    };
-    dc.onopen = () => {
+    // const onmessage = (e: MessageEvent<any>) => {
+    //   console.log("Received message:", e.data);
+    //   try {
+    //     const data = JSON.parse(e.data);
+    //     if (
+    //       typeof data.alpha === "number" &&
+    //       typeof data.beta === "number" &&
+    //       typeof data.gamma === "number"
+    //     ) {
+    //       setOrientation({
+    //         alpha: data.alpha,
+    //         beta: data.beta,
+    //         gamma: data.gamma,
+    //       });
+    //     }
+    //     setMessage(e.data);
+    //   } catch {
+    //     setMessage(e.data);
+    //   }
+    // };
+
+    //dc.addEventListener("message", onmessage);
+
+    const onopen = () => {
       console.log("Data channel is open (receiver)!!!");
       alert("Data channel is open (receiver)!!!");
       setDcOpen(true);
     };
 
-    lc.onicecandidate = (e) => {
+    dc.addEventListener("open", onopen);
+
+    const onicecandidate = (e: RTCPeerConnectionIceEvent) => {
       console.log(
         "New ICE candidate preprinting SDP:",
         JSON.stringify(lc.localDescription)
       );
       setOffer(lc.localDescription);
     };
+    lc.addEventListener("icecandidate", onicecandidate);
 
     lc.createOffer()
       .then((offer) => lc.setLocalDescription(offer))
       .then((a) => console.log("Offer set as local description"));
+
+    return () => {
+      lc.removeEventListener("icecandidate", onicecandidate);
+      //dc.removeEventListener("message", onmessage);
+      dc.removeEventListener("open", onopen);
+    };
   }, []);
 
   const handleAnswerInput = async (answerStr: string) => {
     if (!lcRef.current) return;
+    console.log(answerStr);
     const answer = JSON.parse(answerStr);
     await lcRef.current.setRemoteDescription(answer);
   };
@@ -94,29 +127,38 @@ export default function Receiver() {
   };
 
   return (
-    <div className="p-4">
-      <H1>This is the receiver</H1>
-      <H2>This is the offer, paste it on the controller:</H2>
-      <button onClick={copyToClipboard}>
-        <QRCodeSVG
-          size={200}
-          className="mx-auto"
-          value={JSON.stringify(offer)}
-        />
-      </button>
-      {/* <p>{JSON.stringify(offer)}</p> */}
-
-      <H2>Paste the controller answer here</H2>
-      <Scanner
-        onScan={(e) => console.log("Scanner result:", e)}
-        onError={console.error}
-        components={{
-          torch: true,
-          zoom: true,
-          finder: true,
-        }}
-        classNames={{ container: "max-w-xs mx-auto" }}
-      />
+    <div>
+      <div className="p-4 mx-auto flex items-center gap-40">
+        <div className="flex-col items-center">
+          <h2 className="text-md mb-4">
+            1) Read this QR Code with your phone using the controller Page:
+          </h2>
+          <button onClick={copyToClipboard} className="flex mx-auto">
+            <QRCodeSVG
+              size={300}
+              value={JSON.stringify(offer)}
+              //value={`http://gaiasenses-web-git-webrtc-control-fmammolis-projects.vercel.app/controller`}
+              level="L"
+              minVersion={40}
+            />
+          </button>
+          {/* <p>{JSON.stringify(offer)}</p> */}
+        </div>
+        <div className="flex-col items-center">
+          <h2>2) Show the laptop camera the QR Code on your phone:</h2>
+          <Scanner
+            onScan={handleScan}
+            onError={console.error}
+            components={{
+              torch: true,
+              finder: true,
+            }}
+            classNames={{ container: "max-w-xs mx-auto" }}
+            sound={false}
+          />
+        </div>
+        <div></div>
+      </div>
       <textarea onBlur={(e) => handleAnswerInput(e.target.value)} />
       <div>
         <p>{message}</p>

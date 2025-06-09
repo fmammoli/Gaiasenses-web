@@ -182,10 +182,30 @@ export default function Controller() {
     }
   };
 
+  // Helper to update and send orientation
+  function updateAndSendOrientation(newOrientation: DeviceOrientationEvent) {
+    setOrientation(newOrientation);
+    dcRef.current?.send(JSON.stringify(newOrientation));
+  }
+
+  // Button handlers
+  function changeOrientation(axis: "alpha" | "beta" | "gamma", delta: number) {
+    setOrientation((prev) => {
+      const updated = {
+        alpha: prev?.alpha ?? 0,
+        beta: prev?.beta ?? 0,
+        gamma: prev?.gamma ?? 0,
+        [axis]: (prev?.[axis] ?? 0) + delta,
+      };
+      dcRef.current?.send(JSON.stringify(updated));
+      return updated;
+    });
+  }
+
   return (
     <div className="p-4">
-      <H1>This is the controller</H1>
-      <H2>Paste the receiver offer here:</H2>
+      <H1>Receiver</H1>
+      <H2>1) Read the QR Code in the laptop:</H2>
       <Scanner
         onScan={handleScan}
         onError={console.error}
@@ -200,7 +220,7 @@ export default function Controller() {
       <textarea onBlur={(e) => handleOfferInput(e.target.value)} />
       {answer && (
         <div>
-          <H2>This is the answer, paste it on the receiver</H2>
+          <H2>2) Show this QRCode to the laptop camera:</H2>
           <button onClick={copyToClipboard}>
             <QRCodeSVG
               size={200}
@@ -228,6 +248,31 @@ export default function Controller() {
           <p>alpha: {orientation?.alpha}</p>
           <p>beta: {orientation?.beta}</p>
           <p>gamma: {orientation?.gamma}</p>
+        </div>
+      )}
+      {motionEnabled && (
+        <div>
+          <H2>Orientation</H2>
+          <p>alpha: {orientation?.alpha}</p>
+          <p>beta: {orientation?.beta}</p>
+          <p>gamma: {orientation?.gamma}</p>
+          <div className="flex gap-2 mt-2">
+            <div>
+              <span>Alpha: </span>
+              <button onClick={() => changeOrientation("alpha", -5)}>-</button>
+              <button onClick={() => changeOrientation("alpha", 5)}>+</button>
+            </div>
+            <div>
+              <span>Beta: </span>
+              <button onClick={() => changeOrientation("beta", -5)}>-</button>
+              <button onClick={() => changeOrientation("beta", 5)}>+</button>
+            </div>
+            <div>
+              <span>Gamma: </span>
+              <button onClick={() => changeOrientation("gamma", -5)}>-</button>
+              <button onClick={() => changeOrientation("gamma", 5)}>+</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
