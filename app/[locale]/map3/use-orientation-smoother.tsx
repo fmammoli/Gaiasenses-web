@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useOrientationSmoother(
-  orientation: { alpha?: number; beta?: number } | null
+  orientation: { alpha?: number; beta?: number; gamma?: number } | null
 ) {
-  const smoothedRef = useRef<{ alpha: number; beta: number }>({
+  const smoothedRef = useRef<{ alpha: number; beta: number; gamma: number }>({
     alpha: 0,
     beta: 0,
+    gamma: 0,
   });
   const workerRef = useRef<Worker | null>(null);
 
@@ -20,6 +21,7 @@ export function useOrientationSmoother(
         smoothedRef.current = {
           alpha: e.data.smoothAlpha,
           beta: e.data.smoothBeta,
+          gamma: e.data.smoothGamma,
         };
       }
     };

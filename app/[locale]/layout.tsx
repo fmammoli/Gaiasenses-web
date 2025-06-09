@@ -44,11 +44,9 @@ export default function LocaleLayout({
         >
         </ThemeProvider> */}
         <RegisterPd4WebSW></RegisterPd4WebSW>
-        <OrientationProvider>
-          <WebRTCProvider>
-            <AudioContextProvider>{children}</AudioContextProvider>
-          </WebRTCProvider>
-        </OrientationProvider>
+        <WebRTCProvider>
+          <AudioContextProvider>{children}</AudioContextProvider>
+        </WebRTCProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -35,75 +35,15 @@ const iceServers = {
 };
 
 export default function Receiver() {
-  const [offer, setOffer] = useState<RTCSessionDescriptionInit | null>(null);
-
-  //const [dcOpen, setDcOpen] = useState(false);
-  //const lcRef = useRef<RTCPeerConnection | null>(null);
-  //const dcRef = useRef<RTCDataChannel | null>(null);
-
-  const [message, setMessage] = useState("");
-
-  const { pcRef: lcRef, dcRef, dcOpen, setDcOpen } = useWebRTC();
-
-  const { setOrientation } = useOrientation();
+  const { pcRef: lcRef, offer, setWebRTCConnection } = useWebRTC();
 
   useEffect(() => {
     console.log("Initializing WebRTC Receiver...");
-    lcRef.current = new RTCPeerConnection(iceServers);
-    const lc = lcRef.current;
-    dcRef.current = lc.createDataChannel("gaiaChannel");
-    const dc = dcRef.current;
-
-    // const onmessage = (e: MessageEvent<any>) => {
-    //   console.log("Received message:", e.data);
-    //   try {
-    //     const data = JSON.parse(e.data);
-    //     if (
-    //       typeof data.alpha === "number" &&
-    //       typeof data.beta === "number" &&
-    //       typeof data.gamma === "number"
-    //     ) {
-    //       setOrientation({
-    //         alpha: data.alpha,
-    //         beta: data.beta,
-    //         gamma: data.gamma,
-    //       });
-    //     }
-    //     setMessage(e.data);
-    //   } catch {
-    //     setMessage(e.data);
-    //   }
-    // };
-
-    //dc.addEventListener("message", onmessage);
-
-    const onopen = () => {
-      console.log("Data channel is open (receiver)!!!");
-      alert("Data channel is open (receiver)!!!");
-      setDcOpen(true);
-    };
-
-    dc.addEventListener("open", onopen);
-
-    const onicecandidate = (e: RTCPeerConnectionIceEvent) => {
-      console.log(
-        "New ICE candidate preprinting SDP:",
-        JSON.stringify(lc.localDescription)
-      );
-      setOffer(lc.localDescription);
-    };
-    lc.addEventListener("icecandidate", onicecandidate);
-
-    lc.createOffer()
-      .then((offer) => lc.setLocalDescription(offer))
-      .then((a) => console.log("Offer set as local description"));
-
-    return () => {
-      lc.removeEventListener("icecandidate", onicecandidate);
-      //dc.removeEventListener("message", onmessage);
-      dc.removeEventListener("open", onopen);
-    };
-  }, []);
+    if (!lcRef.current) {
+      const pc = new RTCPeerConnection(iceServers);
+      setWebRTCConnection(pc);
+    }
+  }, [lcRef, setWebRTCConnection]);
 
   const handleAnswerInput = async (answerStr: string) => {
     if (!lcRef.current) return;
@@ -160,9 +100,6 @@ export default function Receiver() {
         <div></div>
       </div>
       <textarea onBlur={(e) => handleAnswerInput(e.target.value)} />
-      <div>
-        <p>{message}</p>
-      </div>
     </div>
   );
 }
