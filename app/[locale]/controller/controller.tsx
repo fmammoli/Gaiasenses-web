@@ -204,8 +204,8 @@ export default function Controller() {
 
   return (
     <div className="p-4">
-      <H1>Receiver</H1>
-      <H2>1) Read the QR Code in the laptop:</H2>
+      <H1>Controller</H1>
+      <H2>1) Read the QR Code on your laptop:</H2>
       <Scanner
         onScan={handleScan}
         onError={console.error}
