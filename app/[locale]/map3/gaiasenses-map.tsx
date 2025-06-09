@@ -18,11 +18,8 @@ import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
 
 import InfoButton from "./info-button";
-import { useOrientation } from "@/hooks/orientation-context";
 import ReceiverDialog from "./receiver-dialog";
-// @ts-ignore
 
-import { useOrientationSmoother } from "./use-orientation-smoother";
 import OrientationControl from "./orientation-control";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
@@ -114,8 +111,8 @@ export default function GaiasensesMap({
     router.replace(`${pathname}?${newSearchParams.toString()}`);
 
     // Debounced popup logic
-    setShowPopup(false);
-
+    //setShowPopup(false);
+    //setShowPopup(true);
     if (orientationIdleTimer.current)
       clearTimeout(orientationIdleTimer.current);
     orientationIdleTimer.current = setTimeout(() => {
@@ -174,9 +171,11 @@ export default function GaiasensesMap({
   }
 
   function handleMoveEnd(e: ViewStateChangeEvent) {
-    console.log("move end");
-    const lngLat = e.target.getCenter().wrap();
-    updatePopupPosition(lngLat.lat, lngLat.lng);
+    if (inputMode === "mouse") {
+      console.log("move end");
+      const lngLat = e.target.getCenter().wrap();
+      updatePopupPosition(lngLat.lat, lngLat.lng);
+    }
   }
 
   useEffect(() => {
@@ -201,6 +200,26 @@ export default function GaiasensesMap({
   }, [isIdleRedirect, searchParams, router, pathname, idleTimerRedirect]);
 
   //console.log(searchParams);
+
+  const onOrientationMoveEnd = () => {
+    if (!showPopup) {
+      setShowPopup(true);
+    }
+  };
+
+  const [inputMode, setInputMode] = useState<string>("mouse");
+
+  const toggleInputMode = (dcOpen: boolean) => {
+    setInputMode((prevMode) => {
+      if (dcOpen) {
+        if (prevMode === "mouse") {
+          return "controller";
+        }
+      }
+      return prevMode;
+    });
+  };
+
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] ">
@@ -251,7 +270,10 @@ export default function GaiasensesMap({
       >
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
-        <OrientationControl></OrientationControl>
+        <OrientationControl
+          onMoveEnd={updatePopupPosition}
+          onConnected={toggleInputMode}
+        ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
           latitude={latlng[0]}

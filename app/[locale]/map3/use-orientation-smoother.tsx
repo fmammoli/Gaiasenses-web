@@ -38,6 +38,7 @@ export function useOrientationSmoother(
       workerRef.current.postMessage({
         alpha: orientation.alpha,
         beta: orientation.beta,
+        gamma: orientation.gamma,
       });
     }
   }, [orientation]);

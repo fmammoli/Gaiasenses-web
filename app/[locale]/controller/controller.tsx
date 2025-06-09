@@ -223,7 +223,7 @@ export default function Controller() {
           <H2>2) Show this QRCode to the laptop camera:</H2>
           <button onClick={copyToClipboard}>
             <QRCodeSVG
-              size={200}
+              size={400}
               className="mx-auto"
               value={JSON.stringify(answer)}
             />

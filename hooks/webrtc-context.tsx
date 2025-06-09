@@ -50,7 +50,6 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
       "New ICE candidate preprinting SDP:",
       JSON.stringify(pcRef.current.localDescription)
     );
-    //setOffer(pcRef.current.localDescription);
   }, []);
 
   const onmessage = useCallback((e: MessageEvent<any>) => {
@@ -61,7 +60,6 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
         typeof data.beta === "number" &&
         typeof data.gamma === "number"
       ) {
-        console.log("Received orientation data:", data);
         orientationMessageRef.current = {
           alpha: data.alpha,
           beta: data.beta,
