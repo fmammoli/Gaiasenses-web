@@ -2,10 +2,9 @@
 
 import { useOrientationSmoother } from "./use-orientation-smoother";
 import { useMap } from "react-map-gl";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWebRTC } from "@/hooks/webrtc-context";
 import { LngLat } from "mapbox-gl";
-import { on } from "events";
 
 export default function OrientationControl({
   onMoveEnd,
@@ -124,15 +123,16 @@ export default function OrientationControl({
   }, [mapRef, orientationMessageRef, smoothedRef]);
 
   return (
-    <div className="absolute top-0 left-0 p-4 z-10 m-10">
-      <div className="bg-white bg-opacity-75 backdrop-blur-md rounded-lg p-4 shadow-lg">
-        <h2 className="text-lg font-bold mb-2">Orientation Control</h2>
-        <p className="text-sm text-gray-700">
-          Alpha: {orientation.alpha.toFixed(2)}°<br />
-          Beta: {orientation.beta.toFixed(2)}°<br />
-          Gamma: {orientation.gamma.toFixed(2)}°
-        </p>
-      </div>
-    </div>
+    // <div className="absolute top-0 left-0 p-4 z-10 m-10">
+    //   <div className="bg-white bg-opacity-75 backdrop-blur-md rounded-lg p-4 shadow-lg">
+    //     <h2 className="text-lg font-bold mb-2">Orientation Control</h2>
+    //     <p className="text-sm text-gray-700">
+    //       Alpha: {orientation.alpha.toFixed(2)}°<br />
+    //       Beta: {orientation.beta.toFixed(2)}°<br />
+    //       Gamma: {orientation.gamma.toFixed(2)}°
+    //     </p>
+    //   </div>
+    // </div>
+    <div></div>
   );
 }
