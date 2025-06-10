@@ -1,3 +1,5 @@
+import getOpenMeteo from "./getOpenMeteo";
+
 export type FireSpotsResponseData = {
   city: string;
   count: number;
@@ -187,7 +189,9 @@ export async function getWeather(
 
   //this is the old fetch, using satellite-fetcher API
   //return getData("rainfall", lat, lon);
-  return openWeather(lat, lon, options.lang);
+  //return openWeather(lat, lon, options.lang);
+  const resp = await getOpenMeteo({ lat, lon });
+  return resp;
 }
 
 export async function getLightning(
