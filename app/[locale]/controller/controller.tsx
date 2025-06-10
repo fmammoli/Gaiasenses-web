@@ -206,17 +206,20 @@ export default function Controller() {
     <div className="p-4">
       <H1>Controller</H1>
       <H2>1) Read the QR Code on your laptop:</H2>
-      <Scanner
-        onScan={handleScan}
-        onError={console.error}
-        formats={["qr_code"]}
-        components={{
-          torch: true,
-          zoom: true,
-          finder: true,
-        }}
-        classNames={{ container: "max-w-xs mx-auto" }}
-      />
+      {!answer && (
+        <Scanner
+          onScan={handleScan}
+          onError={console.error}
+          formats={["qr_code"]}
+          components={{
+            torch: true,
+            zoom: true,
+            finder: true,
+          }}
+          classNames={{ container: "max-w-xs mx-auto" }}
+        />
+      )}
+
       <textarea onBlur={(e) => handleOfferInput(e.target.value)} />
       {answer && (
         <div>
@@ -228,20 +231,19 @@ export default function Controller() {
               value={JSON.stringify(answer)}
             />
           </button>
-          {/* <p>{JSON.stringify(answer)}</p> */}
         </div>
       )}
-      <div>
+      {/* <div>
         <Button onClick={sendTestMessage}>Click to send message test!</Button>
-      </div>
-      {!motionEnabled && (
+      </div> */}
+      {/* {!motionEnabled && (
         <button
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
           onClick={enableMotionDetection}
         >
           Enable Motion Detection
         </button>
-      )}
+      )} */}
       {motionEnabled && (
         <div>
           <H2>Orientation</H2>
@@ -250,7 +252,7 @@ export default function Controller() {
           <p>gamma: {orientation?.gamma}</p>
         </div>
       )}
-      {motionEnabled && (
+      {/* {motionEnabled && (
         <div>
           <H2>Orientation</H2>
           <p>alpha: {orientation?.alpha}</p>
@@ -274,7 +276,7 @@ export default function Controller() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
