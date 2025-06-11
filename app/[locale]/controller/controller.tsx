@@ -8,6 +8,11 @@ import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { QRCodeSVG } from "qrcode.react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import {
+  decompressFromEncodedURIComponent,
+  compressToEncodedURIComponent,
+} from "lz-string";
+
 const iceServers = {
   iceServers: [
     {
@@ -183,7 +188,10 @@ export default function Controller() {
 
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
     if (detectedCodes && detectedCodes[0]?.rawValue && !offer) {
-      handleOfferInput(detectedCodes[0].rawValue);
+      const decompressedValue = decompressFromEncodedURIComponent(
+        detectedCodes[0].rawValue
+      );
+      handleOfferInput(decompressedValue);
     }
   };
 
@@ -245,7 +253,7 @@ export default function Controller() {
             <QRCodeSVG
               size={300}
               className="mx-auto"
-              value={JSON.stringify(answer)}
+              value={compressToEncodedURIComponent(JSON.stringify(answer))}
               boostLevel={true}
             />
           </button>

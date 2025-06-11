@@ -3,8 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react"; // npm install qrcode.react
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
-import { useOrientation } from "@/hooks/orientation-context";
 import { useWebRTC } from "@/hooks/webrtc-context";
+
+import {
+  compress,
+  decompress,
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from "lz-string";
 
 const iceServers = {
   iceServers: [
@@ -62,7 +68,10 @@ export default function Receiver() {
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
     console.log("Detected codes:", detectedCodes);
     if (detectedCodes && detectedCodes[0]?.rawValue) {
-      handleAnswerInput(detectedCodes[0].rawValue);
+      const decompressedValue = decompressFromEncodedURIComponent(
+        detectedCodes[0].rawValue
+      );
+      handleAnswerInput(decompressedValue);
     }
   };
 
@@ -71,21 +80,20 @@ export default function Receiver() {
       <div className="p-4 mx-auto flex items-center gap-40">
         <div className="flex-col items-center">
           <h2 className="text-md mb-4">
-            1) Read this QR Code with your phone using the controller Page:
+            1. Read this QR Code with your phone using the controller Page:
           </h2>
           <button onClick={copyToClipboard} className="flex mx-auto">
             <QRCodeSVG
               size={300}
-              value={JSON.stringify(offer)}
+              value={compressToEncodedURIComponent(JSON.stringify(offer))}
               //value={`http://gaiasenses-web-git-webrtc-control-fmammolis-projects.vercel.app/controller`}
               level="L"
-              minVersion={40}
             />
           </button>
           {/* <p>{JSON.stringify(offer)}</p> */}
         </div>
         <div className="flex-col items-center">
-          <h2>2) Show the laptop camera the QR Code on your phone:</h2>
+          <h2>2. Show the laptop camera the QR Code on your phone:</h2>
           <Scanner
             onScan={handleScan}
             onError={console.error}
