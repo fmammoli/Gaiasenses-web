@@ -255,6 +255,7 @@ export default function Controller() {
               className="mx-auto"
               value={compressToEncodedURIComponent(JSON.stringify(answer))}
               boostLevel={true}
+              level="L"
             />
           </button>
         </div>
