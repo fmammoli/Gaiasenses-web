@@ -10,6 +10,7 @@ export type NightRainSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
     //inspired by https://openprocessing.org/sketch/2318784
+    //Dados de satélite utilizados: Umidade e temperatura.
     let particles = [];
     let humidity = 0;
     let temp = 0;

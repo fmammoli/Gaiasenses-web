@@ -10,6 +10,7 @@ export type LightningBoltsSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & LightningBoltsSketchProps>) {
 //inspired by https://openprocessing.org/sketch/639075
+//Dados de satélite utilizados: Contagem de raios.
 let bolts: ChaoticLine[] = [];
 let boltTimer = 0;  
 let boltCount = 0; 

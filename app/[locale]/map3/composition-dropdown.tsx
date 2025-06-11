@@ -23,11 +23,12 @@ type  CompositionDropdownProps = {
     composition?:string,
     mode?:string
   }
+  weatherData?: any; 
+  lightningData?: any; 
+  fireData?: any; 
 }
 
-
-export function CompositionDropdown({searchParams}:CompositionDropdownProps) {
-
+export function CompositionDropdown({searchParams,weatherData}:CompositionDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -36,10 +37,10 @@ export function CompositionDropdown({searchParams}:CompositionDropdownProps) {
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Compositions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={searchParams.composition} className="overflow-y-scroll h-48">
+        <DropdownMenuRadioGroup value={searchParams.composition} className="overflow-y-scroll h-48"> 
           {compositions.map((item, index)=>{
             return (
-                <Link href={{query: {...searchParams, composition: item[0], mode:"player"}}} key={index}>
+                <Link href={{query: {...searchParams, composition: item[0], temperature: weatherData.temp,mode:"player"}}} key={index}> 
                   <DropdownMenuRadioItem value={item[0]}>
                     {item[0]}
                   </DropdownMenuRadioItem>

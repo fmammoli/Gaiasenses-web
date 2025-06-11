@@ -17,7 +17,7 @@ export default async function PopupWeatherInfo({
   lon: string | number;
   lang: string;
 }>) {
-  const weatherData = await getWeather(lat, lon, { lang: lang });
+  const weatherData = await getWeather(lat, lon, { lang: lang }); 
 
   return (
     <div className="mt-2 ">

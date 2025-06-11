@@ -32,6 +32,8 @@ export default async function RiverLines(props: RiverLinesProps) {
       const data = await getWeather(props.lat, props.lon); 
       humidity = data.main.humidity;
       temp = data.main.temp;
+      console.log("temperatura: ", temp)
+      console.log("umidade: ", humidity)
     }
   } catch (error) {
     console.log(error);

@@ -9,6 +9,7 @@ export type BurningTreesSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   //inspired by https://openprocessing.org/sketch/1749652
+  //Dados de satélite utilizados: Focos de incêndios.
   let t = 0;
   let fireNumber = 0;
   let W: number;

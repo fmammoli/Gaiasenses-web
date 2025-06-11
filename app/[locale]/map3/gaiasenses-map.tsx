@@ -256,7 +256,7 @@ export default function GaiasensesMap({
           }}
         ></Marker>
 
-        {showPopup && (
+        {showPopup && ( //adquirir as informações desse pop-up (que é o weatherinfo, dentro do children na linha 273, e mandar para o dropdown)
           <Popup
             latitude={latlng[0]}
             longitude={latlng[1]}

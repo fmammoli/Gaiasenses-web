@@ -10,6 +10,7 @@ export type WindLinesRESketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & WindLinesRESketchProps>) {
 //inspired by https://openprocessing.org/sketch/894918
+//Dados de satélite utilizados: Velocidade do vento.
 let n = 3100;
 let ps: Vector[] = [];
 let pOld: Vector[] = [];
