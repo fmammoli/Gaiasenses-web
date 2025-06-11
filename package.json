@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev-remote": "next dev -p 8080",
+    "dev-remote": "next dev -H 192.168.0.44",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

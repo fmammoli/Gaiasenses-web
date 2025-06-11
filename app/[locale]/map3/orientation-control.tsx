@@ -120,7 +120,7 @@ export default function OrientationControl({
       cancelAnimationFrame(animationId);
       if (idleTimer.current) clearTimeout(idleTimer.current);
     };
-  }, [mapRef, orientationMessageRef, smoothedRef]);
+  }, [mapRef, onMoveEnd, orientationMessageRef, smoothedRef]);
 
   return (
     // <div className="absolute top-0 left-0 p-4 z-10 m-10">
