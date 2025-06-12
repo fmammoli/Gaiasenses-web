@@ -2,16 +2,18 @@
 
 import { useOrientationSmoother } from "./use-orientation-smoother";
 import { useMap } from "react-map-gl";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useWebRTC } from "@/hooks/webrtc-context";
 import { LngLat } from "mapbox-gl";
 
 export default function OrientationControl({
   onMoveEnd,
   onConnected,
+  setShowPopup,
 }: {
   onMoveEnd: (lat: number, lon: number) => void;
   onConnected: (dcOpen: boolean) => void;
+  setShowPopup: Dispatch<SetStateAction<boolean>>;
 }) {
   const { orientationMessageRef, dcOpen } = useWebRTC();
 
@@ -32,7 +34,7 @@ export default function OrientationControl({
     gamma: 0,
   });
   const THRESHOLD = 1.5; // degrees, adjust as needed
-  const STABLE_DELAY = 1000; // ms
+  const STABLE_DELAY = 600; // ms
 
   const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
 
@@ -65,7 +67,7 @@ export default function OrientationControl({
       const speed = Math.max(dAlpha, dBeta, dGamma);
 
       // Map speed to zoom (tune these values as needed)
-      const minZoom = 1.5;
+      const minZoom = 1.3;
       const maxZoom = 5;
       const maxSpeed = 100; // degrees/sec for fastest spin
       const zoom = Math.max(
@@ -86,11 +88,11 @@ export default function OrientationControl({
         Math.abs(beta - lastBeta) > THRESHOLD ||
         Math.abs(gamma - lastGamma) > THRESHOLD;
 
-      setOrientation({
-        alpha: Math.abs(alpha - lastAlpha),
-        beta: Math.abs(beta - lastBeta),
-        gamma: Math.abs(gamma - lastGamma),
-      });
+      // setOrientation({
+      //   alpha: Math.abs(alpha - lastAlpha),
+      //   beta: Math.abs(beta - lastBeta),
+      //   gamma: Math.abs(gamma - lastGamma),
+      // });
       if (moved) {
         console.log("moved");
         const lngLat = new LngLat(longitude, latitude).wrap();
@@ -101,14 +103,16 @@ export default function OrientationControl({
             easing: (t) => t,
           });
         }
+        //setShowPopup(false);
         //onMoveEnd(longitude, latitude); // Hide popup on movement
-
+        onMoveEnd(lngLat.lat, lngLat.lng);
         // Reset idle timer
-        if (idleTimer.current) clearTimeout(idleTimer.current);
-        idleTimer.current = setTimeout(() => {
-          console.log("open popup");
-          onMoveEnd(lngLat.lat, lngLat.lng);
-        }, STABLE_DELAY);
+        // if (idleTimer.current) clearTimeout(idleTimer.current);
+        // idleTimer.current = setTimeout(() => {
+        //   console.log("open popup");
+        //   onMoveEnd(lngLat.lat, lngLat.lng);
+        //   //setShowPopup(true);
+        // }, STABLE_DELAY);
 
         lastRef.current = { alpha, beta, gamma };
         lastTimeRef.current = now;
@@ -118,7 +122,7 @@ export default function OrientationControl({
     animate();
     return () => {
       cancelAnimationFrame(animationId);
-      if (idleTimer.current) clearTimeout(idleTimer.current);
+      //if (idleTimer.current) clearTimeout(idleTimer.current);
     };
   }, [mapRef, onMoveEnd, orientationMessageRef, smoothedRef]);
 

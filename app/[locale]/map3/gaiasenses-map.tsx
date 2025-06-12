@@ -273,6 +273,7 @@ export default function GaiasensesMap({
         <OrientationControl
           onMoveEnd={updatePopupPosition}
           onConnected={toggleInputMode}
+          setShowPopup={setShowPopup}
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
