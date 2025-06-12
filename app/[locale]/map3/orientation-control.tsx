@@ -31,7 +31,7 @@ export default function OrientationControl({
     beta: 0,
     gamma: 0,
   });
-  const STOPPED_THRESHOLD = 0.4; // degrees, adjust as needed
+  const STOPPED_THRESHOLD = 0.08; // degrees, adjust as needed
   const MOVING_THRESHOLD = 0.2; // degrees, adjust as needed
   const STABLE_DELAY = 500; // ms
 
@@ -65,7 +65,7 @@ export default function OrientationControl({
 
       // Map speed to zoom (tune these values as needed)
       const minZoom = 1.5;
-      const maxZoom = 5;
+      const maxZoom = 8;
       const maxSpeed = 100; // degrees/sec for fastest spin
       const zoom = Math.max(
         minZoom,
@@ -106,7 +106,6 @@ export default function OrientationControl({
           mapRef.current.easeTo({
             center: lngLat,
             duration: 100,
-            zoom: zoom,
             easing: (t) => t,
           });
         }
@@ -126,6 +125,12 @@ export default function OrientationControl({
         }, STABLE_DELAY);
       } else {
         isStoppedRef.current = true;
+        // mapRef.current?.easeTo({
+        //   center: mapRef.current.getCenter(),
+        //   zoom: 5,
+        //   duration: 100,
+        //   easing: (t) => t,
+        // });
       }
       lastTimeRef.current = now;
       lastRef.current = smoothedRef.current;
