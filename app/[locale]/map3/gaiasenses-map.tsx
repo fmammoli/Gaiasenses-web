@@ -12,7 +12,7 @@ import Map, {
   MapRef,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
@@ -74,8 +74,10 @@ export default function GaiasensesMap({
   ]);
   const [showPopup, setShowPopup] = useState<boolean>(true);
   const orientationIdleTimer = useRef<NodeJS.Timeout | null>(null);
-  const ORIENTATION_IDLE_DELAY = 500; // ms
+  const ORIENTATION_IDLE_DELAY = 300; // ms
   const mapRef = useRef<MapRef>(null);
+
+  const [inputMode, setInputMode] = useState<string>("mouse");
 
   function handleDrag(event: MarkerDragEvent) {
     clearTimeout(idleTimer!);
@@ -93,32 +95,36 @@ export default function GaiasensesMap({
     setShowPopup(false);
   }
 
-  function updatePopupPosition(lat: number, lng: number) {
-    const newSearchParams = new URLSearchParams(searchParams.toString());
+  const updatePopupPosition = useCallback(
+    (lat: number, lng: number) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
 
-    newSearchParams.set("lat", lat.toString());
-    newSearchParams.set("lng", lng.toString());
+      newSearchParams.set("lat", lat.toString());
+      newSearchParams.set("lng", lng.toString());
 
-    let randomComposition = shuffled.next().value;
+      let randomComposition = shuffled.next().value;
 
-    if (randomComposition === undefined) {
-      const newShuffle = shuffle([...comps]);
-      randomComposition = newShuffle.next().value;
-      setShuffled(newShuffle);
-    }
-    newSearchParams.set("composition", randomComposition[0]);
-    newSearchParams.set("mode", "map");
-    router.replace(`${pathname}?${newSearchParams.toString()}`);
+      if (randomComposition === undefined) {
+        const newShuffle = shuffle([...comps]);
+        randomComposition = newShuffle.next().value;
+        setShuffled(newShuffle);
+      }
 
-    // Debounced popup logic
-    //setShowPopup(false);
-    //setShowPopup(true);
-    if (orientationIdleTimer.current)
-      clearTimeout(orientationIdleTimer.current);
-    orientationIdleTimer.current = setTimeout(() => {
-      setShowPopup(true);
-    }, ORIENTATION_IDLE_DELAY);
-  }
+      //Debounced popup logic
+      //setShowPopup(true);
+
+      if (orientationIdleTimer.current)
+        clearTimeout(orientationIdleTimer.current);
+      orientationIdleTimer.current = setTimeout(() => {
+        setShowPopup(true);
+      }, ORIENTATION_IDLE_DELAY);
+
+      newSearchParams.set("composition", randomComposition[0]);
+      newSearchParams.set("mode", "map");
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+    },
+    [searchParams, shuffled, router, pathname]
+  );
 
   function handleDragEnd(event: MarkerDragEvent) {
     const lngLat = event.lngLat.wrap();
@@ -170,13 +176,16 @@ export default function GaiasensesMap({
     setShowPopup(false);
   }
 
-  function handleMoveEnd(e: ViewStateChangeEvent) {
-    if (inputMode === "mouse") {
-      console.log("move end");
-      const lngLat = e.target.getCenter().wrap();
-      updatePopupPosition(lngLat.lat, lngLat.lng);
-    }
-  }
+  const handleMoveEnd = useCallback(
+    (e: ViewStateChangeEvent) => {
+      if (inputMode === "mouse") {
+        console.log("move end");
+        const lngLat = e.target.getCenter().wrap();
+        updatePopupPosition(lngLat.lat, lngLat.lng);
+      }
+    },
+    [inputMode, updatePopupPosition]
+  );
 
   useEffect(() => {
     if (isIdle) {
@@ -198,16 +207,6 @@ export default function GaiasensesMap({
       }
     }
   }, [isIdleRedirect, searchParams, router, pathname, idleTimerRedirect]);
-
-  //console.log(searchParams);
-
-  const onOrientationMoveEnd = () => {
-    if (!showPopup) {
-      setShowPopup(true);
-    }
-  };
-
-  const [inputMode, setInputMode] = useState<string>("mouse");
 
   const toggleInputMode = (dcOpen: boolean) => {
     setInputMode((prevMode) => {
@@ -273,7 +272,6 @@ export default function GaiasensesMap({
         <OrientationControl
           onMoveEnd={updatePopupPosition}
           onConnected={toggleInputMode}
-          setShowPopup={setShowPopup}
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
