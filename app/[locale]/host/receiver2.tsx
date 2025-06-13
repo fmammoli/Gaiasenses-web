@@ -6,10 +6,7 @@ import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { useWebRTC } from "@/hooks/webrtc-context";
 import { io, Socket } from "socket.io-client";
 
-import {
-  compressToEncodedURIComponent,
-  decompressFromEncodedURIComponent,
-} from "lz-string";
+import { compressToEncodedURIComponent } from "lz-string";
 import Link from "next/link";
 
 const iceServers = {
@@ -103,14 +100,14 @@ export default function Receiver2() {
       <h2 className="text-md mb-4">1. Read this QR Code with your phone:</h2>
       <Link
         className="flex justify-center"
-        href={`https://gaiasenses-web.verce.app/controller?offer=${compressToEncodedURIComponent(
+        href={`https://https://gaiasenses-oiyhv6zhv-fmammolis-projects.vercel.app/controller?offer=${compressToEncodedURIComponent(
           JSON.stringify(offer)
         )}`}
         target="_blank"
       >
         <QRCodeSVG
           size={400}
-          value={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(
+          value={`https://gaiasenses-oiyhv6zhv-fmammolis-projects.vercel.app/controller?offer=${compressToEncodedURIComponent(
             JSON.stringify(offer)
           )}`}
           //value={`http://gaiasenses-web-git-webrtc-control-fmammolis-projects.vercel.app/controller`}
