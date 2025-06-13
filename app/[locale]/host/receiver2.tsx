@@ -55,7 +55,7 @@ export default function Receiver2() {
 
   useEffect(() => {
     if (!socketRef.current) {
-      const socket = io("http://localhost:3001");
+      const socket = io("https://gaiasenses-controller-server.onrender.com");
       socketRef.current = socket;
 
       socketRef.current.on("connect", () => {
@@ -103,7 +103,7 @@ export default function Receiver2() {
       <h2 className="text-md mb-4">1. Read this QR Code with your phone:</h2>
       <Link
         className="flex justify-center"
-        href={`http://localhost:3000/controller?offer=${compressToEncodedURIComponent(
+        href={`https://gaiasenses-web.verce.app/controller?offer=${compressToEncodedURIComponent(
           JSON.stringify(offer)
         )}`}
         target="_blank"

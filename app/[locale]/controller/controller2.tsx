@@ -152,7 +152,7 @@ export default function Controller2({ offer }: { offer: string }) {
     };
 
     if (!socketRef.current) {
-      const socket = io("http://localhost:3001");
+      const socket = io("https://gaiasenses-controller-server.onrender.com");
       socketRef.current = socket;
 
       socketRef.current.on("connect", () => {
