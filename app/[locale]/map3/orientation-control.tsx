@@ -93,14 +93,14 @@ export default function OrientationControl({
         beta: Math.abs(beta - lastBeta),
         gamma: Math.abs(gamma - lastGamma),
       });
-      console.log({
-        alpha: Math.abs(alpha - lastAlpha),
-        beta: Math.abs(beta - lastBeta),
-        gamma: Math.abs(gamma - lastGamma),
-      });
+      // console.log({
+      //   alpha: Math.abs(alpha - lastAlpha),
+      //   beta: Math.abs(beta - lastBeta),
+      //   gamma: Math.abs(gamma - lastGamma),
+      // });
       if (moved) {
         isStoppedRef.current = true;
-        console.log("moved");
+        //console.log("moved");
         const lngLat = new LngLat(longitude, latitude).wrap();
         if (mapRef.current) {
           mapRef.current.easeTo({

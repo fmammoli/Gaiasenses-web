@@ -5,13 +5,9 @@ import { H1 } from "@/components/ui/h1";
 import { H2 } from "@/components/ui/h2";
 import { P } from "@/components/ui/p";
 import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
-import { QRCodeSVG } from "qrcode.react";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  decompressFromEncodedURIComponent,
-  compressToEncodedURIComponent,
-} from "lz-string";
+import { decompressFromEncodedURIComponent } from "lz-string";
 import { io, Socket } from "socket.io-client";
 
 const iceServers = {
@@ -42,17 +38,14 @@ const iceServers = {
   ],
 };
 
-export default function Controller({
-  initialOffer,
-}: {
-  initialOffer: string | null;
-}) {
-  const [offer, setOffer] = useState<RTCSessionDescriptionInit | null>(null);
+export default function Controller2({ offer }: { offer: string }) {
+  //const [offer, setOffer] = useState<RTCSessionDescriptionInit | null>(null);
   const [answer, setAnswer] = useState<RTCSessionDescriptionInit | null>(null);
   const [dcOpen, setDcOpen] = useState(false);
   const rcRef = useRef<RTCPeerConnection | null>(null);
   const dcRef = useRef<RTCDataChannel | null>(null);
   const [motionEnabled, setMotionEnabled] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
 
   type DeviceOrientationEvent = {
     alpha: number | null; // rotation around z-axis
@@ -132,8 +125,6 @@ export default function Controller({
     }
   }, [handleOrientationEvent]);
 
-  const socketRef = useRef<Socket | null>(null);
-
   useEffect(() => {
     const rc = new RTCPeerConnection(iceServers);
     rcRef.current = rc;
@@ -144,6 +135,7 @@ export default function Controller({
         JSON.stringify(rc.localDescription)
       );
       setAnswer(rc.localDescription);
+      socketRef.current?.emit("answer", rc.localDescription);
     };
 
     rc.ondatachannel = (e) => {
@@ -156,12 +148,11 @@ export default function Controller({
         console.log("Data channel is open (controller)!!!");
         setDcOpen(true);
         alert("Data channel is open (controller)!!!");
-        enableMotionDetection();
       };
     };
 
     if (!socketRef.current) {
-      const socket = io("http://localhost:3001");
+      const socket = io("https://gaiasenses-controller-server.onrender.com");
       socketRef.current = socket;
 
       socketRef.current.on("connect", () => {
@@ -169,6 +160,40 @@ export default function Controller({
       });
     }
   }, [enableMotionDetection]);
+
+  useEffect(() => {
+    const emitAnswer = async () => {
+      if (
+        motionEnabled &&
+        rcRef.current &&
+        offer &&
+        !rcRef.current.localDescription
+      ) {
+        const offerStr = decompressFromEncodedURIComponent(offer);
+        console.log(JSON.parse(offerStr));
+
+        await rcRef.current.setRemoteDescription(JSON.parse(offerStr));
+
+        const answer = await rcRef.current.createAnswer();
+
+        await rcRef.current.setLocalDescription(answer);
+
+        console.log("Answer created:", rcRef.current.localDescription);
+
+        if (socketRef.current) {
+          //socketRef.current.emit("answer", rcRef.current.localDescription);
+          console.log(
+            "Answer emitted to server:",
+            rcRef.current.localDescription
+          );
+          setAnswer(rcRef.current.localDescription);
+        } else {
+          console.error("Socket is not initialized.");
+        }
+      }
+    };
+    emitAnswer();
+  }, [motionEnabled, offer]);
 
   const handleOfferInput = async (offerStr: string) => {
     if (!rcRef.current) return;
@@ -211,26 +236,7 @@ export default function Controller({
     }
   };
 
-  // Helper to update and send orientation
-  function updateAndSendOrientation(newOrientation: DeviceOrientationEvent) {
-    setOrientation(newOrientation);
-    dcRef.current?.send(JSON.stringify(newOrientation));
-  }
-
-  // Button handlers
-  function changeOrientation(axis: "alpha" | "beta" | "gamma", delta: number) {
-    setOrientation((prev) => {
-      const updated = {
-        alpha: prev?.alpha ?? 0,
-        beta: prev?.beta ?? 0,
-        gamma: prev?.gamma ?? 0,
-        [axis]: (prev?.[axis] ?? 0) + delta,
-      };
-      dcRef.current?.send(JSON.stringify(updated));
-      return updated;
-    });
-  }
-
+  console.log(rcRef.current);
   return (
     <div className="p-4">
       <H1>Controller</H1>
@@ -259,21 +265,6 @@ export default function Controller({
             classNames={{ container: "max-w-xs mx-auto" }}
           />
           <textarea onBlur={(e) => handleOfferInput(e.target.value)} />
-        </div>
-      )}
-
-      {motionEnabled && answer && (
-        <div className="flex flex-col gap-4 mt-4">
-          <H2>2. Show this QRCode to the laptop camera:</H2>
-          <button onClick={copyToClipboard}>
-            <QRCodeSVG
-              size={300}
-              className="mx-auto"
-              value={compressToEncodedURIComponent(JSON.stringify(answer))}
-              boostLevel={true}
-              level="L"
-            />
-          </button>
         </div>
       )}
 
