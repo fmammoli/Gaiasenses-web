@@ -6,8 +6,8 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import Receiver from "../host/receiver"; // Adjust path if needed
 import { Gamepad } from "lucide-react";
+import Receiver2 from "../host/receiver2";
 
 function isMobile() {
   if (typeof navigator === "undefined") return false;
@@ -31,7 +31,7 @@ export default function ReceiverDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-[75%]">
         <DialogTitle>Receiver</DialogTitle>
-        <Receiver />
+        <Receiver2 />
         <DialogClose asChild></DialogClose>
       </DialogContent>
     </Dialog>

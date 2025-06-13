@@ -83,14 +83,17 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
       dcRef.current.addEventListener("message", onmessage);
       pcRef.current.addEventListener("icecandidate", onicecandidate);
 
-      pcRef.current
-        .createOffer()
-        .then((offer) => {
-          if (!pcRef.current) return;
-          pcRef.current.setLocalDescription(offer);
-          setOffer(offer);
-        })
-        .then(() => console.log("Offer set as local description"));
+      if (!pcRef.current.localDescription) {
+        pcRef.current
+          .createOffer()
+          .then((offer) => {
+            if (!pcRef.current) return;
+            console.log("Local description", pcRef.current.localDescription);
+            pcRef.current.setLocalDescription(offer);
+            setOffer(offer);
+          })
+          .then(() => console.log("Offer set as local description"));
+      }
     },
     [onopen, onmessage, onicecandidate, setOffer]
   );
