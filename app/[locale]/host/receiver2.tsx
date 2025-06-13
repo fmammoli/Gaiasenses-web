@@ -100,14 +100,14 @@ export default function Receiver2() {
       <h2 className="text-md mb-4">1. Read this QR Code with your phone:</h2>
       <Link
         className="flex justify-center"
-        href={`https://gaiasenses-oiyhv6zhv-fmammolis-projects.vercel.app/controller?offer=${compressToEncodedURIComponent(
+        href={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(
           JSON.stringify(offer)
         )}`}
         target="_blank"
       >
         <QRCodeSVG
           size={400}
-          value={`https://gaiasenses-oiyhv6zhv-fmammolis-projects.vercel.app/controller?offer=${compressToEncodedURIComponent(
+          value={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(
             JSON.stringify(offer)
           )}`}
           //value={`http://gaiasenses-web-git-webrtc-control-fmammolis-projects.vercel.app/controller`}
