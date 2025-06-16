@@ -158,6 +158,9 @@ export default function Controller2({ offer }: { offer: string }) {
         console.log("Socket connected");
       });
     }
+    return () => {
+      rc.ondatachannel = null;
+    };
   }, [enableMotionDetection]);
 
   useEffect(() => {
