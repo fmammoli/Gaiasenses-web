@@ -128,14 +128,14 @@ export default function Controller2({ offer }: { offer: string }) {
     const rc = new RTCPeerConnection(iceServers);
     rcRef.current = rc;
     //This gets triggered when we create an answer based on a received offer
-    // rc.onicecandidate = (e) => {
-    //   console.log(
-    //     "New ICE candidate preprinting SDP:",
-    //     JSON.stringify(rc.localDescription)
-    //   );
-    //   setAnswer(rc.localDescription);
-    //   socketRef.current?.emit("answer", rc.localDescription);
-    // };
+    rc.onicecandidate = (e) => {
+      console.log(
+        "New ICE candidate preprinting SDP:",
+        JSON.stringify(rc.localDescription)
+      );
+      setAnswer(rc.localDescription);
+      socketRef.current?.emit("answer", rc.localDescription);
+    };
 
     rc.ondatachannel = (e) => {
       const dc = e.channel;
@@ -183,7 +183,7 @@ export default function Controller2({ offer }: { offer: string }) {
         console.log("Answer created:", rcRef.current.localDescription);
 
         if (socketRef.current) {
-          socketRef.current.emit("answer", rcRef.current.localDescription);
+          //socketRef.current.emit("answer", rcRef.current.localDescription);
           console.log(
             "Answer emitted to server:",
             rcRef.current.localDescription
