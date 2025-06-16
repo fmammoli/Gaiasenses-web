@@ -211,7 +211,9 @@ export default function GaiasensesMap({
       const lat = newSearchParams.get("lat");
       const lng = newSearchParams.get("lng");
       if (lat && lng) {
-        updatePopupPosition(parseFloat(lat), parseFloat(lng));
+        if (showPopup === false) {
+          updatePopupPosition(parseFloat(lat), parseFloat(lng));
+        }
       }
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     }

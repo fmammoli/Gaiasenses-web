@@ -140,7 +140,6 @@ export default function OrientationControl({
     animate();
     return () => {
       cancelAnimationFrame(animationId);
-      //if (idleTimer.current) clearTimeout(idleTimer.current);
     };
   }, [
     mapRef,
