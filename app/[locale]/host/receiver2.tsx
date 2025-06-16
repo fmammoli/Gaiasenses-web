@@ -41,44 +41,48 @@ export default function Receiver2() {
   const { pcRef: lcRef, offer, setWebRTCConnection } = useWebRTC();
 
   useEffect(() => {
-    console.log("Initializing WebRTC Receiver...");
     if (!lcRef.current) {
+      console.log("setting RTCPeer Connection");
       const pc = new RTCPeerConnection(iceServers);
       setWebRTCConnection(pc);
     }
-    console.log("WebRTC PeerConnection created:", lcRef.current);
   }, [lcRef, setWebRTCConnection]);
 
   useEffect(() => {
-    if (!socketRef.current) {
-      const socket = io("https://gaiasenses-controller-server.onrender.com");
-      socketRef.current = socket;
+    const socket = io("https://gaiasenses-controller-server.onrender.com");
+    socketRef.current = socket;
 
-      socketRef.current.on("connect", () => {
-        if (socketRef.current && offer) {
-          socketRef.current.emit("offer", offer);
-        }
-      });
+    socketRef.current.on("connect", () => {
+      if (socketRef.current && lcRef.current?.localDescription) {
+        socketRef.current.emit("offer", offer);
+      }
+    });
 
-      socket.on("ice-candidate", async (candidate) => {
-        if (lcRef.current) {
-          await lcRef.current.addIceCandidate(candidate);
-        }
-      });
+    socket.on("ice-candidate", async (candidate) => {
+      if (lcRef.current) {
+        await lcRef.current.addIceCandidate(candidate);
+      }
+    });
 
-      // Listen for answer and ICE candidates from the server
-      socketRef.current.on("getAnswer", async (answer) => {
-        if (lcRef.current && !lcRef.current.remoteDescription) {
-          await lcRef.current.setRemoteDescription(answer);
-        }
-      });
-    }
+    // Listen for answer and ICE candidates from the server
+    socketRef.current.on("getAnswer", async (answer) => {
+      if (lcRef.current?.localDescription) console.log("has local description");
+      if (lcRef.current?.remoteDescription)
+        console.log("has remote description", lcRef.current?.remoteDescription);
+      if (lcRef.current) {
+        await lcRef.current.setRemoteDescription(answer);
+        console.log(lcRef.current);
+      }
+    });
 
     return () => {
       socketRef.current?.disconnect();
+      socketRef.current?.off("connect");
+      socketRef.current?.off("ice-candidate");
+      socketRef.current?.off("getAnswer");
       socketRef.current = null;
     };
-  }, [offer, lcRef]);
+  }, [lcRef, offer]);
 
   return (
     <div className="flex-col items-center justify-center">

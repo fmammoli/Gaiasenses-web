@@ -128,14 +128,14 @@ export default function Controller2({ offer }: { offer: string }) {
     const rc = new RTCPeerConnection(iceServers);
     rcRef.current = rc;
     //This gets triggered when we create an answer based on a received offer
-    rc.onicecandidate = (e) => {
-      console.log(
-        "New ICE candidate preprinting SDP:",
-        JSON.stringify(rc.localDescription)
-      );
-      setAnswer(rc.localDescription);
-      socketRef.current?.emit("answer", rc.localDescription);
-    };
+    // rc.onicecandidate = (e) => {
+    //   console.log(
+    //     "New ICE candidate preprinting SDP:",
+    //     JSON.stringify(rc.localDescription)
+    //   );
+    //   setAnswer(rc.localDescription);
+    //   socketRef.current?.emit("answer", rc.localDescription);
+    // };
 
     rc.ondatachannel = (e) => {
       const dc = e.channel;
@@ -180,7 +180,7 @@ export default function Controller2({ offer }: { offer: string }) {
         console.log("Answer created:", rcRef.current.localDescription);
 
         if (socketRef.current) {
-          //socketRef.current.emit("answer", rcRef.current.localDescription);
+          socketRef.current.emit("answer", rcRef.current.localDescription);
           console.log(
             "Answer emitted to server:",
             rcRef.current.localDescription
@@ -191,20 +191,10 @@ export default function Controller2({ offer }: { offer: string }) {
         }
       }
     };
-    emitAnswer();
-  }, [motionEnabled, offer]);
-
-  const handleOfferInput = async (offerStr: string) => {
-    if (!rcRef.current) return;
-
-    const offer = JSON.parse(offerStr);
-    await rcRef.current.setRemoteDescription(offer);
-    //This triggers the onicecandidate event
-    const answer = await rcRef.current.createAnswer();
-    await rcRef.current.setLocalDescription(answer);
-    console.log("Answer created:", rcRef.current.localDescription);
-    setAnswer(rcRef.current.localDescription);
-  };
+    if (!answer) {
+      emitAnswer();
+    }
+  }, [motionEnabled, offer, answer]);
 
   // DeviceMotion event handler
   function handleMotionEvent(event: DeviceMotionEvent) {

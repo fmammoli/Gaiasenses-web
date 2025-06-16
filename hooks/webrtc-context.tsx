@@ -71,32 +71,25 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
     }
   }, []);
 
-  const setWebRTCConnection = useCallback(
-    (pc: RTCPeerConnection) => {
-      pcRef.current = pc;
-      dcRef.current = pc.createDataChannel("gaiasenses");
+  const setWebRTCConnection = async (pc: RTCPeerConnection) => {
+    if (pcRef.current) return;
+    pcRef.current = pc;
+    dcRef.current = pc.createDataChannel("gaiasenses");
 
-      if (!pcRef.current || !dcRef.current) return;
-      console.log("WebRTCProvider initialized");
+    if (!pcRef.current || !dcRef.current) return;
+    console.log("WebRTCProvider initialized");
 
-      dcRef.current.addEventListener("open", onopen);
-      dcRef.current.addEventListener("message", onmessage);
-      pcRef.current.addEventListener("icecandidate", onicecandidate);
+    dcRef.current.addEventListener("open", onopen);
+    dcRef.current.addEventListener("message", onmessage);
+    pcRef.current.addEventListener("icecandidate", onicecandidate);
 
-      if (!pcRef.current.localDescription) {
-        pcRef.current
-          .createOffer()
-          .then((offer) => {
-            if (!pcRef.current) return;
-            console.log("Local description", pcRef.current.localDescription);
-            pcRef.current.setLocalDescription(offer);
-            setOffer(offer);
-          })
-          .then(() => console.log("Offer set as local description"));
-      }
-    },
-    [onopen, onmessage, onicecandidate, setOffer]
-  );
+    if (!pcRef.current.localDescription) {
+      const offer = await pcRef.current.createOffer();
+      await pcRef.current.setLocalDescription(offer);
+      setOffer(offer);
+      console.log("Offer set as local description");
+    }
+  };
 
   useEffect(() => {
     return () => {
