@@ -9,9 +9,13 @@ import { LngLat } from "mapbox-gl";
 export default function OrientationControl({
   onMoveEnd,
   onConnected,
+  onMoveEndLong,
+  onMove,
 }: {
   onMoveEnd: (lat: number, lon: number) => void;
+  onMoveEndLong?: (lat: number, lon: number) => void;
   onConnected: (dcOpen: boolean) => void;
+  onMove?: (lat: number, lon: number) => void;
 }) {
   const { orientationMessageRef, dcOpen } = useWebRTC();
 
@@ -31,10 +35,10 @@ export default function OrientationControl({
     beta: 0,
     gamma: 0,
   });
-  const STOPPED_THRESHOLD = 0.08; // degrees, adjust as needed
+  const STOPPED_THRESHOLD = 0.1; // degrees, adjust as needed
   const MOVING_THRESHOLD = 0.2; // degrees, adjust as needed
   const STABLE_DELAY = 500; // ms
-
+  const COMPOSITION_DELAY = 3000;
   const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
 
   const lastTimeRef = useRef(performance.now());
@@ -42,6 +46,10 @@ export default function OrientationControl({
   const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
   const isStoppedRef = useRef<boolean>(false);
+
+  const compositionTimmer = useRef<NodeJS.Timeout | null>(null);
+
+  const lngLatRef = useRef<LngLat | null>(null);
 
   useEffect(() => {
     let animationId: number;
@@ -99,38 +107,35 @@ export default function OrientationControl({
       //   gamma: Math.abs(gamma - lastGamma),
       // });
       if (moved) {
-        isStoppedRef.current = true;
+        isStoppedRef.current = false;
         //console.log("moved");
-        const lngLat = new LngLat(longitude, latitude).wrap();
+        lngLatRef.current = new LngLat(longitude, latitude).wrap();
         if (mapRef.current) {
           mapRef.current.easeTo({
-            center: lngLat,
+            center: lngLatRef.current,
             duration: 100,
             easing: (t) => t,
           });
         }
 
-        //onMoveEnd(lngLat.lat, lngLat.lng);
+        const additionalThreshold = threshold + 2;
+        const compositionMoved =
+          Math.abs(alpha - lastAlpha) > additionalThreshold ||
+          Math.abs(beta - lastBeta) > additionalThreshold ||
+          Math.abs(gamma - lastGamma) > additionalThreshold;
 
-        //setShowPopup(false);
-        //onMoveEnd(longitude, latitude); // Hide popup on movement
-        //onMoveEnd(lngLat.lat, lngLat.lng);
-        //Reset idle timer
+        if (onMove && compositionMoved) {
+          onMove(lngLatRef.current.lat, lngLatRef.current.lng);
+        }
+
         if (idleTimer.current) clearTimeout(idleTimer.current);
         idleTimer.current = setTimeout(() => {
-          console.log("open popup");
-          onMoveEnd(lngLat.lat, lngLat.lng);
-          isStoppedRef.current = true;
-          //setShowPopup(true);
-        }, STABLE_DELAY);
-      } else {
-        isStoppedRef.current = true;
-        // mapRef.current?.easeTo({
-        //   center: mapRef.current.getCenter(),
-        //   zoom: 5,
-        //   duration: 100,
-        //   easing: (t) => t,
-        // });
+          if (lngLatRef.current && isStoppedRef.current === false) {
+            console.log("open popup");
+            onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
+            isStoppedRef.current = true;
+          }
+        }, 300);
       }
       lastTimeRef.current = now;
       lastRef.current = smoothedRef.current;
@@ -141,7 +146,14 @@ export default function OrientationControl({
       cancelAnimationFrame(animationId);
       //if (idleTimer.current) clearTimeout(idleTimer.current);
     };
-  }, [mapRef, onMoveEnd, orientationMessageRef, smoothedRef]);
+  }, [
+    mapRef,
+    onMove,
+    onMoveEnd,
+    onMoveEndLong,
+    orientationMessageRef,
+    smoothedRef,
+  ]);
 
   return (
     <div>

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { H1 } from "@/components/ui/h1";
 import { H2 } from "@/components/ui/h2";
 import { P } from "@/components/ui/p";
-import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { decompressFromEncodedURIComponent } from "lz-string";
@@ -207,34 +206,11 @@ export default function Controller2({ offer }: { offer: string }) {
     setAnswer(rcRef.current.localDescription);
   };
 
-  const sendTestMessage = () => {
-    if (dcRef.current && dcRef.current.readyState === "open") {
-      dcRef.current.send("Hello from the controller!");
-    } else {
-      console.log("Data channel is not open or not available.");
-    }
-  };
-  const copyToClipboard = () => {
-    if (answer) {
-      navigator.clipboard.writeText(JSON.stringify(answer));
-      console.log("Answer copied to clipboard:", answer);
-    }
-  };
-
   // DeviceMotion event handler
   function handleMotionEvent(event: DeviceMotionEvent) {
     // Example: log acceleration
     console.log("Acceleration:", event.acceleration);
   }
-
-  const handleScan = (detectedCodes: IDetectedBarcode[]) => {
-    if (detectedCodes && detectedCodes[0]?.rawValue && !offer) {
-      const decompressedValue = decompressFromEncodedURIComponent(
-        detectedCodes[0].rawValue
-      );
-      handleOfferInput(decompressedValue);
-    }
-  };
 
   console.log(rcRef.current);
   return (
@@ -247,24 +223,6 @@ export default function Controller2({ offer }: { offer: string }) {
             start to enable them.
           </P>
           <Button onClick={enableMotionDetection}>Start</Button>
-        </div>
-      )}
-
-      {motionEnabled && !answer && (
-        <div className="flex flex-col gap-4 mt-4">
-          <H2>1. Read the QR Code on your laptop:</H2>
-          <Scanner
-            onScan={handleScan}
-            onError={console.error}
-            formats={["qr_code"]}
-            components={{
-              torch: true,
-              zoom: true,
-              finder: true,
-            }}
-            classNames={{ container: "max-w-xs mx-auto" }}
-          />
-          <textarea onBlur={(e) => handleOfferInput(e.target.value)} />
         </div>
       )}
 

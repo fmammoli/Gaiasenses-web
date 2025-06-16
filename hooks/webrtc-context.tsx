@@ -40,7 +40,7 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
 
   const onopen = useCallback(() => {
     console.log("Data channel is open (receiver)!!!");
-    alert("Data channel is open (receiver)!!!");
+    //alert("Data channel is open (receiver)!!!");
     setDcOpen(true);
   }, [setDcOpen]);
 

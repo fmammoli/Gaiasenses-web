@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react"; // npm install qrcode.react
-import { IDetectedBarcode, Scanner } from "@yudiel/react-qr-scanner";
 import { useWebRTC } from "@/hooks/webrtc-context";
 import { io, Socket } from "socket.io-client";
 
@@ -81,23 +80,11 @@ export default function Receiver2() {
     };
   }, [offer, lcRef]);
 
-  const handleAnswerInput = async (answerStr: string) => {
-    if (!lcRef.current) return;
-    console.log(answerStr);
-    const answer = JSON.parse(answerStr);
-    await lcRef.current.setRemoteDescription(answer);
-  };
-
-  const copyToClipboard = () => {
-    if (offer) {
-      navigator.clipboard.writeText(JSON.stringify(offer));
-      console.log("Offer copied to clipboard:", offer);
-    }
-  };
-
   return (
     <div className="flex-col items-center justify-center">
-      <h2 className="text-md mb-4">1. Read this QR Code with your phone:</h2>
+      <h2 className="text-md mb-4">
+        1. Read this QR Code with your phone camera:
+      </h2>
       <Link
         className="flex justify-center"
         href={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(

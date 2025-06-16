@@ -64,6 +64,7 @@ export default function GaiasensesMap({
 }: GaiasensesMapProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchParamsRef = useRef(searchParams);
   const router = useRouter();
 
   const [shuffled, setShuffled] = useState(shuffle([...comps]));
@@ -72,58 +73,61 @@ export default function GaiasensesMap({
     initialLat,
     initialLng,
   ]);
-  const [showPopup, setShowPopup] = useState<boolean>(true);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const orientationIdleTimer = useRef<NodeJS.Timeout | null>(null);
   const ORIENTATION_IDLE_DELAY = 300; // ms
   const mapRef = useRef<MapRef>(null);
 
+  const IDLE_DELAY = 2000;
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
+
   const [inputMode, setInputMode] = useState<string>("mouse");
 
   function handleDrag(event: MarkerDragEvent) {
-    clearTimeout(idleTimer!);
-    setIsIdle(false);
-
-    clearTimeout(idleTimerRedirect!);
-    setIsIdleRedirect(false);
-
     const wrappedLatLng = event.lngLat.wrap();
 
     setLatlng([wrappedLatLng.lat, wrappedLatLng.lng]);
   }
 
   function handleDragStart() {
-    setShowPopup(false);
+    if (showPopup === true) {
+      setShowPopup(false);
+    }
   }
 
   const updatePopupPosition = useCallback(
     (lat: number, lng: number) => {
-      const newSearchParams = new URLSearchParams(searchParams.toString());
+      if (showPopup === false) {
+        const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      newSearchParams.set("lat", lat.toString());
-      newSearchParams.set("lng", lng.toString());
+        newSearchParams.set("lat", lat.toString());
+        newSearchParams.set("lng", lng.toString());
+        newSearchParams.set("mode", "map");
+        let randomComposition = shuffled.next().value;
 
-      let randomComposition = shuffled.next().value;
+        if (randomComposition === undefined) {
+          const newShuffle = shuffle([...comps]);
+          randomComposition = newShuffle.next().value;
+          setShuffled(newShuffle);
+        }
 
-      if (randomComposition === undefined) {
-        const newShuffle = shuffle([...comps]);
-        randomComposition = newShuffle.next().value;
-        setShuffled(newShuffle);
+        //Debounced popup logic
+        //setShowPopup(false);
+
+        if (orientationIdleTimer.current)
+          clearTimeout(orientationIdleTimer.current);
+        orientationIdleTimer.current = setTimeout(() => {
+          if (showPopup === false) {
+            setShowPopup(true);
+          }
+        }, ORIENTATION_IDLE_DELAY);
+
+        newSearchParams.set("composition", randomComposition[0]);
+        newSearchParams.set("mode", "map");
+        router.replace(`${pathname}?${newSearchParams.toString()}`);
       }
-
-      //Debounced popup logic
-      //setShowPopup(true);
-
-      if (orientationIdleTimer.current)
-        clearTimeout(orientationIdleTimer.current);
-      orientationIdleTimer.current = setTimeout(() => {
-        setShowPopup(true);
-      }, ORIENTATION_IDLE_DELAY);
-
-      newSearchParams.set("composition", randomComposition[0]);
-      newSearchParams.set("mode", "map");
-      router.replace(`${pathname}?${newSearchParams.toString()}`);
     },
-    [searchParams, shuffled, router, pathname]
+    [searchParams, shuffled, showPopup, router, pathname]
   );
 
   function handleDragEnd(event: MarkerDragEvent) {
@@ -131,7 +135,9 @@ export default function GaiasensesMap({
     //setLatlng([lngLat.lat,lngLat.lng]);
     //mapRef.current?.setCenter(lngLat);
     //mapRef.current?.easeTo({center:lngLat})
-    updatePopupPosition(lngLat.lat, lngLat.lng);
+    if (showPopup === false) {
+      updatePopupPosition(lngLat.lat, lngLat.lng);
+    }
   }
 
   function onGeolocate(e: GeolocateResultEvent) {
@@ -145,68 +151,46 @@ export default function GaiasensesMap({
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
 
-  const [isIdle, setIsIdle] = useState(false);
-  const [idleTimer, setIdleTimer] = useState<NodeJS.Timeout | null>(null);
-
-  const [isIdleRedirect, setIsIdleRedirect] = useState(false);
-  const [idleTimerRedirect, setIdleTimerRedirect] =
-    useState<NodeJS.Timeout | null>(null);
-
-  function handleIdle() {
-    //console.log("idle")
-    setIdleTimer(
-      setTimeout(() => {
-        setIsIdle(true);
-      }, 30000)
-    );
-  }
-
   function handleMove(e: ViewStateChangeEvent) {
-    clearTimeout(idleTimer!);
-    setIsIdle(false);
-
-    clearTimeout(idleTimerRedirect!);
-    setIsIdleRedirect(false);
-
     const center = e.target.getCenter();
     setLatlng([
       parseFloat(center.lat.toString()),
       parseFloat(center.lng.toString()),
     ]);
-    setShowPopup(false);
+    if (showPopup === true) {
+      setShowPopup(false);
+    }
   }
 
   const handleMoveEnd = useCallback(
     (e: ViewStateChangeEvent) => {
-      if (inputMode === "mouse") {
+      if (inputMode === "mouse" && showPopup === false) {
         console.log("move end");
         const lngLat = e.target.getCenter().wrap();
         updatePopupPosition(lngLat.lat, lngLat.lng);
       }
     },
-    [inputMode, updatePopupPosition]
+    [inputMode, updatePopupPosition, showPopup]
   );
 
-  useEffect(() => {
-    if (isIdle) {
-      console.log("isIdle for 5s");
+  const onMoveEndLong = (lat: number, lon: number) => {
+    console.log("is idle for 2s");
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+
+    if (newSearchParams.get("mode") === "map") {
+      newSearchParams.set("mode", "player");
+
+      newSearchParams.set("lat", lat.toString());
+      newSearchParams.set("lon", lon.toString());
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
     }
-  }, [isIdle]);
+  };
 
-  useEffect(() => {
-    if (isIdleRedirect) {
-      console.log("isIdle for 10s");
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-
-      if (newSearchParams.get("mode") === "map") {
-        newSearchParams.set("mode", "player");
-        router.replace(`${pathname}?${newSearchParams.toString()}`);
-
-        clearTimeout(idleTimerRedirect!);
-        setIsIdleRedirect(false);
-      }
+  const onOrientationMove = (lat: number, lon: number) => {
+    if (showPopup === false) {
+      updatePopupPosition(lat, lon);
     }
-  }, [isIdleRedirect, searchParams, router, pathname, idleTimerRedirect]);
+  };
 
   const toggleInputMode = (dcOpen: boolean) => {
     setInputMode((prevMode) => {
@@ -219,6 +203,28 @@ export default function GaiasensesMap({
     });
   };
 
+  const onIdle = () => {
+    console.log("2 seconds idle, playing composition");
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    if (newSearchParams.get("mode") === "map") {
+      newSearchParams.set("mode", "player");
+      const lat = newSearchParams.get("lat");
+      const lng = newSearchParams.get("lng");
+      if (lat && lng) {
+        updatePopupPosition(parseFloat(lat), parseFloat(lng));
+      }
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+    }
+  };
+
+  const handleIdle = () => {
+    if (inputMode !== "mouse") {
+      if (idleTimer.current) clearTimeout(idleTimer.current);
+      idleTimer.current = setTimeout(() => {
+        onIdle();
+      }, IDLE_DELAY);
+    }
+  };
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] ">
@@ -236,7 +242,7 @@ export default function GaiasensesMap({
       </div>
       <div>
         <AnimatePresence>
-          {isIdle && (
+          {false && (
             <motion.div
               className="absolute top-1/2 left-1/2 bg-white z-[1] p-2 -translate-x-[50%] rounded-sm shadow-md"
               initial={{ opacity: 0 }}
@@ -272,6 +278,8 @@ export default function GaiasensesMap({
         <OrientationControl
           onMoveEnd={updatePopupPosition}
           onConnected={toggleInputMode}
+          onMoveEndLong={onMoveEndLong}
+          onMove={onOrientationMove}
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
