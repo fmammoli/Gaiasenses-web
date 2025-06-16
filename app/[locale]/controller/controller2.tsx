@@ -228,6 +228,10 @@ export default function Controller2({ offer }: { offer: string }) {
 
       {motionEnabled && (
         <div>
+          <div className="mb-10">
+            <H2>Rotate your device to move the map.</H2>
+          </div>
+
           <H2>Orientation</H2>
           <p>alpha: {orientation?.alpha}</p>
           <p>beta: {orientation?.beta}</p>

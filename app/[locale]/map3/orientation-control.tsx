@@ -37,8 +37,6 @@ export default function OrientationControl({
   });
   const STOPPED_THRESHOLD = 0.1; // degrees, adjust as needed
   const MOVING_THRESHOLD = 0.2; // degrees, adjust as needed
-  const STABLE_DELAY = 500; // ms
-  const COMPOSITION_DELAY = 3000;
   const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
 
   const lastTimeRef = useRef(performance.now());
@@ -46,8 +44,6 @@ export default function OrientationControl({
   const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
   const isStoppedRef = useRef<boolean>(false);
-
-  const compositionTimmer = useRef<NodeJS.Timeout | null>(null);
 
   const lngLatRef = useRef<LngLat | null>(null);
 
