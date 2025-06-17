@@ -39,9 +39,7 @@ export default function OrientationControl({
 
   const { smoothedRef, smooth } = useOrientationSmoother();
 
-  const idleTimer = useRef<NodeJS.Timeout | null>(null);
-
-  const longIdleTimer = useRef<NodeJS.Timeout | null>(null);
+  const lastMoveRef = useRef(Date.now());
 
   const lngLatRef = useRef<LngLat | null>(null);
 
@@ -51,6 +49,7 @@ export default function OrientationControl({
       const { alpha, beta, gamma } = smooth(
         orientationMessageRef.current || { alpha: 0, beta: 0, gamma: 0 }
       );
+      smoothedRef.current = { alpha, beta, gamma };
       //console.log(orientationMessageRef.current);
       const {
         alpha: lastAlpha,
@@ -87,7 +86,7 @@ export default function OrientationControl({
 
         mapRef.current?.easeTo({
           center: lngLatRef.current,
-          duration: 60,
+          duration: 80,
           easing: (t) => t,
         });
 
@@ -102,22 +101,23 @@ export default function OrientationControl({
           // console.log("Aloooo");
           onMove(lngLatRef.current.lat, lngLatRef.current.lng);
         }
-
-        if (idleTimer.current) clearTimeout(idleTimer.current);
-        idleTimer.current = setTimeout(() => {
-          if (lngLatRef.current) {
-            console.log("open popup");
-            onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
-          }
-        }, 400);
-
-        if (longIdleTimer.current) clearTimeout(longIdleTimer.current);
-        longIdleTimer.current = setTimeout(() => {
-          if (idleTimer.current) clearTimeout(idleTimer.current);
-          if (lngLatRef.current) {
-            onMoveEndLong(lngLatRef.current.lat, lngLatRef.current.lng);
-          }
-        }, 3000);
+        lastMoveRef.current = Date.now();
+      }
+      const idleTime = Date.now() - lastMoveRef.current;
+      //console.log(idleTime);
+      if (idleTime >= 470 && idleTime <= 500) {
+        //console.log("on move end");
+        if (mapRef.current) {
+          const center = mapRef.current.getCenter();
+          onMoveEnd(center.lat, center.lng);
+        }
+      }
+      if (idleTime >= 2970 && idleTime <= 3000) {
+        //console.log("on move end long");
+        if (mapRef.current) {
+          const center = mapRef.current.getCenter();
+          onMoveEndLong(center.lat, center.lng);
+        }
       }
       lastRef.current = smoothedRef.current;
       animationId = requestAnimationFrame(animate);

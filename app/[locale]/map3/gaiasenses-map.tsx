@@ -24,17 +24,23 @@ import OrientationControl from "./orientation-control";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
+    item[0] === "lluvia" ||
     item[0] === "zigzag" ||
+    item[0] === "colorFlower" ||
     item[0] === "stormEye" ||
     item[0] === "curves" ||
+    item[0] === "cloudBubble" ||
     item[0] === "bonfire" ||
     item[0] === "digitalOrganism" ||
     item[0] === "mudflatScatter" ||
-    item[0] === "cloudBubble" ||
     item[0] === "paintBrush" ||
     item[0] === "generativeStrings" ||
     item[0] === "nightRain" ||
-    item[0] === "windLines"
+    item[0] === "windLines" ||
+    item[0] === "lightnigBolts" ||
+    item[0] === "burningTrees" ||
+    item[0] === "riverLines" ||
+    item[0] === "attractor"
   ) {
     return item;
   }
@@ -110,12 +116,13 @@ export default function GaiasensesMap({
       newSearchParams.set("mode", "map");
       newSearchParams.set("composition", randomComposition[0]);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
-      console.log("going to map mode");
+      //console.log("going to map mode");
       if (orientationIdleTimer.current)
         clearTimeout(orientationIdleTimer.current);
       orientationIdleTimer.current = setTimeout(() => {
         setShowPopup(true);
       }, ORIENTATION_IDLE_DELAY);
+      //setShowPopup(true);
     }
   };
 
@@ -139,7 +146,7 @@ export default function GaiasensesMap({
 
   function handleMove(e: ViewStateChangeEvent) {
     const center = e.target.getCenter();
-    console.log("alooo movinfg");
+    //console.log("alooo movinfg");
 
     setLatlng([
       parseFloat(center.lat.toString()),
@@ -159,25 +166,19 @@ export default function GaiasensesMap({
   };
 
   const onMoveEndLong = (lat: number, lon: number) => {
-    console.log("is idle for 2s");
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
     if (newSearchParams.get("mode") === "map") {
-      if (orientationIdleTimer.current)
-        clearTimeout(orientationIdleTimer.current);
-      orientationIdleTimer.current = setTimeout(() => {
-        setShowPopup(true);
-      }, ORIENTATION_IDLE_DELAY);
-      console.log("lat:", lat, "  lon:", lon);
       newSearchParams.set("mode", "player");
       newSearchParams.set("lat", lat.toString());
-      newSearchParams.set("lon", lon.toString());
+      newSearchParams.set("lng", lon.toString());
       router.replace(`${pathname}?${newSearchParams.toString()}`);
     }
   };
 
   const onOrientationMoveEnd = (lat: number, lon: number) => {
-    if (showPopup === false) {
+    //setLatlng([lat, lon]);
+    if (inputMode !== "mouse" && showPopup === false) {
       updatePopupPosition(lat, lon);
     }
   };
@@ -233,7 +234,7 @@ export default function GaiasensesMap({
         initialViewState={{
           latitude: latlng[0],
           longitude: latlng[1],
-          zoom: 1.5,
+          zoom: 2,
         }}
         mapStyle="mapbox://styles/mapbox/standard"
         projection={{ name: "globe" }}
@@ -251,8 +252,8 @@ export default function GaiasensesMap({
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
-          latitude={mapRef.current?.getCenter().lat || 0}
-          longitude={mapRef.current?.getCenter().lng || 0}
+          latitude={latlng[0]}
+          longitude={latlng[1]}
           draggable
           onDragStart={handleDragStart}
           onDrag={handleDrag}
