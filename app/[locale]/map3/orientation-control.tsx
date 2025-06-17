@@ -36,7 +36,7 @@ export default function OrientationControl({
     gamma: 0,
   });
   const STOPPED_THRESHOLD = 0.1; // degrees, adjust as needed
-  const MOVING_THRESHOLD = 0.2; // degrees, adjust as needed
+  const MOVING_THRESHOLD = 0.1; // degrees, adjust as needed
   const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
 
   const lastTimeRef = useRef(performance.now());
@@ -92,11 +92,11 @@ export default function OrientationControl({
         Math.abs(beta - lastBeta) > threshold ||
         Math.abs(gamma - lastGamma) > threshold;
 
-      setOrientation({
-        alpha: Math.abs(alpha - lastAlpha),
-        beta: Math.abs(beta - lastBeta),
-        gamma: Math.abs(gamma - lastGamma),
-      });
+      // setOrientation({
+      //   alpha: Math.abs(alpha - lastAlpha),
+      //   beta: Math.abs(beta - lastBeta),
+      //   gamma: Math.abs(gamma - lastGamma),
+      // });
       // console.log({
       //   alpha: Math.abs(alpha - lastAlpha),
       //   beta: Math.abs(beta - lastBeta),
@@ -131,7 +131,7 @@ export default function OrientationControl({
             onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
             isStoppedRef.current = true;
           }
-        }, 300);
+        }, 400);
       }
       lastTimeRef.current = now;
       lastRef.current = smoothedRef.current;

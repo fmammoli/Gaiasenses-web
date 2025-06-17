@@ -78,7 +78,7 @@ export default function GaiasensesMap({
   const ORIENTATION_IDLE_DELAY = 300; // ms
   const mapRef = useRef<MapRef>(null);
 
-  const IDLE_DELAY = 2000;
+  const IDLE_DELAY = 3000;
   const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
   const [inputMode, setInputMode] = useState<string>("mouse");
