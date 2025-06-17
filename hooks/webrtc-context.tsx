@@ -117,8 +117,6 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
         dcRef.current.removeEventListener("message", onmessage);
         dcRef.current.close();
         pcRef.current.close();
-        pcRef.current = null;
-        dcRef.current = null;
       }
     };
   }, []);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react"; // npm install qrcode.react
 import { useWebRTC } from "@/hooks/webrtc-context";
 import { io, Socket } from "socket.io-client";
@@ -11,6 +11,8 @@ import Link from "next/link";
 export default function Receiver2() {
   const socketRef = useRef<Socket | null>(null);
   const { pcRef: lcRef, offer } = useWebRTC();
+
+  const [answer, setAnswer] = useState<RTCSessionDescriptionInit | null>(null);
 
   useEffect(() => {
     const socket = io("https://gaiasenses-controller-server.onrender.com");
@@ -30,19 +32,24 @@ export default function Receiver2() {
     });
 
     // Listen for answer and ICE candidates from the server
-    socketRef.current.on("getAnswer", async (answer) => {
-      if (lcRef.current?.localDescription) console.log("has local description");
-      if (lcRef.current?.remoteDescription)
-        console.log("has remote description", lcRef.current?.remoteDescription);
-      if (
-        lcRef.current &&
-        !lcRef.current.remoteDescription &&
-        lcRef.current.signalingState !== "stable"
-      ) {
-        await lcRef.current.setRemoteDescription(answer);
+    socketRef.current.on(
+      "getAnswer",
+      async (newAnswer: RTCSessionDescriptionInit) => {
+        console.log(lcRef.current?.signalingState);
+        console.log(lcRef.current?.connectionState);
         console.log(lcRef.current);
+
+        if (
+          lcRef.current &&
+          lcRef.current.localDescription &&
+          lcRef.current.localDescription.type === "offer" &&
+          !lcRef.current.remoteDescription
+        ) {
+          await lcRef.current.setRemoteDescription(newAnswer);
+          //console.log(lcRef.current);
+        }
       }
-    });
+    );
 
     return () => {
       socketRef.current?.disconnect();
@@ -51,7 +58,7 @@ export default function Receiver2() {
       socketRef.current?.off("getAnswer");
       socketRef.current = null;
     };
-  }, [lcRef, offer]);
+  }, [answer, lcRef, offer]);
   console.log(offer);
   return (
     <div className="flex-col items-center justify-center">
