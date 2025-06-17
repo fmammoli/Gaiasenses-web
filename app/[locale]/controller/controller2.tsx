@@ -56,8 +56,10 @@ export default function Controller2({ offer }: { offer: string }) {
   );
 
   // Add this function to handle device orientation (gyroscope) data
-  const handleOrientationEvent = useCallback(
-    (event: DeviceOrientationEvent) => {
+
+  // In your enableMotionDetection function, also add the orientation event listener:
+  const enableMotionDetection = () => {
+    const handleOrientationEvent = (event: DeviceOrientationEvent) => {
       // alpha: rotation around z-axis, beta: x-axis, gamma: y-axis
       const orientation = console.log("Gyroscope:", {
         alpha: event.alpha,
@@ -76,12 +78,8 @@ export default function Controller2({ offer }: { offer: string }) {
         beta: event.beta,
         gamma: event.gamma,
       });
-    },
-    []
-  );
+    };
 
-  // In your enableMotionDetection function, also add the orientation event listener:
-  const enableMotionDetection = useCallback(() => {
     if (
       typeof DeviceMotionEvent !== "undefined" &&
       typeof (DeviceMotionEvent as any).requestPermission === "function"
@@ -122,7 +120,7 @@ export default function Controller2({ offer }: { offer: string }) {
         true
       );
     }
-  }, [handleOrientationEvent]);
+  };
 
   useEffect(() => {
     const rc = new RTCPeerConnection(iceServers);
@@ -161,7 +159,7 @@ export default function Controller2({ offer }: { offer: string }) {
     return () => {
       rc.ondatachannel = null;
     };
-  }, [enableMotionDetection]);
+  }, []);
 
   useEffect(() => {
     const emitAnswer = async () => {

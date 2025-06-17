@@ -75,11 +75,8 @@ export default function GaiasensesMap({
   ]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const orientationIdleTimer = useRef<NodeJS.Timeout | null>(null);
-  const ORIENTATION_IDLE_DELAY = 300; // ms
+  const ORIENTATION_IDLE_DELAY = 400; // ms
   const mapRef = useRef<MapRef>(null);
-
-  const IDLE_DELAY = 3000;
-  const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
   const [inputMode, setInputMode] = useState<string>("mouse");
 
@@ -95,47 +92,36 @@ export default function GaiasensesMap({
     }
   }
 
-  const updatePopupPosition = useCallback(
-    (lat: number, lng: number) => {
-      if (showPopup === false) {
-        const newSearchParams = new URLSearchParams(searchParams.toString());
+  const updatePopupPosition = (lat: number, lng: number) => {
+    if (showPopup === false) {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
 
-        newSearchParams.set("lat", lat.toString());
-        newSearchParams.set("lng", lng.toString());
-        newSearchParams.set("mode", "map");
-        let randomComposition = shuffled.next().value;
+      let randomComposition = shuffled.next().value;
 
-        if (randomComposition === undefined) {
-          const newShuffle = shuffle([...comps]);
-          randomComposition = newShuffle.next().value;
-          setShuffled(newShuffle);
-        }
-
-        //Debounced popup logic
-        //setShowPopup(false);
-
-        if (orientationIdleTimer.current)
-          clearTimeout(orientationIdleTimer.current);
-        orientationIdleTimer.current = setTimeout(() => {
-          if (showPopup === false) {
-            setShowPopup(true);
-          }
-        }, ORIENTATION_IDLE_DELAY);
-
-        newSearchParams.set("composition", randomComposition[0]);
-        newSearchParams.set("mode", "map");
-        router.replace(`${pathname}?${newSearchParams.toString()}`);
+      if (randomComposition === undefined) {
+        const newShuffle = shuffle([...comps]);
+        randomComposition = newShuffle.next().value;
+        setShuffled(newShuffle);
       }
-    },
-    [searchParams, shuffled, showPopup, router, pathname]
-  );
+
+      //Debounced popup logic
+      newSearchParams.set("lat", lat.toString());
+      newSearchParams.set("lng", lng.toString());
+      newSearchParams.set("mode", "map");
+      newSearchParams.set("composition", randomComposition[0]);
+      router.replace(`${pathname}?${newSearchParams.toString()}`);
+
+      if (orientationIdleTimer.current)
+        clearTimeout(orientationIdleTimer.current);
+      orientationIdleTimer.current = setTimeout(() => {
+        setShowPopup(true);
+      }, ORIENTATION_IDLE_DELAY);
+    }
+  };
 
   function handleDragEnd(event: MarkerDragEvent) {
-    const lngLat = event.lngLat.wrap();
-    //setLatlng([lngLat.lat,lngLat.lng]);
-    //mapRef.current?.setCenter(lngLat);
-    //mapRef.current?.easeTo({center:lngLat})
     if (showPopup === false) {
+      const lngLat = event.lngLat.wrap();
       updatePopupPosition(lngLat.lat, lngLat.lng);
     }
   }
@@ -162,16 +148,13 @@ export default function GaiasensesMap({
     }
   }
 
-  const handleMoveEnd = useCallback(
-    (e: ViewStateChangeEvent) => {
-      if (inputMode === "mouse" && showPopup === false) {
-        console.log("move end");
-        const lngLat = e.target.getCenter().wrap();
-        updatePopupPosition(lngLat.lat, lngLat.lng);
-      }
-    },
-    [inputMode, updatePopupPosition, showPopup]
-  );
+  const handleMoveEnd = (e: ViewStateChangeEvent) => {
+    if (inputMode === "mouse" && showPopup === false) {
+      console.log("move end");
+      const lngLat = e.target.getCenter().wrap();
+      updatePopupPosition(lngLat.lat, lngLat.lng);
+    }
+  };
 
   const onMoveEndLong = (lat: number, lon: number) => {
     console.log("is idle for 2s");
@@ -186,10 +169,9 @@ export default function GaiasensesMap({
     }
   };
 
-  const onOrientationMove = (lat: number, lon: number) => {
-    if (showPopup === false) {
-      updatePopupPosition(lat, lon);
-    }
+  const onOrientationMoveEnd = (lat: number, lon: number) => {
+    console.log("orientation move end");
+    updatePopupPosition(lat, lon);
   };
 
   const toggleInputMode = (dcOpen: boolean) => {
@@ -203,30 +185,6 @@ export default function GaiasensesMap({
     });
   };
 
-  const onIdle = () => {
-    console.log("2 seconds idle, playing composition");
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    if (newSearchParams.get("mode") === "map") {
-      newSearchParams.set("mode", "player");
-      const lat = newSearchParams.get("lat");
-      const lng = newSearchParams.get("lng");
-      if (lat && lng) {
-        if (showPopup === false) {
-          updatePopupPosition(parseFloat(lat), parseFloat(lng));
-        }
-      }
-      router.replace(`${pathname}?${newSearchParams.toString()}`);
-    }
-  };
-
-  const handleIdle = () => {
-    if (inputMode !== "mouse") {
-      if (idleTimer.current) clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(() => {
-        onIdle();
-      }, IDLE_DELAY);
-    }
-  };
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] ">
@@ -272,16 +230,16 @@ export default function GaiasensesMap({
         mapStyle="mapbox://styles/mapbox/standard"
         projection={{ name: "globe" }}
         onMove={handleMove}
-        onIdle={handleIdle}
+        //onIdle={handleIdle}
         onMoveEnd={handleMoveEnd}
       >
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
         <OrientationControl
-          onMoveEnd={updatePopupPosition}
+          onMoveEnd={onOrientationMoveEnd}
           onConnected={toggleInputMode}
           onMoveEndLong={onMoveEndLong}
-          onMove={onOrientationMove}
+          //onMove={onOrientationMove}
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker

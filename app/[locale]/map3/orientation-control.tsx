@@ -35,46 +35,26 @@ export default function OrientationControl({
     beta: 0,
     gamma: 0,
   });
-  const STOPPED_THRESHOLD = 0.1; // degrees, adjust as needed
-  const MOVING_THRESHOLD = 0.1; // degrees, adjust as needed
-  const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
+  const THRESHOLD = 0;
 
-  const lastTimeRef = useRef(performance.now());
+  const smoothedRef = useOrientationSmoother(orientationMessageRef.current);
 
   const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const isStoppedRef = useRef<boolean>(false);
+  const longIdleTimer = useRef<NodeJS.Timeout | null>(null);
 
   const lngLatRef = useRef<LngLat | null>(null);
 
   useEffect(() => {
     let animationId: number;
     function animate() {
-      const now = performance.now();
-      const dt = (now - lastTimeRef.current) / 1000; // seconds
-
       const { alpha, beta, gamma } = smoothedRef.current;
-
+      //console.log(orientationMessageRef.current);
       const {
         alpha: lastAlpha,
         beta: lastBeta,
         gamma: lastGamma,
       } = lastRef.current;
-
-      // Calculate angular speed (degrees/sec)
-      const dAlpha = Math.abs(alpha - lastAlpha) / dt;
-      const dBeta = Math.abs(beta - lastBeta) / dt;
-      const dGamma = Math.abs(gamma - lastGamma) / dt;
-      const speed = Math.max(dAlpha, dBeta, dGamma);
-
-      // Map speed to zoom (tune these values as needed)
-      const minZoom = 1.5;
-      const maxZoom = 8;
-      const maxSpeed = 100; // degrees/sec for fastest spin
-      const zoom = Math.max(
-        minZoom,
-        maxZoom - (speed / maxSpeed) * (maxZoom - minZoom)
-      );
 
       const alphaRad = (alpha * Math.PI) / 180;
       const latitude = Math.max(
@@ -83,57 +63,61 @@ export default function OrientationControl({
       );
       const longitude = alpha;
 
-      // Only move if change exceeds threshold
-      const threshold = isStoppedRef.current
-        ? STOPPED_THRESHOLD
-        : MOVING_THRESHOLD; // Lower threshold when stopped
       const moved =
-        Math.abs(alpha - lastAlpha) > threshold ||
-        Math.abs(beta - lastBeta) > threshold ||
-        Math.abs(gamma - lastGamma) > threshold;
+        Math.abs(alpha - lastAlpha) > THRESHOLD ||
+        Math.abs(beta - lastBeta) > THRESHOLD ||
+        Math.abs(gamma - lastGamma) > THRESHOLD;
 
-      // setOrientation({
-      //   alpha: Math.abs(alpha - lastAlpha),
-      //   beta: Math.abs(beta - lastBeta),
-      //   gamma: Math.abs(gamma - lastGamma),
-      // });
+      setOrientation({
+        alpha: Math.abs(alpha - lastAlpha),
+        beta: Math.abs(beta - lastBeta),
+        gamma: Math.abs(gamma - lastGamma),
+      });
       // console.log({
       //   alpha: Math.abs(alpha - lastAlpha),
       //   beta: Math.abs(beta - lastBeta),
       //   gamma: Math.abs(gamma - lastGamma),
       // });
+      // console.log(moved);
       if (moved) {
-        isStoppedRef.current = false;
         //console.log("moved");
         lngLatRef.current = new LngLat(longitude, latitude).wrap();
-        if (mapRef.current) {
-          mapRef.current.easeTo({
-            center: lngLatRef.current,
-            duration: 100,
-            easing: (t) => t,
-          });
-        }
 
-        const additionalThreshold = threshold + 2;
+        mapRef.current?.easeTo({
+          center: lngLatRef.current,
+          duration: 60,
+          easing: (t) => t,
+        });
+
+        const additionalThreshold = THRESHOLD + 2;
         const compositionMoved =
           Math.abs(alpha - lastAlpha) > additionalThreshold ||
           Math.abs(beta - lastBeta) > additionalThreshold ||
           Math.abs(gamma - lastGamma) > additionalThreshold;
 
-        if (onMove && compositionMoved) {
-          onMove(lngLatRef.current.lat, lngLatRef.current.lng);
-        }
+        // if (onMove && compositionMoved) {
+        //   //onMove(lngLatRef.current.lat, lngLatRef.current.lng);
+        // }
 
-        if (idleTimer.current) clearTimeout(idleTimer.current);
-        idleTimer.current = setTimeout(() => {
-          if (lngLatRef.current && isStoppedRef.current === false) {
-            console.log("open popup");
-            onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
-            isStoppedRef.current = true;
-          }
-        }, 400);
+        // if (idleTimer.current) clearTimeout(idleTimer.current);
+        // idleTimer.current = setTimeout(() => {
+        //   if (lngLatRef.current) {
+        //     console.log("open popup");
+        //     //onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
+        //   }
+        // }, 400);
+
+        // if (longIdleTimer.current) clearTimeout(longIdleTimer.current);
+        // longIdleTimer.current = setTimeout(() => {
+        //   if (idleTimer.current) clearTimeout(idleTimer.current);
+        //   if (lngLatRef.current) {
+        //     console.log("redirect");
+        //     //onMoveLongEnd(lngLatRef.current.lat, lngLatRef.current.lng);
+        //     // onMoveEnd(lngLatRef.current.lat, lngLatRef.current.lng);
+        //     //isStoppedRef.current = true;
+        //   }
+        // }, 3000);
       }
-      lastTimeRef.current = now;
       lastRef.current = smoothedRef.current;
       animationId = requestAnimationFrame(animate);
     }
