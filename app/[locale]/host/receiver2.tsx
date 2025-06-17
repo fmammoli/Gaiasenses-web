@@ -26,9 +26,7 @@ export default function Receiver2() {
     });
 
     socket.on("ice-candidate", async (candidate) => {
-      if (lcRef.current) {
-        await lcRef.current.addIceCandidate(candidate);
-      }
+      await lcRef.current?.addIceCandidate(candidate);
     });
 
     // Listen for answer and ICE candidates from the server
@@ -51,15 +49,15 @@ export default function Receiver2() {
       }
     );
 
+    console.log(offer);
     return () => {
       socketRef.current?.disconnect();
       socketRef.current?.off("connect");
       socketRef.current?.off("ice-candidate");
       socketRef.current?.off("getAnswer");
-      socketRef.current = null;
     };
-  }, [answer, lcRef, offer]);
-  console.log(offer);
+  }, [lcRef, offer]);
+
   return (
     <div className="flex-col items-center justify-center">
       <h2 className="text-md mb-4">
@@ -67,7 +65,7 @@ export default function Receiver2() {
       </h2>
       <Link
         className="flex justify-center"
-        href={`http://localhost:3000/controller?offer=${compressToEncodedURIComponent(
+        href={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(
           JSON.stringify(offer)
         )}`}
         target="_blank"

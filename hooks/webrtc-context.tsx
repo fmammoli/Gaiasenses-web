@@ -65,6 +65,8 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
 
   const orientationMessageRef = useRef<OrientationMessage | null>(null);
 
+  const hasCreatedOffer = useRef(false);
+
   useEffect(() => {
     if (pcRef.current) return;
     pcRef.current = new RTCPeerConnection(iceServers);
@@ -115,27 +117,30 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
         pcRef.current.removeEventListener("icecandidate", onicecandidate);
         dcRef.current.removeEventListener("open", onopen);
         dcRef.current.removeEventListener("message", onmessage);
-        dcRef.current.close();
-        pcRef.current.close();
+        // dcRef.current.close();
+        // pcRef.current.close();
       }
     };
   }, []);
 
   useEffect(() => {
     const configure = async () => {
-      if (pcRef.current && !pcRef.current.localDescription) {
+      if (
+        pcRef.current &&
+        !hasCreatedOffer.current &&
+        !pcRef.current.localDescription
+      ) {
+        hasCreatedOffer.current = true;
         const offer = await pcRef.current.createOffer();
         await pcRef.current.setLocalDescription(offer);
         setOffer(offer);
       }
     };
 
-    if (offer === null) {
-      configure().then(() => {
-        console.log("local description set based on offer");
-      });
-    }
-  }, [offer]);
+    configure().then(() => {
+      console.log("local description set based on offer");
+    });
+  }, []);
 
   return (
     <WebRTCContext.Provider
