@@ -12,7 +12,7 @@ export default function Receiver2() {
   const socketRef = useRef<Socket | null>(null);
   const { pcRef: lcRef, offer } = useWebRTC();
 
-  const [answer, setAnswer] = useState<RTCSessionDescriptionInit | null>(null);
+  const answerRef = useRef<RTCSessionDescriptionInit | null>(null);
 
   useEffect(() => {
     const socket = io("https://gaiasenses-controller-server.onrender.com");
@@ -33,30 +33,38 @@ export default function Receiver2() {
     socketRef.current.on(
       "getAnswer",
       async (newAnswer: RTCSessionDescriptionInit) => {
-        console.log(lcRef.current?.signalingState);
-        console.log(lcRef.current?.connectionState);
-        console.log(lcRef.current);
-
+        const pc = lcRef.current;
         if (
-          lcRef.current &&
-          lcRef.current.localDescription &&
-          lcRef.current.localDescription.type === "offer" &&
-          !lcRef.current.remoteDescription
+          pc &&
+          pc.localDescription &&
+          pc.localDescription.type === "offer" &&
+          !pc.remoteDescription
         ) {
-          await lcRef.current.setRemoteDescription(newAnswer);
-          //console.log(lcRef.current);
+          try {
+            await pc.setRemoteDescription(newAnswer);
+          } catch (e) {
+            console.error("Failed to set remote description:", e);
+          }
+        } else {
+          console.warn("Skipping setRemoteDescription: wrong state", {
+            signalingState: pc?.signalingState,
+            localDescription: pc?.localDescription,
+            remoteDescription: pc?.remoteDescription,
+          });
         }
       }
     );
 
-    console.log(offer);
     return () => {
       socketRef.current?.disconnect();
       socketRef.current?.off("connect");
       socketRef.current?.off("ice-candidate");
       socketRef.current?.off("getAnswer");
+      socketRef.current = null;
     };
   }, [lcRef, offer]);
+
+  console.log(offer);
 
   return (
     <div className="flex-col items-center justify-center">
@@ -65,7 +73,7 @@ export default function Receiver2() {
       </h2>
       <Link
         className="flex justify-center"
-        href={`https://gaiasenses-web.vercel.app/controller?offer=${compressToEncodedURIComponent(
+        href={`http://localhost:3000/controller?offer=${compressToEncodedURIComponent(
           JSON.stringify(offer)
         )}`}
         target="_blank"
@@ -79,6 +87,7 @@ export default function Receiver2() {
           level="L"
         />
       </Link>
+      <p>{JSON.stringify(offer, null, 2)}</p>
     </div>
   );
 }

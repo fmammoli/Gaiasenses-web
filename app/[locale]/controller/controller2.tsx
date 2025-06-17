@@ -205,7 +205,6 @@ export default function Controller2({ offer }: { offer: string }) {
     console.log("Acceleration:", event.acceleration);
   }
 
-  console.log(rcRef.current);
   return (
     <div className="p-4">
       <H1>Controller</H1>

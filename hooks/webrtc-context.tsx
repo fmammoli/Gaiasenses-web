@@ -77,7 +77,7 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
 
     const onopen = () => {
       console.log("Data channel is open (receiver)!!!");
-      //alert("Data channel is open (receiver)!!!");
+      alert("Data channel is open (receiver)!!!");
       setDcOpen(true);
     };
 
@@ -112,34 +112,28 @@ export function WebRTCProvider({ children }: WebRTCProviderProps) {
     dcRef.current.addEventListener("message", onmessage);
     pcRef.current.addEventListener("icecandidate", onicecandidate);
 
+    const configure = async () => {
+      if (pcRef.current) {
+        const newOffer = await pcRef.current.createOffer();
+        await pcRef.current.setLocalDescription(newOffer);
+        setOffer(newOffer);
+        console.log("Local description set to offer");
+      }
+    };
+
+    configure();
+
     return () => {
       if (pcRef.current && dcRef.current) {
         pcRef.current.removeEventListener("icecandidate", onicecandidate);
         dcRef.current.removeEventListener("open", onopen);
         dcRef.current.removeEventListener("message", onmessage);
-        // dcRef.current.close();
-        // pcRef.current.close();
+        dcRef.current.close();
+        pcRef.current.close();
+        dcRef.current = null;
+        pcRef.current = null;
       }
     };
-  }, []);
-
-  useEffect(() => {
-    const configure = async () => {
-      if (
-        pcRef.current &&
-        !hasCreatedOffer.current &&
-        !pcRef.current.localDescription
-      ) {
-        hasCreatedOffer.current = true;
-        const offer = await pcRef.current.createOffer();
-        await pcRef.current.setLocalDescription(offer);
-        setOffer(offer);
-      }
-    };
-
-    configure().then(() => {
-      console.log("local description set based on offer");
-    });
   }, []);
 
   return (
