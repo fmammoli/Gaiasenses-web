@@ -110,7 +110,7 @@ export default function GaiasensesMap({
       newSearchParams.set("mode", "map");
       newSearchParams.set("composition", randomComposition[0]);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
-
+      console.log("going to map mode");
       if (orientationIdleTimer.current)
         clearTimeout(orientationIdleTimer.current);
       orientationIdleTimer.current = setTimeout(() => {
@@ -139,6 +139,8 @@ export default function GaiasensesMap({
 
   function handleMove(e: ViewStateChangeEvent) {
     const center = e.target.getCenter();
+    console.log("alooo movinfg");
+
     setLatlng([
       parseFloat(center.lat.toString()),
       parseFloat(center.lng.toString()),
@@ -161,8 +163,13 @@ export default function GaiasensesMap({
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
     if (newSearchParams.get("mode") === "map") {
+      if (orientationIdleTimer.current)
+        clearTimeout(orientationIdleTimer.current);
+      orientationIdleTimer.current = setTimeout(() => {
+        setShowPopup(true);
+      }, ORIENTATION_IDLE_DELAY);
+      console.log("lat:", lat, "  lon:", lon);
       newSearchParams.set("mode", "player");
-
       newSearchParams.set("lat", lat.toString());
       newSearchParams.set("lon", lon.toString());
       router.replace(`${pathname}?${newSearchParams.toString()}`);
@@ -170,8 +177,9 @@ export default function GaiasensesMap({
   };
 
   const onOrientationMoveEnd = (lat: number, lon: number) => {
-    console.log("orientation move end");
-    updatePopupPosition(lat, lon);
+    if (showPopup === false) {
+      updatePopupPosition(lat, lon);
+    }
   };
 
   const toggleInputMode = (dcOpen: boolean) => {
@@ -239,12 +247,12 @@ export default function GaiasensesMap({
           onMoveEnd={onOrientationMoveEnd}
           onConnected={toggleInputMode}
           onMoveEndLong={onMoveEndLong}
-          //onMove={onOrientationMove}
+          onMove={onOrientationMoveEnd}
         ></OrientationControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
-          latitude={latlng[0]}
-          longitude={latlng[1]}
+          latitude={mapRef.current?.getCenter().lat || 0}
+          longitude={mapRef.current?.getCenter().lng || 0}
           draggable
           onDragStart={handleDragStart}
           onDrag={handleDrag}

@@ -87,7 +87,7 @@ export default function Receiver2() {
           level="L"
         />
       </Link>
-      <p>{JSON.stringify(offer, null, 2)}</p>
+      {/* <p>{JSON.stringify(offer, null, 2)}</p> */}
     </div>
   );
 }

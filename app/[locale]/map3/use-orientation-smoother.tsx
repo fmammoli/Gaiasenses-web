@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-export function useOrientationSmoother(
-  orientation: { alpha?: number; beta?: number; gamma?: number } | null
-) {
+const bufferSize = 10;
+
+function mean(arr: number[]) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+export function useOrientationSmoother() {
   const smoothedRef = useRef<{ alpha: number; beta: number; gamma: number }>({
     alpha: 0,
     beta: 0,
@@ -10,38 +13,48 @@ export function useOrientationSmoother(
   });
   const workerRef = useRef<Worker | null>(null);
 
-  useEffect(() => {
-    const worker = new Worker(
-      new URL("./orientation-smoother.worker.js", import.meta.url)
-    );
-    workerRef.current = worker;
-
-    worker.onmessage = (e) => {
-      if (e.data.smoothAlpha !== undefined && e.data.smoothBeta !== undefined) {
-        smoothedRef.current = {
-          alpha: e.data.smoothAlpha,
-          beta: e.data.smoothBeta,
-          gamma: e.data.smoothGamma,
-        };
-      }
-    };
-
-    worker.postMessage({ action: "load" });
-
-    return () => {
-      worker.terminate();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (workerRef.current && orientation) {
-      workerRef.current.postMessage({
-        alpha: orientation.alpha,
-        beta: orientation.beta,
-        gamma: orientation.gamma,
-      });
+  const orientationRef = useRef<{ alpha: number; beta: number; gamma: number }>(
+    {
+      alpha: 0,
+      beta: 0,
+      gamma: 0,
     }
-  }, [orientation]);
+  );
 
-  return smoothedRef;
+  const alphaBufferRef = useRef<number[]>([]);
+  const betaBufferRef = useRef<number[]>([]);
+  const gammaBufferRef = useRef<number[]>([]);
+
+  const smooth = ({
+    alpha,
+    beta,
+    gamma,
+  }: {
+    alpha: number;
+    beta: number;
+    gamma: number;
+  }) => {
+    alphaBufferRef.current.push(alpha);
+    betaBufferRef.current.push(beta);
+    gammaBufferRef.current.push(gamma);
+    if (alphaBufferRef.current.length > bufferSize)
+      alphaBufferRef.current.shift();
+    if (betaBufferRef.current.length > bufferSize)
+      betaBufferRef.current.shift();
+    if (gammaBufferRef.current.length > bufferSize)
+      gammaBufferRef.current.shift();
+
+    const smoothAlpha = mean(alphaBufferRef.current);
+    const smoothBeta = mean(betaBufferRef.current);
+    const smoothGamma = mean(gammaBufferRef.current);
+
+    smoothedRef.current = {
+      alpha: smoothAlpha,
+      beta: smoothBeta,
+      gamma: smoothGamma,
+    };
+    return { alpha: smoothAlpha, beta: smoothBeta, gamma: smoothGamma };
+  };
+
+  return { smoothedRef, smooth };
 }
