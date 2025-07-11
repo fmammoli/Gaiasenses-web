@@ -40,7 +40,7 @@ export function CompositionDropdown({searchParams,weatherData}:CompositionDropdo
         <DropdownMenuRadioGroup value={searchParams.composition} className="overflow-y-scroll h-48"> 
           {compositions.map((item, index)=>{
             return (
-                <Link href={{query: {...searchParams, composition: item[0], temperature: weatherData.temp,mode:"player"}}} key={index}> 
+                <Link href={{query: {...searchParams, composition: item[0], mode:"player"}}} key={index}> 
                   <DropdownMenuRadioItem value={item[0]}>
                     {item[0]}
                   </DropdownMenuRadioItem>

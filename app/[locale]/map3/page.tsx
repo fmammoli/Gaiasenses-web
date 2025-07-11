@@ -86,17 +86,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     composition: composition,
     mode: "player",
   };
-
-/* ignore este comentário
-const compositionComponent = CompositionsInfo[
-  composition as keyof CompositionsInfoType
-].Component({
-  lat: lat.toString(),
-  lon: lng.toString(),
-  today: true,
-  play: true,
-});
-*/
+  
   const compositionComponent =
   searchParams.mode === "player"
     ? CompositionsInfo[composition as keyof CompositionsInfoType].Component({
@@ -137,24 +127,6 @@ const compositionComponent = CompositionsInfo[
     lat: lat,
     lng: lng,
   };
-
-  //checar dados pelo console, apenas remover "/**/"
-  /*console.log("------------------------------------------------------------");
-  console.log("Dados capturados em page.tsx:");
-  console.log("Composition:", composition);
-  console.log("Temperatura:", temp); 
-  console.log("Umidade:", humidity);
-  console.log("Velocidade do vento:", speed);
-  console.log("Contagem de raios:", lightningcount);
-  console.log("Contagem de incêndios:", firecount); 
-  console.log("Data e horário de execução:", date_timeplayed);
-  //console.log("Pressão:", weatherData.main.pressure);
-  //console.log("Pressão do mar:", weatherData.main.grnd_level);
-  //console.log("Visibilidade:", weatherData.visibility);
-  //console.log("Descrição do clima:", weatherData.weather[0].description);
-  console.log("Localização do usuário:", userLocation);
-  console.log("Localizção observada:", pinnedlocation);
-  console.log("------------------------------------------------------------");*/
 
   return (
     <div className="grid grid-cols-1 grid-rows-1">

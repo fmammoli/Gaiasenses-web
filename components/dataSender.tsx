@@ -45,13 +45,9 @@ export default function DataSender({
         pinnedlocation,
         userlocation: { userlat: userLocation.lat, userlng: userLocation.lng },
         timeSpent,
-      }).catch((err) => {
-        console.error("Erro ao enviar dados para o Supabase:", err);
       });
       startTimeRef.current = null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
-
   return null;
 }

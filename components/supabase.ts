@@ -30,26 +30,25 @@ export async function insertSatelliteData({
 }) 
 
 {
-  const { data, error } = await supabase.from("GaiaLogs").insert([
+const { data, error } = await supabase.from("GaiaLogs").insert([
   {
     name,
     temperature,
     humidity,
     wind_speed,
     lightning_count,
-    fireSpots_count: fire_count, 
+    fireSpots_count: fire_count,
     date_timeplayed,
-    pinnedlocation: pinnedlocation, 
-    userlocation: userlocation,
+    pinnedlocation,
+    userlocation,
     timeSpent,
-  },
+  }
 ]);
 
-  if (error) {
-    console.error("Erro ao inserir dados no Supabase:", error.message);
-    throw error;
-  }
-
-  console.log("Dados inseridos com sucesso no Supabase:", data);
-  return data;
+if (error) {
+  console.error("Erro ao inserir dados no Supabase:", error.message);
+  throw error;
+}
+console.log("Dados inseridos com sucesso no Supabase:", data);
+return data;
 }
