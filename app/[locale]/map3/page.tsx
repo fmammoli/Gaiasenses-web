@@ -10,6 +10,9 @@ import TitleScreen from "./title-screen";
 import { getTranslations } from "next-intl/server";
 import { CompositionDropdown } from "./composition-dropdown";
 import InfoModal from "./info-modal";
+import { getBrightness, getFireSpots, getLightning, getWeather } from "@/components/getData";
+import { cookies } from "next/headers"
+import DataSender from "@/components/dataSender";
 
 function stringToBoolean(value: string | undefined): boolean {
   if (value === undefined) {
@@ -74,6 +77,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   } else {
     composition = DEFAULT_COMPOSITION;
   }
+
   const lat = parseFloat(searchParams.lat ?? "0");
   const lng = parseFloat(searchParams.lng ?? "0");
 
@@ -82,16 +86,47 @@ export default async function Page({ params, searchParams }: PageProps) {
     composition: composition,
     mode: "player",
   };
-  const compositionComponent = CompositionsInfo[
-    composition as keyof CompositionsInfoType
-  ].Component({
-    lat: lat.toString(),
-    lon: lng.toString(),
-    today: true,
-    play: true,
-  });
-
+  
+  const compositionComponent =
+  searchParams.mode === "player"
+    ? CompositionsInfo[composition as keyof CompositionsInfoType].Component({
+        lat: lat.toString(),
+        lon: lng.toString(),
+        today: true,
+        play: true,
+      })
+    : null;
   const isInfoOpen = stringToBoolean(searchParams.info);
+
+  let userLocation = { lat: 0, lng: 0 };
+  const cookieStore = cookies();
+  const userLocationCookie = cookieStore.get("userLocation");
+  if (userLocationCookie) {
+    try {
+      userLocation = JSON.parse(userLocationCookie.value);
+    } catch {
+      userLocation = { lat: 0, lng: 0 };
+    }
+  }
+
+  const weatherData = await getWeather(lat, lng);
+  const lightningData = await getLightning(lat.toString(), lng.toString(),100);
+  const fireSpotsData = await getFireSpots(lat.toString(), lng.toString(),100);
+
+  const temp = weatherData.main.temp;
+  const speed = weatherData.wind.speed;
+  const humidity = weatherData.main.humidity;
+  const lightningcount = lightningData.count;
+  const firecount = fireSpotsData.count;
+  //const pressure = weatherData.main.pressure;
+  //const pressure_grnd_level = weatherData.main.grnd_level;
+  //const visibility = weatherData.visibility;
+  //const description = weatherData.weather[0].description;
+  const date_timeplayed = new Date().toISOString();
+  const pinnedlocation = {
+    lat: lat,
+    lng: lng,
+  };
 
   return (
     <div className="grid grid-cols-1 grid-rows-1">
@@ -101,7 +136,7 @@ export default async function Page({ params, searchParams }: PageProps) {
           initialLng={lng}
           InfoButtonText={t("infoButtonText")}
         >
-          <PopupContent lat={lat} lng={lng} lang={params.locale}>
+          <PopupContent lat={lat} lng={lng} lang={params.locale} > 
             <div className="flex gap-1">
               <Link href={{ query: newQuery }} className="w-full">
                 <Button className="w-full capitalize" variant={"outline"}>
@@ -123,12 +158,23 @@ export default async function Page({ params, searchParams }: PageProps) {
           titleButtonText={t("titleButtonText")}
         ></TitleScreen>
       </div>
-
+      <DataSender
+        isOpen={searchParams.mode === "player"}
+        composition={composition}
+        temp={temp}
+        speed={speed}
+        humidity={humidity}
+        lightningcount={lightningcount}
+        firecount={firecount}
+        date_timeplayed={date_timeplayed}
+        pinnedlocation={pinnedlocation}
+        userLocation={userLocation}
+      />
       <CompositionModal
         isOpen={searchParams.mode === "player" ? true : false}
         closeButton={
           <Link href={{ query: { ...newQuery, mode: "map" } }}>
-            <Button>Back</Button>
+            <Button>Back</Button> 
           </Link>
         }
       >
