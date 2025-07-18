@@ -10,7 +10,7 @@ export default async function middleware(request: NextRequest){
     defaultLocale:"pt"
   });
   const {geo} = request;
-  
+  //console.log("middleware")
 
   if(request.nextUrl.searchParams.get("lat") === null){
     request.nextUrl.searchParams.set("lat",geo?.latitude || "-23.5528381")
@@ -24,9 +24,17 @@ export default async function middleware(request: NextRequest){
   }
 
   //console.log(JSON.stringify(request.nextUrl))
+  const userLat = geo?.latitude || -23.5528381;
+  const userLng = geo?.longitude || -46.6621533;
   
   const response = handleI18nRouting(request);
-  
+  //Step 2: Set cookies based on the request
+   if (!request.cookies.get("userLocation")) {
+    response.cookies.set(
+      "userLocation", JSON.stringify({ lat: userLat, lng: userLng }),
+      { path: "/", maxAge: 60 * 60 * 24 * 7 } 
+    );
+  }
   response.headers.set("x-your-custom-locale", defaultLocale);
   
   return response
