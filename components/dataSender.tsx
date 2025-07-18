@@ -48,6 +48,16 @@ export default function DataSender({
       });
       startTimeRef.current = null;
     }
-  }, [isOpen]);
+  }, [isOpen,
+      composition,
+      temp,
+      speed,
+      humidity,
+      lightningcount,
+      firecount,
+      date_timeplayed,
+      pinnedlocation,
+      userLocation.lat,
+      userLocation.lng,]);
   return null;
 }
