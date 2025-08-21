@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import InfoButton from "./info-button";
 import ReceiverDialog from "./receiver-dialog";
+import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
 
@@ -202,6 +203,9 @@ export default function GaiasensesMap({
           <p className="w-4 text-xs">|</p>
           <p className="w-28 text-sm">Lng: {latlng[1].toFixed(5)}</p>
         </div>
+      </div>
+      <div>
+        <NotificationDialog></NotificationDialog>
       </div>
       <div>
         <ReceiverDialog></ReceiverDialog>
