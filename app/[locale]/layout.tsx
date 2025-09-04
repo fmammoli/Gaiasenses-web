@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { OrientationProvider } from "@/hooks/orientation-context";
 import { WebRTCProvider } from "@/hooks/webrtc-context";
+import { NextIntlClientProvider, useMessages } from "next-intl";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -33,6 +34,7 @@ export default function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  const msg = useMessages();
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${montserrat.className}`}>
@@ -43,10 +45,12 @@ export default function LocaleLayout({
           disableTransitionOnChange
         >
         </ThemeProvider> */}
-        <RegisterPd4WebSW></RegisterPd4WebSW>
-        <WebRTCProvider>
-          <AudioContextProvider>{children}</AudioContextProvider>
-        </WebRTCProvider>
+        <NextIntlClientProvider locale={locale} messages={msg}>
+          <RegisterPd4WebSW></RegisterPd4WebSW>
+          <WebRTCProvider>
+            <AudioContextProvider>{children}</AudioContextProvider>
+          </WebRTCProvider>
+        </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -37,7 +37,7 @@ export default function ReceiverDialog() {
       {showDialog && (
         <Dialog>
           <DialogTrigger asChild>
-            <div className="absolute top-[215px] right-0 z-10">
+            <div className="absolute top-[255px] right-0 z-10">
               <div className="mr-[10px] mt-[10px]">
                 <button className="bg-white w-[29px] h-[29px] rounded-sm flex justify-center items-center hover:bg-gray-200">
                   <Gamepad width={22} height={22} strokeWidth={2.5} />
