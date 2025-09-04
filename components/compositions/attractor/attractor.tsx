@@ -13,6 +13,7 @@ export type AttractorProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function Attractor(props: AttractorProps) {
@@ -27,11 +28,13 @@ export default async function Attractor(props: AttractorProps) {
     console.log(error);
   }
 
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
-      <AttractorSketch lightningCount={lightningCount} play={props.play} />
+      <AttractorSketch key={refreshKey} lightningCount={lightningCount} play={props.play} />
       <Pd4WebPlayer packageName={packageName} play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ lightningCount }]} />}
     </Composition>
   );
 }

@@ -9,6 +9,18 @@ const forte_espalhado = "/audios/StormEYE-ForteEspalhado.mp3";
 const suave_concentrado = "/audios/StormEYE-SuaveConcentrado.mp3";
 const suave_espalhado = "/audios/StormEYE-SuaveEspalhado.mp3";
 
+export type StormEyeProps = {
+  lat: string;
+  lon: string;
+  debug?: boolean;
+  today?: boolean;
+  temperature?: number;
+  windDeg?: number;
+  windSpeed?: number;
+  play: boolean;
+  refresh?: string;
+};
+
 function getAudio(windDeg: number, windSpeed: number) {
   if (windSpeed >= 1) {
     if (windDeg >= 0 && windDeg <= 180) {
@@ -26,56 +38,40 @@ function getAudio(windDeg: number, windSpeed: number) {
   return suave_concentrado;
 }
 
-export default async function StormEye({
-  lat,
-  lon,
-  debug = false,
-  today = false,
-  temperature,
-  windDeg,
-  windSpeed,
-  play,
-}: {
-  lat: string;
-  lon: string;
-  debug?: boolean;
-  today?: boolean;
-  temperature?: number;
-  windDeg?: number;
-  windSpeed?: number;
-  play: boolean;
-}) {
-  let temperatureData = temperature ?? 0;
-  let windDegData = windDeg ?? 0;
-  let windSpeedData = windSpeed ?? 0;
+export default async function StormEye(props: StormEyeProps) {
+  let temperature = props.temperature ?? 0;
+  let windDeg = props.windDeg ?? 0;
+  let windSpeed = props.windSpeed ?? 0;
 
   let audioPath = "";
 
-  if (today) {
+  if (props.today) {
     try {
-      const data = await getWeather(lat, lon);
-      temperatureData = data.main.temp;
-      windDegData = data.wind.deg;
-      windSpeedData = data.wind.speed;
+      const data = await getWeather(props.lat, props.lon);
+      temperature = data.main.temp;
+      windDeg = data.wind.deg;
+      windSpeed = data.wind.speed;
     } catch (error) {
       console.log(error);
     }
   }
-  audioPath = getAudio(windDegData, windSpeedData);
+  audioPath = getAudio(windDeg, windSpeed);
+  const refreshKey = props.refresh ?? "default";
   return (
     <Composition>
       <StormEyeSketch
-        temperature={temperatureData}
-        windDeg={windDegData}
-        windSpeed={windSpeedData}
-        play={play}
+        key={refreshKey}
+        temperature={temperature}
+        windDeg={windDeg}
+        windSpeed={windSpeed}
+        play={props.play}
       ></StormEyeSketch>
       <CompositionControls
-        play={play}
+        play={props.play}
         mp3
         patchPath={audioPath}
       ></CompositionControls>
-      {debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ temperature, windDeg, windSpeed }]} />}
     </Composition>
   );
 }

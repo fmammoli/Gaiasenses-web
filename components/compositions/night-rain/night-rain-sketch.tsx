@@ -1,18 +1,21 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { Map, map } from "leaflet";
 
 export type NightRainSketchProps = {
-  humidity: number;
-  temp: number;
   play: boolean;
+  rain: number;
+  temperature: number;
 };
 
 function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
     //inspired by https://openprocessing.org/sketch/2318784
     let particles = [];
-    let humidity = 0;
-    let temp = 0;
+    let rain = 0;
+    let temperature = 0;
     let play = false;
 
     let [width, height] = [p5.windowWidth, p5.windowHeight];
@@ -27,8 +30,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
     };
 
     p5.updateWithProps = (props: any) => {
-        humidity = Number.isNaN(props.humidity) ? humidity : props.humidity;
-        temp = Number.isNaN(props.temp) ? temp : props.temp;
+        rain = Number.isNaN(props.rain) ? rain : props.rain;
+        temperature = Number.isNaN(props.temperature) ? temperature : props.temperature;
         play = props.play;
 
         if (props.play) {
@@ -41,7 +44,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
     p5.draw = () => {
         p5.background(0, 30);
 
-        if (particles.length < 1.5 * humidity) particles.push(new Particle());
+        if (particles.length < 3 * rain) particles.push(new Particle());
 
         for (let i = 0; i < particles.length; i++) {
             particles[i].update();
@@ -61,7 +64,10 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
         constructor() {
             this.x = 0;
             this.y = 0;
-            this.vy = 0;
+            this.vy = p5.random(
+                p5.map(rain, 0, 60, 8, 18), 
+                p5.map(rain, 0, 60, 18, 30) 
+            );
             this.maxy = 0;
             this.r = 10;
             this.tr = 50;
@@ -90,7 +96,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
 
         display() {
             p5.strokeWeight(0.5);
-            let hueValue = p5.map(temp, 1, 45, 160, 0); 
+            let hueValue = p5.map(temperature, 1, 35, 160, 0); 
             p5.stroke(hueValue, 255, 255);
 
             if (this.y < this.maxy) {
@@ -111,6 +117,31 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
     }
 }
 
-export default function NightRainSketch(props: NightRainSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function NightRainSketch(initialProps: NightRainSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlRain = searchParams?.get("rain");
+  const urlTemperature = searchParams?.get("temperature");
+  const urlPlay = searchParams?.get("play");
+
+  const rain = useMemo(
+    () => (urlRain !== null ? Number(urlRain) : initialProps.rain),
+    [urlRain, initialProps.rain]
+  );
+
+  const temperature = useMemo(
+    () => (urlTemperature !== null ? Number(urlTemperature) : initialProps.temperature),
+    [urlTemperature, initialProps.temperature]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} rain={rain} temperature={temperature} play={play} />;
+}
+
+function random(arg0: Map, arg1: Map): number {
+    throw new Error("Function not implemented.");
 }

@@ -5,6 +5,16 @@ import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 
+export type ColorFlowerProps = {
+  lat: string;
+  lon: string;
+  debug?: boolean;
+  today?: boolean;
+  temperature?: number;
+  play: boolean;
+  refresh?: string;
+};
+
 const flor_10 = "/audios/Flor-infinito_10.mp3";
 const flor_10_15 = "/audios/Flor-10_15.mp3";
 const flor_15_20 = "/audios/Flor-15_20.mp3";
@@ -30,48 +40,35 @@ function getAudio(temp: number) {
   return flor_30;
 }
 
-export default async function ColorFlower({
-  lat,
-  lon,
-  debug = false,
-  today = false,
-  play,
-  temperature,
-}: {
-  lat: string;
-  lon: string;
-  debug?: boolean;
-  today?: boolean;
-  play: boolean;
-  temperature?: number;
-}) {
-  let temperatureData = temperature ?? 0;
+export default async function StormEye(props: ColorFlowerProps) {
+  let temperature = props.temperature ?? 0;
 
   let audioPath = "";
 
-  if (today) {
+  if (props.today) {
     try {
-      const data = await getWeather(lat, lon);
-      temperatureData = data.main.temp ?? 0;
+      const data = await getWeather(props.lat, props.lon);
+      temperature = data.main.temp ?? 0;
     } catch (error) {
       console.log(error);
     }
   }
-  audioPath = getAudio(temperatureData);
-
-  audioPath = getAudio(temperatureData);
+  audioPath = getAudio(temperature);
+  const refreshKey = props.refresh ?? "default";
+  
   return (
     <Composition>
       <ColorFlowerSketch
-        temperature={temperatureData}
-        play={play}
+        key={refreshKey}
+        temperature={temperature}
+        play={props.play}
       ></ColorFlowerSketch>
       <CompositionControls
-        play={play}
+        play={props.play}
         mp3
         patchPath={audioPath}
       ></CompositionControls>
-      {debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ temperature }]} />}
     </Composition>
   );
 }

@@ -24,28 +24,24 @@ function newMessages(rainData: number) {
   return patchData;
 }
 
-export default async function Lluvia({
-  lat,
-  lon,
-  debug = false,
-  today = false,
-  play,
-  rain,
-}: {
+export type LluviaProps = {
   lat: string;
   lon: string;
   debug?: boolean;
   today?: boolean;
   play: boolean;
   rain?: number;
-}) {
+  refresh?: string;
+};
+
+export default async function Lluvia(props: LluviaProps) {
   let rainData = 0;
   try {
-    if (rain) {
-      rainData = rain;
+    if (props.rain) {
+      rainData = props.rain;
     } else {
-      if (today) {
-        const data = await getWeather(lat, lon);
+      if (props.today) {
+        const data = await getWeather(props.lat, props.lon);
         rainData = data.rain.hasOwnProperty("1h")
           ? (data.rain as { "1h": number })["1h"]
           : 0;
@@ -54,16 +50,17 @@ export default async function Lluvia({
   } catch (error) {}
 
   const { path, messages } = newMessages(rainData);
+  const refreshKey = props.refresh ?? "default";
 
   return (
     <Composition>
-      <LluviaSketch rain={rainData} play={play}></LluviaSketch>
+      <LluviaSketch key={refreshKey} rain={rainData} play={props.play}></LluviaSketch>
       <CompositionControls
-        play={play}
+        play={props.play}
         patchPath={path}
         messages={messages}
       ></CompositionControls>
-      {debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ rainData }]} />}
     </Composition>
   );
 }

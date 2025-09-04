@@ -7,40 +7,42 @@ import DebugPanel from "@/components/debug-panel/debug-panel";
 const noFire = "/audios/burningTrees_noFire.wav";
 const fireNoise = "/audios/burningTrees_audio.mp3" ;
 
-function getAudio(fireNumber: number){
-  if (fireNumber == 0){return noFire;}
+function getAudio(fireCount: number){
+  if (fireCount == 0){return noFire;}
   else{return fireNoise}
 }
 
 export type BurningTreesProps = {
   lat: string;
   lon: string;
-  fireNumber?: number;
+  fireCount?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function BurningTrees(props: BurningTreesProps) {
-  let fireNumber = props.fireNumber ?? 0;
+  let fireCount = props.fireCount ?? 0;
   let burningTreesAudio;
 
   try {
     if (props.today) {
       const fireData = await getFireSpots(props.lat, props.lon, 100);
-      fireNumber = fireData.count;
+      fireCount = fireData.count;
     }
   } catch (error) {
     console.log(error);
   }
 
-  burningTreesAudio = getAudio(fireNumber)
+  const refreshKey = props.refresh ?? "default";
+  burningTreesAudio = getAudio(fireCount)
 
   return (
-    <Composition>
-	    <BurningTreesSketch fireNumber={fireNumber} play={props.play} />
-        <CompositionControls play={props.play} mp3 patchPath={burningTreesAudio}/>
-        {props.debug && <DebugPanel></DebugPanel>}
-    </Composition>
+  <Composition>
+    <BurningTreesSketch key={refreshKey} fireCount={fireCount} play={props.play} />
+    <CompositionControls play={props.play} mp3 patchPath={burningTreesAudio}/>
+    {<DebugPanel data={[{ fireCount }]} />}
+  </Composition>
   );
 }

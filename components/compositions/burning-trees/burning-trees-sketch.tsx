@@ -1,16 +1,18 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type BurningTreesSketchProps = {
-  fireNumber: number;
+  fireCount: number;
   play: boolean;
 };
 
 function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   //inspired by https://openprocessing.org/sketch/1749652
   let t = 0;
-  let fireNumber = 0;
+  let fireCount = 0;
   let W: number;
   let C: number;
   let T: number;
@@ -23,11 +25,11 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   };
 
   p5.updateWithProps = (props: any) => {
-    const count = Number.isNaN(props.fireNumber)
-      ? fireNumber
-      : props.fireNumber;
+    const count = Number.isNaN(props.fireCount)
+      ? fireCount
+      : props.fireCount;
     play = props.play;
-    fireNumber = count;
+    fireCount = count;
   };
 
   p5.draw = () => {
@@ -39,7 +41,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
     p5.background(0, 0.05);
     p5.blendMode(p5.ADD);
 
-    if (fireNumber === 0) {
+    if (fireCount === 0) {
       // Primeiro laço for
       for (let y = 0; y <= W; y += 16) {
         for (let x = ((y / 16) % 2) * -9; x <= W; x += 18) {
@@ -55,7 +57,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
         for (let x = ((y / 16) % 2) * -9; x <= W; x += 18) {
           T = Math.tan(p5.noise(x / W, (y + C) / W) * 15 - t / 99);
 
-          if (T > 0.2 + fireNumber - 1) {
+          if (T > 0.2 + fireCount - 1) {
             p5.fill(120, 100, 100, T); // Cor verde
           } else {
             p5.fill(p5.noise(x, y + C) * 30, 100, 1); // Cor das chamas
@@ -71,6 +73,21 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   };
 }
 
-export default function BurningTreesSketch(props: BurningTreesSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function BurningTreesSketch(initialProps: BurningTreesSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlFireCount = searchParams?.get("fireCount");
+  const urlPlay = searchParams?.get("play");
+
+  const fireCount = useMemo(
+    () => (urlFireCount !== null ? Number(urlFireCount) : initialProps.fireCount),
+    [urlFireCount, initialProps.fireCount]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} fireCount={fireCount} play={play} />;
 }

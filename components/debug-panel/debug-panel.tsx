@@ -8,12 +8,18 @@ import {
 } from "../ui/collapsible";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function DebugPanel() {
+export default function DebugPanel({ data }: { data: { [key: string]: number }[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const sketchProps = Object.fromEntries(searchParams.entries());
+  const sketchProps: { [k: string]: string } = Object.fromEntries(
+    Array.from(searchParams?.entries() ?? [])
+  );
+
+  const defaults = Object.assign({}, ...data) as { [key: string]: number };
+
+  const attributes = Array.from(new Set(data.flatMap((obj) => Object.keys(obj)))).sort();
 
   function handleChange(newSketchProp: { [key: string]: string }) {
     const newProps = { ...sketchProps, ...newSketchProp };
@@ -21,20 +27,17 @@ export default function DebugPanel() {
     router.replace(`${pathname}?${newSearchParams.toString()}`);
   }
 
-  function handleStop() {
-    const { lat, lon, city, geo, play, ...rest } = sketchProps;
-    Object.keys(rest).forEach((key) => (rest[key] = "0"));
-    const newParams = new URLSearchParams({
-      ...rest,
-      lat,
-      lon,
-      city,
-      geo,
-      play: "false",
+  function handleResetToDefaults() {
+    const newProps: { [key: string]: string } = { ...sketchProps };
+
+    attributes.forEach((attr) => {
+      if (defaults[attr] !== undefined) newProps[attr] = String(defaults[attr]);
+      else newProps[attr] = "0";
     });
-    router.replace(`${pathname}?${newParams.toString()}`);
-    router.refresh();
-  }
+
+  const newSearchParams = new URLSearchParams(Object.entries(newProps));
+  router.replace(`${pathname}?${newSearchParams.toString()}`);
+}
 
   return (
     <div className="absolute max-w-[22rem] bg-secondary p-2 rounded-lg right-2 top-1/4 opacity-60 hover:opacity-100 z-50">
@@ -47,42 +50,25 @@ export default function DebugPanel() {
         <CollapsibleContent>
           <div>
             <div>
-              {Object.entries(sketchProps)
-                .filter(
-                  (entry) =>
-                    entry[0] !== "lat" &&
-                    entry[0] !== "lon" &&
-                    entry[0] !== "play" &&
-                    entry[0] !== "geo" &&
-                    entry[0] !== "city"
-                )
-                .map((entry, index) => {
-                  const name = entry[0];
-                  const value = entry[1];
-                  return (
-                    <DebugInput
-                      key={index}
-                      index={index}
-                      name={name}
-                      value={value}
-                      handleChange={handleChange}
-                    ></DebugInput>
-                  );
-                })}
+              {attributes.map((attr, index) => (
+                <DebugInput
+                  key={index}
+                  index={index}
+                  name={attr}
+                  value={sketchProps[attr] ?? (defaults[attr] !== undefined ? String(defaults[attr]) : "")}
+                  handleChange={handleChange}
+                />
+              ))}
             </div>
-            <div></div>
-            <div>
-              <Button
-                variant={"outline"}
-                id="play-button"
-                className="mt-2"
-                onClick={handleStop}
-              >
-                Reset
+
+            <div className="flex gap-2 mt-2">
+              <Button variant={"outline"} id="reset-button" onClick={handleResetToDefaults}>
+                Reset to default
               </Button>
             </div>
+
             <p className="text-xs mt-2">
-              * Click on canvas to play/pause animation.
+              * Alter the satellite data values to tinker with the animation.
             </p>
           </div>
         </CollapsibleContent>

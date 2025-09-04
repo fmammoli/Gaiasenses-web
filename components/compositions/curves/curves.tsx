@@ -12,6 +12,7 @@ export type CurvesProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function Curves(props: CurvesProps) {
@@ -29,15 +30,18 @@ export default async function Curves(props: CurvesProps) {
       console.log(error);
     }
   }
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
       <CurvesSketch
+        key={refreshKey}
         rain={rainData}
         temperature={temperatureData}
         play={props.play}
       />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ rain: rainData, temperature: temperatureData }]} />}
     </Composition>
   );
 }

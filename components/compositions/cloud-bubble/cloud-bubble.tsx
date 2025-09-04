@@ -11,6 +11,7 @@ export type CloudBubbleProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function CloudBubble(props: CloudBubbleProps) {
@@ -24,12 +25,14 @@ export default async function CloudBubble(props: CloudBubbleProps) {
       console.log(error);
     }
   }
-
+  
+  const refreshKey = props.refresh ?? "default";
+  
   return (
     <Composition>
-      <CloudBubbleSketch clouds={clouds} play={props.play} />
+      <CloudBubbleSketch key={refreshKey} clouds={clouds} play={props.play} />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ clouds }]} />}
     </Composition>
   );
 }

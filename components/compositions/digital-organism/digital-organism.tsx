@@ -11,6 +11,7 @@ export type DigitalOrganismProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 const audioPath = "/audios/DigitalOrganism-Improviso.mp3";
@@ -34,12 +35,13 @@ export default async function DigitalOrganism(props: DigitalOrganismProps) {
   }
 
   const audio = getAudio();
+  const refreshKey = props.refresh ?? "default";
 
   return (
     <Composition>
-      <DigitalOrganismSketch rain={rain} play={props.play} />
+      <DigitalOrganismSketch key={refreshKey} rain={rain} play={props.play} />
       <CompositionControls play={props.play} mp3 patchPath={audio} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ rain }]} />}
     </Composition>
   );
 }

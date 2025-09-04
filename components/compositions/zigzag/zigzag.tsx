@@ -4,6 +4,17 @@ import Composition from "../composition";
 import CompositionControls from "../composition-controls";
 import DebugPanel from "@/components/debug-panel/debug-panel";
 
+export type ZigZagSketchProps = {
+  lat: string;
+  lon: string;
+  debug?: boolean;
+  rain?: number;
+  lightningCount?: number;
+  today?: boolean;
+  play: boolean;
+  refresh?: string;
+};
+
 const zigzagAA = "/audios/ZigZag-AA.mp3";
 const zigzagAB = "/audios/ZigZag-AB.mp3";
 const zigzagBA = "/audios/ZigZag-BA.mp3";
@@ -25,56 +36,42 @@ function getAudio(rain: number, lCount: number) {
   }
 }
 
-export default async function Zigzag({
-  lat,
-  lon,
-  debug = false,
-  rain,
-  lightningCount,
-  today = false,
-  play,
-}: {
-  lat: string;
-  lon: string;
-  debug?: boolean;
-  rain?: number;
-  lightningCount?: number;
-  today?: boolean;
-  play: boolean;
-}) {
-  let rainData = rain ?? 0;
-  let lightningCountData = lightningCount ?? 0;
+export default async function Zigzag(props: ZigZagSketchProps) {
+  let rainData = props.rain ?? 0;
+  let lightningCount = props.lightningCount ?? 0;
   let audioPath = "";
 
   try {
-    if (today) {
+    if (props.today) {
       const [weatherData, lightningData] = await Promise.all([
-        getWeather(lat, lon),
-        getLightning(lat, lon, 50),
+        getWeather(props.lat, props.lon),
+        getLightning(props.lat, props.lon, 50),
       ]);
       rainData = weatherData.rain.hasOwnProperty("1h")
         ? (weatherData.rain as { "1h": number })["1h"]
         : 0;
 
-      lightningCountData = lightningData.count;
+      lightningCount = lightningData.count;
     }
   } catch (error) {
     console.log(error);
   }
-  audioPath = getAudio(rainData, lightningCountData);
+  audioPath = getAudio(rainData, lightningCount);
+  const refreshKey = props.refresh ?? "default";
   return (
     <Composition>
       <ZigzagSketch
+        key={refreshKey}
         rain={rainData}
-        lightningCount={lightningCountData}
-        play={play}
+        lightningCount={lightningCount}
+        play={props.play}
       ></ZigzagSketch>
       <CompositionControls
-        play={play}
+        play={props.play}
         mp3
         patchPath={audioPath}
       ></CompositionControls>
-      {debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ rainData, lightningCount }]} />}
     </Composition>
   );
 }

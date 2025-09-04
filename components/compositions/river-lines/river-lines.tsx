@@ -16,34 +16,39 @@ export type RiverLinesProps = {
   lat: string;
   lon: string;
   humidity?: number;
-  temp?: number;
+  temperature?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function RiverLines(props: RiverLinesProps) {
-  let humidity = props.humidity ?? 0;
-  let temp = props.temp ?? 0;
+  let humidity = props.humidity ?? 0
+  let temperature = props.temperature ?? 0
   let riverLinesAudio;
 
   try {
     if (props.today) {
       const data = await getWeather(props.lat, props.lon); 
       humidity = data.main.humidity;
-      temp = data.main.temp;
+      temperature = data.main.temp;
     }
   } catch (error) {
     console.log(error);
   }
 
+  const refreshKey = props.refresh ?? "default";
   riverLinesAudio = getAudio(humidity);
 
-  return (
-    <Composition>
-      <RiverLinesSketch humidity={humidity} temp={temp} play={props.play} />
-      <CompositionControls play={props.play} mp3 patchPath={riverLinesAudio}/>
-      {props.debug && <DebugPanel></DebugPanel>}
-    </Composition>
+  //comentar debug panel dentro das aspas para desativar como consta abaixo, funciona para todas as animações:
+  /*<DebugPanel data={[{ humidity, temperature }]} />*/
+
+return (
+  <Composition>
+    <RiverLinesSketch key={refreshKey} humidity={humidity} temperature={temperature} play={props.play} />
+    <CompositionControls play={props.play} mp3 patchPath={riverLinesAudio}/>
+    {<DebugPanel data={[{ humidity, temperature }]} />}
+  </Composition>
   );
 }
