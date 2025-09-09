@@ -22,6 +22,7 @@ import ReceiverDialog from "./receiver-dialog";
 import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
+import AutoInteraction from "./auto-interaction";
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -246,6 +247,7 @@ export default function GaiasensesMap({
         //onIdle={handleIdle}
         onMoveEnd={handleMoveEnd}
       >
+        <AutoInteraction></AutoInteraction>
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
         <OrientationControl
