@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type BonfireSketchProps = {
   fireCount: number;
@@ -111,6 +113,30 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
   };
 }
 
-export default function BonfireSketch(props: BonfireSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function BonfireSketch({
+  fireCount,
+  play,
+}: BonfireSketchProps) {
+  const searchParams = useSearchParams();
+
+  // Lê os parâmetros da URL
+  const urlFireCount = searchParams?.get("fireCount");
+  const urlPlay = searchParams?.get("play");
+
+  // Prioriza valores da URL se existirem
+  const fireCountValue = useMemo(
+    () => (urlFireCount !== null ? Number(urlFireCount) : fireCount),
+    [urlFireCount, fireCount]
+  );
+
+  const playValue =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : play;
+
+  return (
+    <NextReactP5Wrapper
+      sketch={sketch}
+      fireCount={fireCountValue}
+      play={playValue}
+    />
+  );
 }

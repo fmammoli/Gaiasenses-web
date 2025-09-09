@@ -33,6 +33,7 @@ export type BonfireProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function Bonfire(props: BonfireProps) {
@@ -51,17 +52,18 @@ export default async function Bonfire(props: BonfireProps) {
   }
 
   fireAudio = getFireAudio(fireCount, closeFires);
+  const refreshKey = props.refresh ?? "default";
 
   return (
     <Composition>
       <BonfireSketch
-        key={`${props.lat}_${props.lon}_${"bonfire"}`}
+        key={refreshKey}
         fireCount={fireCount}
         play={props.play}
       />
 
       <CompositionControls play={props.play} mp3 patchPath={fireAudio} />
-      {props.debug && <DebugPanel></DebugPanel>}
+
     </Composition>
   );
 }

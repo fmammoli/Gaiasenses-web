@@ -39,6 +39,7 @@ export type MudflatScatterProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function MudflatScatter(props: MudflatScatterProps) {
@@ -73,22 +74,24 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
   //      * args [1,0,0,"",""]
   //      * label "ON"
 
-  let temperatureData = temperature ?? 0;
-
   let audioPath = "";
 
   if (props.today) {
     try {
       const data = await getWeather(props.lat, props.lon);
-      temperatureData = data.main.temp ?? 0;
+      temperature = data.main.temp ?? 0;
+      windDeg = data.wind.deg;
+      windSpeed = data.wind.speed;
     } catch (error) {
       console.log(error);
     }
   }
-  audioPath = getAudio(temperatureData);
+  audioPath = getAudio(temperature);
+  const refreshKey = props.refresh ?? "default";
   return (
     <Composition>
       <MudflatScatterSketch
+        key={refreshKey}
         temperature={temperature}
         windDeg={windDeg}
         windSpeed={windSpeed}
@@ -99,7 +102,7 @@ export default async function MudflatScatter(props: MudflatScatterProps) {
         mp3
         patchPath={audioPath}
       ></CompositionControls>
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ temperature, windDeg, windSpeed }]} />}
     </Composition>
   );
 }

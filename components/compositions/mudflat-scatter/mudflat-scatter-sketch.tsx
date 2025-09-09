@@ -2,6 +2,8 @@
 import type {  P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import type {Color, Vector } from "p5";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 //for the #wccChallenge on the theme of 'flat'.
 //Thought I would be skipping this week, as I'm on vacation in northern California.
@@ -13,7 +15,7 @@ import type {Color, Vector } from "p5";
 //code by Aaron Reuland
 // from https://openprocessing.org/sketch/1982410
 
-export type MudFlarScatterSketchProps = {
+export type MudFlatScatterSketchProps = {
   temperature: number;
   windDeg: number;
   windSpeed: number;
@@ -127,6 +129,33 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
   }
 }
 
-export default function MudflatScatterSketch(props: Readonly<MudFlarScatterSketchProps>) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function MudFlatScatterSketch(initialProps: MudFlatScatterSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlTemp = searchParams?.get("temperature");
+  const urlWindDeg = searchParams?.get("windDeg");
+  const urlWindSpeed = searchParams?.get("windSpeed");
+  const urlPlay = searchParams?.get("play");
+
+  const temperature = useMemo(
+    () => (urlTemp !== null ? Number(urlTemp) : initialProps.temperature),
+    [urlTemp, initialProps.temperature]
+  );
+
+  const windDeg = useMemo(
+    () => (urlWindDeg !== null ? Number(urlWindDeg) : initialProps.windDeg),
+    [urlWindDeg, initialProps.windDeg]
+  );
+
+    const windSpeed = useMemo(
+    () => (urlWindSpeed !== null ? Number(urlWindSpeed) : initialProps.windSpeed),
+    [urlWindSpeed, initialProps.windSpeed]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} temperature={temperature} windDeg={windDeg} windSpeed={windSpeed} play={play} />;
 }

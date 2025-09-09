@@ -1,9 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import p5Types from "p5";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 //This wrapper was found in https://aleksati.net/posts/how-to-use-p5js-with-nextjs-in-2024
 // can go in "./types/global.d.ts"
+
+export type GenerativeStringsSketchProps = {
+  temp: number;
+  play: boolean;
+};
+
 type P5jsContainerRef = HTMLDivElement;
 type P5jsSketch = (
   p: p5Types,
@@ -397,8 +405,50 @@ export const P5jsContainer: P5jsContainer = ({ sketch, temp }) => {
   return <div ref={parentRef} className="absolute top-0 left-0"></div>;
 };
 
-export default function GenerativeStringsSketch2(props: any) {
+export default function GenerativeStringsSketch(initialProps: GenerativeStringsSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlTemp = searchParams?.get("temp");
+  const urlPlay = searchParams?.get("play");
+
+  const temp = useMemo(
+    () => (urlTemp !== null ? Number(urlTemp) : initialProps.temp),
+    [urlTemp, initialProps.temp]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return (
+    <P5jsContainer sketch={sketch} temp={Math.abs(temp)}></P5jsContainer>
+  );
+}
+
+/*export default function NameSketch(initialProps: NameSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlTemp = searchParams?.get("Temp");
+  const urlDado2 = searchParams?.get("dado2");
+  const urlPlay = searchParams?.get("play");
+
+  const Temp = useMemo(
+    () => (urlTemp !== null ? Number(urlTemp) : initialProps.Temp),
+    [urlTemp, initialProps.Temp]
+  );
+
+  const dado2 = useMemo(
+    () => (urlDado2 !== null ? Number(urlDado2) : initialProps.dado2),
+    [urlDado2, initialProps.dado2]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
   return (
     <P5jsContainer sketch={sketch} temp={Math.abs(props.temp)}></P5jsContainer>
   );
-}
+}*/

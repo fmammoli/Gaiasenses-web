@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type PaintBrushSketchProps = {
   humidity: number;
@@ -141,6 +143,21 @@ function sketch(p5: P5CanvasInstance<SketchProps & PaintBrushSketchProps>) {
   };
 }
 
-export default function PaintBrushSketch(props: PaintBrushSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function PaintBrushSketch(initialProps: PaintBrushSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlHumidity = searchParams?.get("humidity");
+  const urlPlay = searchParams?.get("play");
+
+  const humidity = useMemo(
+    () => (urlHumidity !== null ? Number(urlHumidity) : initialProps.humidity),
+    [urlHumidity, initialProps.humidity]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} humidity={humidity} play={play} />;
 }

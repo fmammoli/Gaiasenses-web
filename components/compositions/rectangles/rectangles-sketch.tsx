@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type RectanglesSketchProps = {
   rain: number;
@@ -75,6 +77,21 @@ function sketch(p5: P5CanvasInstance<SketchProps & RectanglesSketchProps>) {
   };
 }
 
-export default function RectanglesSketch(props: RectanglesSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function RectanglesSketch(initialProps: RectanglesSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlRain = searchParams?.get("rain");
+  const urlPlay = searchParams?.get("play");
+
+  const rain = useMemo(
+    () => (urlRain !== null ? Number(urlRain) : initialProps.rain),
+    [urlRain, initialProps.rain]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} rain={rain} play={play} />;
 }

@@ -46,7 +46,6 @@ export default function TogglePlayButton({
   return (
     <div
       className="absolute top-0 h-full w-full flex items-center justify-center"
-      onClick={togglePlay}
     >
       <Button
         variant={"outline"}

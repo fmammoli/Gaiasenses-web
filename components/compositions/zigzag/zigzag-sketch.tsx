@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type ZigZagSketchProps = {
   rain: number;
@@ -195,14 +197,33 @@ function sketch(p5: P5CanvasInstance<SketchProps & ZigZagSketchProps>) {
 export default function ZigZagSketch({
   rain,
   lightningCount,
-  play = false,
+  play,
 }: ZigZagSketchProps) {
+  const searchParams = useSearchParams();
+
+  // Lê os parâmetros da URL
+  const urlRain = searchParams?.get("rain");
+  const urlLightningCount = searchParams?.get("lightningCount");
+  const urlPlay = searchParams?.get("play");
+
+  // Prioriza valores da URL se existirem
+  const rainValue = useMemo(
+    () => (urlRain !== null ? Number(urlRain) : rain),
+    [urlRain, rain]
+  );
+  const lightningCountValue = useMemo(
+    () => (urlLightningCount !== null ? Number(urlLightningCount) : lightningCount),
+    [urlLightningCount, lightningCount]
+  );
+  const playValue =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : play;
+
   return (
     <NextReactP5Wrapper
       sketch={sketch}
-      rain={rain}
-      lightningCount={lightningCount}
-      play={play}
+      rain={rainValue}
+      lightningCount={lightningCountValue}
+      play={playValue}
     />
   );
 }

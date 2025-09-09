@@ -8,44 +8,49 @@ const light = '/audios/NRlight.mp3';
 const medium = '/audios/NRmedium.mp3';
 const heavy = '/audios/NRheavy.mp3';
 
-function getAudio(humidity: number) { //apenas parametros que serão usados na função, por exemplo, excluímos 'temp' neste caso, apesar dela existir no sketch
-  if(humidity < 30){return light;}
-  if(humidity >= 30 && humidity < 60){return medium;}
-  if(humidity >= 60){return heavy;}
+function getAudio(rain: number) { //apenas parametros que serão usados na função, por exemplo, excluímos 'temperature' neste caso, apesar dela existir no sketch
+  if(rain == 0){return '';}
+  if(rain < 3){return light;}
+  if(rain >= 3 && rain < 6){return medium;}
+  if(rain >= 6){return heavy;}
 }
 
 export type NightRainProps = {
   lat: string;
   lon: string;
-  humidity?: number;
-  temp?: number;
+  rain?: number;
+  temperature?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function NightRain(props: NightRainProps) {
-  let humidity = props.humidity ?? 0;
-  let temp = props.temp ?? 0;
+  let rain = props.rain ?? 0;
+  let temperature = props.temperature ?? 0;
   let nightrainAudio;
 
   try {
     if (props.today) {
       const data = await getWeather(props.lat, props.lon); 
-      humidity = data.main.humidity;
-      temp = data.main.temp;
+      rain = data.rain.hasOwnProperty("1h")
+        ? (data.rain as { "1h": number })["1h"]
+        : 0;
+      temperature = data.main.temp;
     }
   } catch (error) {
     console.log(error);
   }
 
-  nightrainAudio = getAudio(humidity); //apenas parametros da função getAudio
+  nightrainAudio = getAudio(rain); //apenas parametros da função getAudio
+  const refreshKey = props.refresh ?? "default";
 
   return (
     <Composition>
-	    <NightRainSketch humidity={humidity} temp={temp} play={props.play} />
+	    <NightRainSketch key={refreshKey} rain={rain} temperature={temperature} play={props.play} />
         <CompositionControls play={props.play} mp3 patchPath={nightrainAudio}/>
-        {props.debug && <DebugPanel></DebugPanel>}
+        {<DebugPanel data={[{ rain, temperature }]} />}
     </Composition>
   );
 }

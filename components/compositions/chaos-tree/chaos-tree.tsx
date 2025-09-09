@@ -9,17 +9,20 @@ export type ChaosTreeProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function ChaosTree(props: ChaosTreeProps) {
   const lat = Number(props.lat);
   const lon = Number(props.lon);
 
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
-      <ChaosTreeSketch lat={lat} lon={lon} play={props.play} />
+      <ChaosTreeSketch key={refreshKey} lat={lat} lon={lon} play={props.play} />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ lat, lon }]} />}
     </Composition>
   );
 }

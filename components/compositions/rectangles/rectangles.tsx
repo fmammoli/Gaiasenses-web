@@ -11,6 +11,7 @@ export type RectanglesProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function Rectangles(props: RectanglesProps) {
@@ -27,11 +28,13 @@ export default async function Rectangles(props: RectanglesProps) {
     console.log(error);
   }
 
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
-      <RectanglesSketch rain={rainData} play={props.play} />
+      <RectanglesSketch key={refreshKey} rain={rainData} play={props.play} />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ rainData }]} />}
     </Composition>
   );
 }

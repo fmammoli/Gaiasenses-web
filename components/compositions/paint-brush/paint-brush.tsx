@@ -11,6 +11,7 @@ export type PaintBrushProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function PaintBrush(props: PaintBrushProps) {
@@ -25,11 +26,13 @@ export default async function PaintBrush(props: PaintBrushProps) {
     console.log(error);
   }
 
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
-      <PaintBrushSketch humidity={humidity} play={props.play} />
+      <PaintBrushSketch key={refreshKey} humidity={humidity} play={props.play} />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ humidity }]} />}
     </Composition>
   );
 }

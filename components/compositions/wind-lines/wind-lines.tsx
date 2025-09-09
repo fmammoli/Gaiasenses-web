@@ -8,41 +8,43 @@ const light = '/audios/wind-linesLight.wav';
 const medium = '/audios/wind-linesMedium.wav';
 const heavy = '/audios/wind-linesHeavy.wav';
 
-function getAudio(speed: number) {
-  if(speed <= 11){return light;}
-  if(speed >= 12 && speed <= 24){return medium;}
-  if(speed >= 25){return heavy;}
+function getAudio(windSpeed: number) {
+  if(windSpeed <= 11){return light;}
+  if(windSpeed >= 12 && windSpeed <= 24){return medium;}
+  if(windSpeed >= 25){return heavy;}
 }
 
 export type WindLinesREProps = {
   lat: string;
   lon: string;
-  speed?: number;
+  windSpeed?: number;
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function WindLinesRE(props: WindLinesREProps) {
-  let speed = props.speed ?? 0;
+  let windSpeed = props.windSpeed ?? 0;
   let windLinesAudio;
 
   try {
     if (props.today) {
       const data = await getWeather(props.lat, props.lon);
-      speed = data.wind.speed;
+      windSpeed = data.wind.speed;
     }
   } catch (error) {
     console.log(error);
   }
 
-  windLinesAudio = getAudio(speed);
+  const refreshKey = props.refresh ?? "default";
+  windLinesAudio = getAudio(windSpeed);
 
   return (
     <Composition>
-	    <WindLinesRESketch speed={speed} play={props.play} />
+	    <WindLinesRESketch key={refreshKey} windSpeed={windSpeed} play={props.play} />
         <CompositionControls play={props.play} mp3 patchPath={windLinesAudio}/>
-        {props.debug && <DebugPanel></DebugPanel>}
+        {<DebugPanel data={[{ windSpeed }]} />}
     </Composition>
   );
 }

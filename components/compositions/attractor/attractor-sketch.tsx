@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type AttractorSketchProps = {
   lightningCount: number;
@@ -133,6 +135,21 @@ function sketch(p5: P5CanvasInstance<SketchProps & AttractorSketchProps>) {
   };
 }
 
-export default function AttractorSketch(props: AttractorSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function NameSketch(initialProps: AttractorSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler parametros e converter para número quando existirem
+  const urlLightningCount = searchParams?.get("lightningCount");
+  const urlPlay = searchParams?.get("play");
+
+  const lightningCount = useMemo(
+    () => (urlLightningCount !== null ? Number(urlLightningCount) : initialProps.lightningCount),
+    [urlLightningCount, initialProps.lightningCount]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} lightningCount={lightningCount} play={play} />;
 }

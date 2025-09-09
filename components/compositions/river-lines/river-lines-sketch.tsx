@@ -2,10 +2,12 @@
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import p5 from "p5";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type RiverLinesSketchProps = {
   humidity: number;
-  temp: number;
+  temperature: number;
   play: boolean;
 };
 
@@ -13,12 +15,12 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
   //inspired by https://openprocessing.org/sketch/1198771
   let objs: Obj[] = [];
   let humidity = 0;
-  let temp = 0;
+  let temperature = 0;
   let play = false;
   let palette: p5.Color[] = [];
 
-  function getDynamicPalette(temp: number): p5.Color[] {
-    let hueValueStart = p5.map(temp, -5, 30, 210, 0);
+  function getDynamicPalette(temperature: number): p5.Color[] {
+    let hueValueStart = p5.map(temperature, -5, 30, 210, 0);
     let colors: p5.Color[] = [];
     for (let i = 0; i < 6; i++) {
       let hue = (hueValueStart + i * 8) % 360;
@@ -29,8 +31,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
 
   function initializeObjects() {
     objs = [];
-    palette = getDynamicPalette(temp);
-    for (let i = 0; i < humidity; i++) {
+    palette = getDynamicPalette(temperature);
+    const count = Math.max(0, Math.floor(humidity)); 
+    for (let i = 0; i < count; i++) {
       objs.push(new Obj(i));
     }
   }
@@ -50,15 +53,23 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
   p5.updateWithProps = (props: any) => {
     let needsUpdate = false;
 
-    if (!Number.isNaN(props.humidity) && props.humidity !== humidity) {
-      humidity = props.humidity;
+    const h = Number(props.humidity);
+    const t = Number(props.temperature);
+
+    if (Number.isFinite(h) && h !== humidity) {
+      humidity = Math.max(0, Math.floor(h));
       needsUpdate = true;
     }
-    if (!Number.isNaN(props.temp) && props.temp !== temp) {
-      temp = props.temp;
+    if (Number.isFinite(t) && t !== temperature) {
+      temperature = t;
       needsUpdate = true;
     }
-    play = props.play;
+
+    if (typeof props.play === "string") {
+      play = props.play === "true";
+    } else if (typeof props.play === "boolean") {
+      play = props.play;
+    }
 
     if (needsUpdate) {
       initializeObjects();
@@ -93,7 +104,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
 
     constructor(tmpIndex: number) {
       this.index = tmpIndex;
-      this.startY = p5.map(tmpIndex, 0, humidity - 1, p5.height, 0);
+      const denom = Math.max(1, humidity - 1);
+      this.startY = p5.map(tmpIndex, 0, denom, p5.height, 0);
       this.rangeY = p5.random(100, 200);
       this.step = p5.random(10, 20);
       this.strWeight = p5.random(10, 20);
@@ -131,6 +143,27 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
   }
 }
 
-export default function RiverLinesSketch(props: RiverLinesSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function RiverLinesSketch(initialProps: RiverLinesSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlHumidity = searchParams?.get("humidity");
+  const urlTemperature = searchParams?.get("temperature");
+  const urlPlay = searchParams?.get("play");
+
+  const humidity = useMemo(
+    () => (urlHumidity !== null ? Number(urlHumidity) : initialProps.humidity),
+    [urlHumidity, initialProps.humidity]
+  );
+
+  const temperature = useMemo(
+    () => (urlTemperature !== null ? Number(urlTemperature) : initialProps.temperature),
+    [urlTemperature, initialProps.temperature]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} humidity={humidity} temperature={temperature} play={play} />;
 }
