@@ -13,6 +13,8 @@ export default function DebugPanel({ data }: { data: { [key: string]: number }[]
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  if (searchParams.get("debug") !== "true") return null;
+
   const sketchProps: { [k: string]: string } = Object.fromEntries(
     Array.from(searchParams?.entries() ?? [])
   );

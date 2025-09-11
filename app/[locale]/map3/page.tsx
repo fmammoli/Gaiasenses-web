@@ -85,6 +85,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     ...searchParams,
     composition: composition,
     mode: "player",
+    play: true,
   };
   
   const compositionComponent =
