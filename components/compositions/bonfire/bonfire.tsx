@@ -61,7 +61,7 @@ export default async function Bonfire(props: BonfireProps) {
         fireCount={fireCount}
         play={props.play}
       />
-
+      <DebugPanel data={[{ fireCount, closeFires }]} />
       <CompositionControls play={props.play} mp3 patchPath={fireAudio} />
 
     </Composition>
