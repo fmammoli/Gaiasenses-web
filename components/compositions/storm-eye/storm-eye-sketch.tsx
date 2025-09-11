@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type StormEyeSketchProps = {
   temperature: number;
@@ -210,20 +212,43 @@ function sketch(p5: P5CanvasInstance<SketchProps & StormEyeSketchProps>) {
   }
 }
 
-export default function StormEyeSketchProps({
+export default function StormEyeSketch({
   windDeg,
   windSpeed,
   temperature,
-
   play,
 }: StormEyeSketchProps) {
+  const searchParams = useSearchParams();
+
+  // Lê os parâmetros da URL
+  const urlTemperature = searchParams?.get("temperature");
+  const urlWindDeg = searchParams?.get("windDeg");
+  const urlWindSpeed = searchParams?.get("windSpeed");
+  const urlPlay = searchParams?.get("play");
+
+  // Prioriza valores da URL se existirem
+  const temperatureValue = useMemo(
+    () => (urlTemperature !== null ? Number(urlTemperature) : temperature),
+    [urlTemperature, temperature]
+  );
+  const windDegValue = useMemo(
+    () => (urlWindDeg !== null ? Number(urlWindDeg) : windDeg),
+    [urlWindDeg, windDeg]
+  );
+  const windSpeedValue = useMemo(
+    () => (urlWindSpeed !== null ? Number(urlWindSpeed) : windSpeed),
+    [urlWindSpeed, windSpeed]
+  );
+  const playValue =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : play;
+
   return (
     <NextReactP5Wrapper
       sketch={sketch}
-      windSpeed={windSpeed}
-      windDeg={windDeg}
-      temperature={temperature}
-      play={play}
+      windSpeed={windSpeedValue}
+      windDeg={windDegValue}
+      temperature={temperatureValue}
+      play={playValue}
     />
   );
 }

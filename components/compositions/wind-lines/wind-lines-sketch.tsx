@@ -2,9 +2,11 @@
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { Vector } from "p5";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type WindLinesRESketchProps = {
-  speed: number;
+  windSpeed: number;
   play: boolean;
 };
 
@@ -14,7 +16,7 @@ let n = 3100;
 let ps: Vector[] = [];
 let pOld: Vector[] = [];
 
-let speed = 0; 
+let windSpeed = 0; 
 
 let [width, height] = [p5.windowWidth, p5.windowHeight];
 let canvas: any | null = null;
@@ -29,7 +31,7 @@ p5.setup = () => {
 };
 
 p5.updateWithProps = (props: any) => {
-  speed = Number.isNaN(props.speed) ? speed : props.speed;
+  windSpeed = Number.isNaN(props.windSpeed) ? windSpeed : props.windSpeed;
 };
 
 p5.draw = () => {
@@ -44,7 +46,7 @@ p5.draw = () => {
   for (let i = 0; i < n; i++) {
     let p = ps[i];
     let ang = (p5.noise(0.003 * p.x + f0, 0.003 * p.y)) * 4 * p5.PI;
-    let v = p5.createVector(((speed * 1.75) / 5) * p5.cos(ang) + (speed / 5) * p5.cos(f1), p5.sin(ang));
+    let v = p5.createVector(((windSpeed * 1.75) / 5) * p5.cos(ang) + (windSpeed / 5) * p5.cos(f1), p5.sin(ang));
     
     pOld[i] = p.copy(); 
     p.add(v);
@@ -64,6 +66,19 @@ p5.draw = () => {
 }
 } 
 
-export default function WindLinesRESketch(props: WindLinesRESketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function RiverLinesSketch(initialProps: WindLinesRESketchProps) {
+  const searchParams = useSearchParams();
+
+  const urlWindSpeed = searchParams?.get("windSpeed");
+  const urlPlay = searchParams?.get("play");
+
+  const windSpeed = useMemo(
+    () => (urlWindSpeed !== null ? Number(urlWindSpeed) : initialProps.windSpeed),
+    [urlWindSpeed, initialProps.windSpeed]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  return <NextReactP5Wrapper sketch={sketch} windSpeed={windSpeed} play={play} />;
 }

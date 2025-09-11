@@ -1,6 +1,8 @@
 "use client";
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type ChaosTreeSketchProps = {
   lat: number;
@@ -248,6 +250,27 @@ function sketch(p5: P5CanvasInstance<SketchProps & ChaosTreeSketchProps>) {
   };
 }
 
-export default function ChaosTreeSketch(props: ChaosTreeSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function ChaosTreeSketch(initialProps: ChaosTreeSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlLat = searchParams?.get("lat");
+  const urlLon = searchParams?.get("lon");
+  const urlPlay = searchParams?.get("play");
+
+  const lat = useMemo(
+    () => (urlLat !== null ? Number(urlLat) : initialProps.lat),
+    [urlLat, initialProps.lat]
+  );
+
+  const lon = useMemo(
+    () => (urlLon !== null ? Number(urlLon) : initialProps.lon),
+    [urlLon, initialProps.lon]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} lat={lat} lon={lon} play={play} />;
 }

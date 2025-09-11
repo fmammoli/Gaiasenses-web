@@ -22,7 +22,19 @@ export default function TogglePlayButton({
   ) {
     event.preventDefault();
     event.stopPropagation();
-    const newParams = new URLSearchParams(searchParams.toString());
+
+    const newParams = new URLSearchParams();
+
+    const lat = searchParams.get("lat");
+    const lng = searchParams.get("lng");
+    const composition = searchParams.get("composition");
+    const debug = searchParams.get("debug");
+
+    newParams.set("lat", lat ?? "0");
+    newParams.set("lng", lng ?? "0");
+    newParams.set("mode", "map");
+    newParams.set("composition", composition ?? "attractor");
+    if (debug === "true") newParams.set("debug", "true");
 
     const newPlayStatus = !play;
     newParams.set("play", newPlayStatus.toString());
@@ -35,7 +47,6 @@ export default function TogglePlayButton({
       if (onPause) onPause(newPlayStatus);
     }
 
-    newParams.set("mode", "map");
     //newParams.delete("compositionName");
     //newParams.set("play", "false");
     //newParams.set("today", "true");
@@ -45,8 +56,8 @@ export default function TogglePlayButton({
 
   return (
     <div
+    onClick={togglePlay}
       className="absolute top-0 h-full w-full flex items-center justify-center"
-      onClick={togglePlay}
     >
       <Button
         variant={"outline"}

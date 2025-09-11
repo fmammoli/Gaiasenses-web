@@ -2,9 +2,11 @@
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import p5Types from "p5";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type LightningBoltsSketchProps = {
-  boltCount: number;
+  lightningCount: number;
   play: boolean;
 };
 
@@ -12,8 +14,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & LightningBoltsSketchProps>) {
 //inspired by https://openprocessing.org/sketch/639075
 let bolts: ChaoticLine[] = [];
 let boltTimer = 0;  
-let boltCount = 0; 
-let boltInterval = 35 / boltCount;
+let lightningCount = 0; 
+let boltInterval = 35 / lightningCount;
 
 let [width, height] = [p5.windowWidth, p5.windowHeight];
 
@@ -27,10 +29,10 @@ p5.setup = () => {
 }
 
 p5.updateWithProps = (props: any) => {
-  const count = Number.isNaN(props.boltCount) ? boltCount : props.boltCount;
+  const count = Number.isNaN(props.lightningCount) ? lightningCount : props.lightningCount;
   play = props.play;
-  boltCount = count;
-  boltInterval = 35 / boltCount;
+  lightningCount = count;
+  boltInterval = 35 / lightningCount;
 };
 
 p5.draw = () => {
@@ -38,7 +40,7 @@ p5.draw = () => {
   p5.rect(0, 0, width, height);
 
   if (boltTimer >= boltInterval) {
-    for (let i = 0; i < boltCount; i++) { 
+    for (let i = 0; i < lightningCount; i++) { 
       let a1 = p5.random(p5.TWO_PI);
       let a2 = p5.random(p5.TWO_PI);
       let r1 = 0;
@@ -122,6 +124,21 @@ class ChaoticLine {
 }
 }
 
-export default function LightningBoltsSketch(props: LightningBoltsSketchProps) {
-  return <NextReactP5Wrapper sketch={sketch} {...props} />;
+export default function LightningBoltsSketch(initialProps: LightningBoltsSketchProps) {
+  const searchParams = useSearchParams();
+
+  // ler params e converter para número quando existirem
+  const urlLightningCount = searchParams?.get("lightningCount");
+  const urlPlay = searchParams?.get("play");
+
+  const lightningCount = useMemo(
+    () => (urlLightningCount !== null ? Number(urlLightningCount) : initialProps.lightningCount),
+    [urlLightningCount, initialProps.lightningCount]
+  );
+
+  const play =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+
+  // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
+  return <NextReactP5Wrapper sketch={sketch} lightningCount={lightningCount} play={play} />;
 }

@@ -2,6 +2,8 @@
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { useRef } from "react";
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 
 export type ColorFlowerSketchProps = {
   temperature: number;
@@ -230,14 +232,25 @@ export default function ColorFlowerSketch({
   temperature,
   play,
 }: ColorFlowerSketchProps) {
-  const ref = useRef(null);
+  const searchParams = useSearchParams();
+
+  // Lê os parâmetros da URL
+  const urlTemperature = searchParams?.get("temperature");
+  const urlPlay = searchParams?.get("play");
+
+  // Prioriza valores da URL se existirem
+  const temperatureValue = useMemo(
+    () => (urlTemperature !== null ? Number(urlTemperature) : temperature),
+    [urlTemperature, temperature]
+  );
+  const playValue =
+    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : play;
 
   return (
     <NextReactP5Wrapper
-      ref={ref}
       sketch={sketch}
-      temperature={temperature}
-      play={play}
+      temperature={temperatureValue}
+      play={playValue}
     />
   );
 }

@@ -9,14 +9,16 @@ export type WeatherTreeProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function WeatherTree(props: WeatherTreeProps) {
+  const refreshKey = props.refresh ?? "default";
   return (
     <Composition>
-      <WeatherTreeSketch play={props.play} />
+      <WeatherTreeSketch key={refreshKey} play={props.play} />
       <CompositionControls play={props.play} />
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{  }]} />}
     </Composition>
   );
 }

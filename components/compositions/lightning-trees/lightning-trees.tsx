@@ -12,6 +12,7 @@ export type LightningTreesProps = {
   play: boolean;
   debug?: boolean;
   today?: boolean;
+  refresh?: string;
 };
 
 export default async function LightningTrees(props: LightningTreesProps) {
@@ -26,11 +27,13 @@ export default async function LightningTrees(props: LightningTreesProps) {
     console.log(error);
   }
 
+  const refreshKey = props.refresh ?? "default";
+
   return (
     <Composition>
-      <LightningTreesSketch lightningCount={lightningCount} play={props.play} />
+      <LightningTreesSketch key={refreshKey} lightningCount={lightningCount} play={props.play} />
       <Pd4WebPlayer packageName={packageName} play={props.play}></Pd4WebPlayer>
-      {props.debug && <DebugPanel></DebugPanel>}
+      {<DebugPanel data={[{ lightningCount }]} />}
     </Composition>
   );
 }

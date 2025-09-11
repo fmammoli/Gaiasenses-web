@@ -3,6 +3,7 @@ import CloudBubble from "./cloud-bubble/cloud-bubble";
 import ColorFlower from "./color-flower/color-flower";
 import Curves from "./curves/curves";
 import DigitalOrganism from "./digital-organism/digital-organism";
+import Bonfire from "./bonfire/bonfire";
 import GenerativeStrings from "./generative-strings/generative-strings";
 import LightningTrees from "./lightning-trees/lightning-trees";
 import Lluvia from "./lluvia/lluvia";
@@ -35,6 +36,7 @@ export type AvailableCompositionNames =
   | "weatherTree"
   | "mudflatScatter"
   | "generativeStrings"
+  | "bonfire"
   | "nightRain"
   | "windLines"
   | "lightningBolts"
@@ -55,6 +57,7 @@ export type AvailableCompositionComponents =
   | typeof LightningTrees
   | typeof WeatherTree
   | typeof GenerativeStrings
+  | typeof Bonfire
   | typeof NightRain
   | typeof WindLines
   | typeof LightningBolts
@@ -200,9 +203,18 @@ const CompositionsInfo: CompositionsInfoType = {
     endpoints: [""],
     thumb: "weather-tree.png",
   },
+  bonfire: {
+    name: "bonfire",
+    attributes: ["lat", "lon", "fireCount"],
+    Component: Bonfire,
+    endpoints: [""],
+    thumb: "bonfire.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1749652",
+    author: "Pedro Trama",
+  },
   nightRain: {
     name: "nightRain",
-    attributes: ["rain", "temp"],
+    attributes: ["rain", "temperature"],
     Component: NightRain,
     endpoints: [""],
     thumb: "night-rain.png",
@@ -211,7 +223,7 @@ const CompositionsInfo: CompositionsInfoType = {
   },
   windLines: {
     name: "windLines",
-    attributes: ["speed"],
+    attributes: ["windSpeed"],
     Component: WindLines,
     endpoints: [""],
     thumb: "wind-lines.png",
@@ -220,7 +232,7 @@ const CompositionsInfo: CompositionsInfoType = {
   },
   lightningBolts: {
     name: "lightningBolts",
-    attributes: ["boltCount"],
+    attributes: ["lightningCount"],
     Component: LightningBolts,
     endpoints: [""],
     thumb: "lightning-bolts.png",
@@ -229,7 +241,7 @@ const CompositionsInfo: CompositionsInfoType = {
   },
   burningTrees: {
     name: "burningTrees",
-    attributes: ["fireNumber"],
+    attributes: ["fireCount"],
     Component: BurningTrees,
     endpoints: [""],
     thumb: "burning-trees.png",
@@ -246,7 +258,7 @@ const CompositionsInfo: CompositionsInfoType = {
   },
   riverLines: { 
     name: "riverLines", 
-    attributes: ["rain", "temp"],
+    attributes: ["humidity", "temperature"],
     Component: RiverLines,
     endpoints: [],
     thumb: "river-lines.png",
