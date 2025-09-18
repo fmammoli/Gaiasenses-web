@@ -10,8 +10,13 @@ import TitleScreen from "./title-screen";
 import { getTranslations } from "next-intl/server";
 import { CompositionDropdown } from "./composition-dropdown";
 import InfoModal from "./info-modal";
-import { getBrightness, getFireSpots, getLightning, getWeather } from "@/components/getData";
-import { cookies } from "next/headers"
+import {
+  getBrightness,
+  getFireSpots,
+  getLightning,
+  getWeather,
+} from "@/components/getData";
+import { cookies } from "next/headers";
 import DataSender from "@/components/dataSender";
 
 function stringToBoolean(value: string | undefined): boolean {
@@ -87,16 +92,16 @@ export default async function Page({ params, searchParams }: PageProps) {
     mode: "player",
     play: true,
   };
-  
+
   const compositionComponent =
-  searchParams.mode === "player"
-    ? CompositionsInfo[composition as keyof CompositionsInfoType].Component({
-        lat: lat.toString(),
-        lon: lng.toString(),
-        today: true,
-        play: true,
-      })
-    : null;
+    searchParams.mode === "player"
+      ? CompositionsInfo[composition as keyof CompositionsInfoType].Component({
+          lat: lat.toString(),
+          lon: lng.toString(),
+          today: true,
+          play: true,
+        })
+      : null;
   const isInfoOpen = stringToBoolean(searchParams.info);
 
   let userLocation = { lat: 0, lng: 0 };
@@ -110,9 +115,15 @@ export default async function Page({ params, searchParams }: PageProps) {
     }
   }
 
-  const weatherData = await getWeather(lat, lng);
-  const lightningData = await getLightning(lat.toString(), lng.toString(),100);
-  const fireSpotsData = await getFireSpots(lat.toString(), lng.toString(),100);
+  const [weatherData, lightningData, fireSpotsData] = await Promise.all([
+    getWeather(lat, lng),
+    getLightning(lat.toString(), lng.toString(), 100),
+    getFireSpots(lat.toString(), lng.toString(), 100),
+  ]);
+
+  // const weatherData = await getWeather(lat, lng);
+  // const lightningData = await getLightning(lat.toString(), lng.toString(), 100);
+  // const fireSpotsData = await getFireSpots(lat.toString(), lng.toString(), 100);
 
   const temp = weatherData.main.temp;
   const speed = weatherData.wind.speed;
@@ -137,7 +148,7 @@ export default async function Page({ params, searchParams }: PageProps) {
           initialLng={lng}
           InfoButtonText={t("infoButtonText")}
         >
-          <PopupContent lat={lat} lng={lng} lang={params.locale} > 
+          <PopupContent lat={lat} lng={lng} lang={params.locale}>
             <div className="flex gap-1">
               <Link href={{ query: newQuery }} className="w-full">
                 <Button className="w-full capitalize" variant={"outline"}>
@@ -175,7 +186,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         isOpen={searchParams.mode === "player" ? true : false}
         closeButton={
           <Link href={{ query: { ...newQuery, mode: "map" } }}>
-            <Button>Back</Button> 
+            <Button>Back</Button>
           </Link>
         }
       >

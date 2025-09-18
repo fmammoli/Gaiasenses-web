@@ -2,7 +2,7 @@
 
 import { clear, time } from "console";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LngLatLike, useMap } from "react-map-gl";
 
 type location = {
@@ -48,61 +48,90 @@ const locations: location[] = [
   },
 ];
 
-export default function AutoInteraction() {
+type AutoInteractionProps = {
+  isIdle: boolean;
+};
+
+export default function UseAutoInteraction() {
   const { current: map } = useMap();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const [timeoutId1, setTimeoutId1] = useState<NodeJS.Timeout | null>(null);
+  const [timeoutId2, setTimeoutId2] = useState<NodeJS.Timeout | null>(null);
+
+  console.log("alooo");
   useEffect(() => {
-    if (!map) return;
-    let timeout: NodeJS.Timeout | null = null;
-    const interval = setInterval(() => {
-      let randomIndex = Math.floor(Math.random() * locations.length);
+    if (!map)
+      return () => {
+        clearTimeout(timeoutId1!);
+        clearTimeout(timeoutId2!);
+      };
 
-      const currentCenter = map.getCenter();
-      if (
-        currentCenter.lng === (locations[randomIndex].coords as number[])[0] &&
-        currentCenter.lat === (locations[randomIndex].coords as number[])[1]
-      ) {
-        randomIndex = (randomIndex + 1) % locations.length;
-      }
+    //clearTimeout(timeoutId!);
+    console.log("Run autoInteraction");
 
-      map.on("moveend", () => {
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        newSearchParams.set(
-          "lat",
-          String((locations[randomIndex].coords as number[])[1])
-        );
-        newSearchParams.set(
-          "lng",
-          String((locations[randomIndex].coords as number[])[0])
-        );
+    let randomIndex = Math.floor(Math.random() * locations.length);
+
+    const currentCenter = map.getCenter();
+    if (
+      currentCenter.lng === (locations[randomIndex].coords as number[])[0] &&
+      currentCenter.lat === (locations[randomIndex].coords as number[])[1]
+    ) {
+      randomIndex = (randomIndex + 1) % locations.length;
+    }
+
+    const onMoveEnd = async () => {
+      console.log("map moved end 2");
+
+      //if (timeoutId1) clearTimeout(timeoutId1);
+      //if (timeoutId2) clearTimeout(timeoutId2);
+
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set(
+        "lat",
+        String((locations[randomIndex].coords as number[])[1])
+      );
+      newSearchParams.set(
+        "lng",
+        String((locations[randomIndex].coords as number[])[0])
+      );
+
+      const timeout1 = setTimeout(() => {
         newSearchParams.set("mode", "player");
         newSearchParams.set("composition", locations[randomIndex].composition);
+        console.log("composition!!!!!!");
         router.replace(pathname + "?" + newSearchParams.toString(), {
           scroll: false,
         });
-        timeout = setTimeout(() => {
-          newSearchParams.set("mode", "map");
-          router.replace(pathname + "?" + newSearchParams.toString(), {
-            scroll: false,
-          });
-        }, 5000);
-      });
+      }, 10000);
+      setTimeoutId1(timeout1);
 
-      map.flyTo({
-        center: locations[randomIndex].coords,
-        speed: 0.7,
-        zoom: 6,
-        easing: (t) => t ** 2,
-      });
-    }, 20000);
-    return () => {
-      clearInterval(interval);
-      timeout ? clearTimeout(timeout) : null;
+      // const timeout2 = setTimeout(() => {
+      //   newSearchParams.set("mode", "map");
+      //   router.replace(pathname + "?" + newSearchParams.toString(), {
+      //     scroll: false,
+      //   });
+      // }, 15000);
+      // setTimeoutId2(timeout2);
     };
-  }, [map, pathname, router, searchParams]);
+
+    map.once("moveend", onMoveEnd);
+
+    map.flyTo({
+      center: locations[randomIndex].coords,
+      speed: 0.7,
+      zoom: 4,
+      easing: (t) => t ** 2,
+    });
+
+    return () => {
+      timeoutId1 ? clearTimeout(timeoutId1) : null;
+      timeoutId2 ? clearTimeout(timeoutId2) : null;
+      //map.off("moveend", onMoveEnd);
+    };
+  }, [map, pathname, router, searchParams, timeoutId1, timeoutId2]);
 
   return null;
 }

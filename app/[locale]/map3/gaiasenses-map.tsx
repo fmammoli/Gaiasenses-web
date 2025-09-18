@@ -10,9 +10,10 @@ import Map, {
   GeolocateResultEvent,
   ViewStateChangeEvent,
   MapRef,
+  LngLatLike,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
@@ -23,6 +24,49 @@ import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
 import AutoInteraction from "./auto-interaction";
+
+type location = {
+  name: string;
+  coords: LngLatLike | undefined;
+  composition: string;
+};
+const locations: location[] = [
+  {
+    name: "CTI",
+    coords: [-47.12870085542251, -22.851741644263786],
+    composition: "zigzag",
+  },
+  {
+    name: "Belfast",
+    coords: [-5.925948120326226, 54.59624433531145],
+    composition: "stormEye",
+  },
+  {
+    name: "São Paulo",
+    coords: [-46.62283272732059, -23.554978262429717],
+    composition: "burningTrees",
+  },
+  {
+    name: "Tokyo",
+    coords: [139.9118266746732, 35.69322960644536],
+    composition: "digitalOrganism",
+  },
+  {
+    name: "Paris",
+    coords: [2.349091224739889, 48.85701848772013],
+    composition: "mudflatScatter",
+  },
+  {
+    name: "Rio de Janeiro",
+    coords: [-43.28570708635095, -22.90166071685915],
+    composition: "attractor",
+  },
+  {
+    name: "Brasília",
+    coords: [-47.3406054804507, -15.795060704219555],
+    composition: "riverLines",
+  },
+];
 
 const comps = Object.entries(CompositionsInfo).filter((item) => {
   if (
@@ -81,7 +125,7 @@ export default function GaiasensesMap({
     initialLat,
     initialLng,
   ]);
-  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(true);
   const orientationIdleTimer = useRef<NodeJS.Timeout | null>(null);
   const ORIENTATION_IDLE_DELAY = 400; // ms
   const mapRef = useRef<MapRef>(null);
@@ -119,14 +163,18 @@ export default function GaiasensesMap({
       newSearchParams.set("composition", randomComposition[0]);
       router.replace(`${pathname}?${newSearchParams.toString()}`);
       //console.log("going to map mode");
-      if (orientationIdleTimer.current)
-        clearTimeout(orientationIdleTimer.current);
-      orientationIdleTimer.current = setTimeout(() => {
-        setShowPopup(true);
-      }, ORIENTATION_IDLE_DELAY);
+      // if (orientationIdleTimer.current)
+      //   clearTimeout(orientationIdleTimer.current);
+      // orientationIdleTimer.current = setTimeout(() => {
+      //   setShowPopup(true);
+      // }, ORIENTATION_IDLE_DELAY);
       //setShowPopup(true);
     }
   };
+
+  useEffect(() => {
+    setShowPopup(true);
+  }, [initialLat, initialLng, setShowPopup]);
 
   function handleDragEnd(event: MarkerDragEvent) {
     if (showPopup === false) {
@@ -196,6 +244,27 @@ export default function GaiasensesMap({
     });
   };
 
+  const [isIdle, setIsIdle] = useState<boolean>(false);
+  const idleTimer = useRef<NodeJS.Timeout | null>(null);
+  const IDLE_DELAY = 10000; // ms
+
+  useEffect(() => {
+    console.log("isIdle: ", isIdle);
+  }, [isIdle]);
+
+  function handleOnIdle() {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => {
+      setIsIdle(true);
+    }, IDLE_DELAY);
+    //setIsIdle(false);
+  }
+
+  function handleMoveStart() {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    setIsIdle(false);
+  }
+
   return (
     <div style={{ height: "100svh", width: "100svw" }}>
       <div className="absolute top-0 z-[1] ">
@@ -244,10 +313,11 @@ export default function GaiasensesMap({
         mapStyle="mapbox://styles/mapbox/standard"
         projection={{ name: "globe" }}
         onMove={handleMove}
-        //onIdle={handleIdle}
+        onIdle={handleOnIdle}
         onMoveEnd={handleMoveEnd}
+        onMoveStart={handleMoveStart}
       >
-        <AutoInteraction></AutoInteraction>
+        {isIdle && <AutoInteraction></AutoInteraction>}
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
         <OrientationControl
