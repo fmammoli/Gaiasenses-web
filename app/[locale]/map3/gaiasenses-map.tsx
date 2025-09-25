@@ -10,8 +10,8 @@ import Map, {
   GeolocateResultEvent,
   ViewStateChangeEvent,
   MapRef,
-  LngLatLike,
 } from "react-map-gl";
+//@ts-expect-error
 import "mapbox-gl/dist/mapbox-gl.css";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -115,7 +115,6 @@ export default function GaiasensesMap({
 }: GaiasensesMapProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchParamsRef = useRef(searchParams);
   const router = useRouter();
 
   const [shuffled, setShuffled] = useState(shuffle([...comps]));
@@ -195,7 +194,6 @@ export default function GaiasensesMap({
 
   function handleMove(e: ViewStateChangeEvent) {
     const center = e.target.getCenter();
-    //console.log("alooo movinfg");
 
     setLatlng([
       parseFloat(center.lat.toString()),
@@ -208,7 +206,6 @@ export default function GaiasensesMap({
 
   const handleMoveEnd = (e: ViewStateChangeEvent) => {
     if (inputMode === "mouse" && showPopup === false) {
-      console.log("move end");
       const lngLat = e.target.getCenter().wrap();
       updatePopupPosition(lngLat.lat, lngLat.lng);
     }
@@ -281,7 +278,6 @@ export default function GaiasensesMap({
     //setLatlng([lat, lng]);
 
     timeout1.current = setTimeout(() => {
-      console.log("open composition route");
       const params = new URLSearchParams(searchParams.toString());
       params.set("lat", lat.toString());
       params.set("lng", lng.toString());
@@ -311,8 +307,6 @@ export default function GaiasensesMap({
 
   useEffect(() => {
     if (autoActive) {
-      console.log("fly to location[index]");
-
       mapRef.current?.flyTo({
         center: locations[autoLocationIndex].coords,
         speed: 0.7,
@@ -374,7 +368,6 @@ export default function GaiasensesMap({
         projection={{ name: "globe" }}
         onMove={handleMove}
         onMoveEnd={(e: ViewStateChangeEvent) => {
-          console.log(autoActive);
           if (autoActive) {
             handleMoveEnd(e);
             onMoveEndAuto(e);
@@ -414,7 +407,6 @@ export default function GaiasensesMap({
             anchor="bottom"
             offset={36}
             onClose={() => {
-              console.log("on close");
               setShowPopup(false);
             }}
             closeOnClick={true}
