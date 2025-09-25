@@ -11,9 +11,11 @@ import Map, {
   ViewStateChangeEvent,
   MapRef,
 } from "react-map-gl";
-//@ts-expect-error
+
+// @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
