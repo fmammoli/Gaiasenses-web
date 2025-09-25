@@ -24,10 +24,11 @@ import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
 import AutoInteraction from "./auto-interaction";
+import useTimeout from "@/hooks/use-timeout";
 
 type location = {
   name: string;
-  coords: LngLatLike | undefined;
+  coords: [number, number];
   composition: string;
 };
 const locations: location[] = [
@@ -244,29 +245,90 @@ export default function GaiasensesMap({
     });
   };
 
-  const [isIdle, setIsIdle] = useState<boolean>(false);
-  const idleTimer = useRef<NodeJS.Timeout | null>(null);
-  const IDLE_DELAY = 10000; // ms
+  const [autoActive, setAutoActive] = useState(false);
+  const mouseIdleTimer = useRef<NodeJS.Timeout | null>(null);
+  const MOUSE_IDLE_DELAY = 10000; // 10 seconds
+
+  function handleMouseMove() {
+    if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
+    if (timeout1.current) clearTimeout(timeout1.current);
+    if (timeout2.current) clearTimeout(timeout2.current);
+    if (timeout3.current) clearTimeout(timeout3.current);
+
+    setAutoActive(false);
+    mouseIdleTimer.current = setTimeout(() => {
+      setAutoActive(true);
+    }, MOUSE_IDLE_DELAY);
+  }
 
   useEffect(() => {
-    console.log("isIdle: ", isIdle);
-  }, [isIdle]);
+    return () => {
+      if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
+    };
+  }, []);
 
-  function handleOnIdle() {
-    if (idleTimer.current) clearTimeout(idleTimer.current);
-    idleTimer.current = setTimeout(() => {
-      setIsIdle(true);
-    }, IDLE_DELAY);
-    //setIsIdle(false);
+  const timeout1 = useRef<NodeJS.Timeout | null>(null);
+  const TIMEOUT_1_PAUSE = 5000; // 10 seconds
+
+  const timeout2 = useRef<NodeJS.Timeout | null>(null);
+  const TIMEOUT_2_PAUSE = 20000; // 10 seconds
+
+  const timeout3 = useRef<NodeJS.Timeout | null>(null);
+  const TIMEOUT_3_PAUSE = 5000; // 10 seconds
+
+  const [autoLocationIndex, setAutoLocationIndex] = useState(0);
+
+  function onMoveEndAuto(e: ViewStateChangeEvent) {
+    const [lng, lat] = locations[autoLocationIndex].coords;
+    //setLatlng([lat, lng]);
+
+    timeout1.current = setTimeout(() => {
+      console.log("open composition route");
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("lat", lat.toString());
+      params.set("lng", lng.toString());
+      params.set("mode", "player");
+      params.set("composition", locations[autoLocationIndex].composition);
+      router.replace(`${pathname}?${params.toString()}`);
+      timeout2.current = setTimeout(() => {
+        // params.set("lat", lat.toString());
+        // params.set("lng", lng.toString());
+        params.set("mode", "map");
+        //params.set("composition", locations[autoLocationIndex].composition);
+        router.replace(`${pathname}?${params.toString()}`);
+
+        timeout3.current = setTimeout(() => {
+          setAutoLocationIndex((prev) => {
+            const next = prev + 1;
+            if (next > locations.length - 1) {
+              return 0;
+            } else {
+              return next;
+            }
+          });
+        }, TIMEOUT_3_PAUSE);
+      }, TIMEOUT_2_PAUSE);
+    }, 7000);
   }
 
-  function handleMoveStart() {
-    if (idleTimer.current) clearTimeout(idleTimer.current);
-    setIsIdle(false);
-  }
+  useEffect(() => {
+    if (autoActive) {
+      console.log("fly to location[index]");
+
+      mapRef.current?.flyTo({
+        center: locations[autoLocationIndex].coords,
+        speed: 0.7,
+        zoom: 4,
+        easing: (t) => t ** 2,
+      });
+    }
+  }, [autoActive, autoLocationIndex]);
 
   return (
-    <div style={{ height: "100svh", width: "100svw" }}>
+    <div
+      style={{ height: "100svh", width: "100svw" }}
+      onMouseMove={handleMouseMove}
+    >
       <div className="absolute top-0 z-[1] ">
         <div className="m-4 bg-gray-400 bg-opacity-50 text-white p-2 rounded-sm flex justify-evenly sm:max-w-[240px] md:max-w-[400px]">
           <p className="w-24 text-sm">Lat: {latlng[0].toFixed(5)} </p>
@@ -313,11 +375,16 @@ export default function GaiasensesMap({
         mapStyle="mapbox://styles/mapbox/standard"
         projection={{ name: "globe" }}
         onMove={handleMove}
-        onIdle={handleOnIdle}
-        onMoveEnd={handleMoveEnd}
-        onMoveStart={handleMoveStart}
+        onMoveEnd={(e: ViewStateChangeEvent) => {
+          console.log(autoActive);
+          if (autoActive) {
+            handleMoveEnd(e);
+            onMoveEndAuto(e);
+          } else {
+            handleMoveEnd(e);
+          }
+        }}
       >
-        {isIdle && <AutoInteraction></AutoInteraction>}
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
         <OrientationControl
