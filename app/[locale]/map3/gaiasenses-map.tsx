@@ -23,8 +23,6 @@ import ReceiverDialog from "./receiver-dialog";
 import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
-import AutoInteraction from "./auto-interaction";
-import useTimeout from "@/hooks/use-timeout";
 
 type location = {
   name: string;
@@ -247,7 +245,7 @@ export default function GaiasensesMap({
 
   const [autoActive, setAutoActive] = useState(false);
   const mouseIdleTimer = useRef<NodeJS.Timeout | null>(null);
-  const MOUSE_IDLE_DELAY = 10000; // 10 seconds
+  const MOUSE_IDLE_DELAY = 20000; // 20 seconds
 
   function handleMouseMove() {
     if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
