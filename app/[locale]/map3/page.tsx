@@ -221,14 +221,14 @@ export default async function Page({ params, searchParams }: PageProps) {
 
           <div>
             <p className="font-bold">{t("development")}</p>
-            <p>Lucas de Oliveira</p>
-            <p>Henrique Cazarim</p> <p>Alvaro Costa</p>
-            <p>Pedro Trama</p> <p>Sara Freitas</p> <p>Felipe Mammoli</p>
+            <p>Felipe Mammoli</p>
+            <p>Henrique Cazarim</p> <p>Lucas de Oliveira</p>
+            <p>Álvaro Costa</p> <p>Pedro Trama</p> <p>Lucas Mielle</p>
           </div>
 
           <div>
             <p className="font-bold">{t("sound")}</p>
-            <p>Gabriel Dincao</p> <p>Laureana Stelmastchuk</p>
+            <p>Gabriel D'Incao</p> <p>Laureana Stelmastchuk</p>
           </div>
 
           <div>
