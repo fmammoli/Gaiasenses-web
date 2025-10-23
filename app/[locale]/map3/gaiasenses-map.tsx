@@ -15,7 +15,7 @@ import Map, {
 // @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CompositionsInfo from "@/components/compositions/compositions-info";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,6 +25,7 @@ import ReceiverDialog from "./receiver-dialog";
 import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
+import BLEControl, { espResponse } from "./ble-control";
 
 type location = {
   name: string;
@@ -244,7 +245,7 @@ export default function GaiasensesMap({
 
   const [autoActive, setAutoActive] = useState(false);
   const mouseIdleTimer = useRef<NodeJS.Timeout | null>(null);
-  const MOUSE_IDLE_DELAY = 20000; // 20 seconds
+  const MOUSE_IDLE_DELAY = 120000; // 20 seconds
 
   function handleMouseMove() {
     if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
@@ -318,6 +319,164 @@ export default function GaiasensesMap({
     }
   }, [autoActive, autoLocationIndex]);
 
+  // ...existing code...
+  // --- improved sensor smoothing + denoise (median + EMA + clamp / optional quaternion slerp) ---
+  const sensorBufferRef = useRef<
+    Array<{ yaw: number; pitch: number; roll: number }>
+  >([]);
+  const sensorSmoothedRef = useRef<{
+    alpha: number;
+    beta: number;
+    gamma: number;
+  }>({
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  });
+
+  const BUFFER_SIZE = 5; // median window size (odd)
+  const EMA_ALPHA = 0.08; // smaller => stronger smoothing
+  const MAP_UPDATE_HZ = 20;
+  const MAP_UPDATE_MS = 1000 / MAP_UPDATE_HZ;
+  const MAX_DELTA_PER_UPDATE = 2.5; // degrees max jump per map update (clamp)
+
+  function median(values: number[]) {
+    const arr = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(arr.length / 2);
+    return arr.length % 2 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
+  }
+
+  // optional: convert quaternion -> euler if your sensor sends quaternion
+  function quatToEuler(q: { w: number; x: number; y: number; z: number }) {
+    const { w, x, y, z } = q;
+    const ysqr = y * y;
+
+    // roll (x-axis rotation)
+    const t0 = 2 * (w * x + y * z);
+    const t1 = 1 - 2 * (x * x + ysqr);
+    const roll = Math.atan2(t0, t1) * (180 / Math.PI);
+
+    // pitch (y-axis rotation)
+    let t2 = 2 * (w * y - z * x);
+    t2 = Math.max(-1, Math.min(1, t2));
+    const pitch = Math.asin(t2) * (180 / Math.PI);
+
+    // yaw (z-axis rotation)
+    const t3 = 2 * (w * z + x * y);
+    const t4 = 1 - 2 * (ysqr + z * z);
+    const yaw = Math.atan2(t3, t4) * (180 / Math.PI);
+
+    return { yaw, pitch, roll };
+  }
+
+  const handleOnSensor = useCallback((data: any) => {
+    if (!data) return;
+
+    let yaw = 0,
+      pitch = 0,
+      roll = 0;
+    data.q = {
+      w: data.quat.quat_w,
+      x: data.quat.quat_x,
+      y: data.quat.quat_y,
+      z: data.quat.quat_z,
+    };
+    if (data.q && typeof data.q === "object") {
+      const q = data.q as {
+        w: number;
+        x: number;
+        y: number;
+        z: number;
+      };
+      const e = quatToEuler(q);
+      yaw = e.yaw;
+      pitch = e.pitch;
+      roll = e.roll;
+    } else {
+      yaw = Number(data.euler?.yaw ?? 0);
+      pitch = Number(data.euler?.pitch ?? 0);
+      roll = Number(data.euler?.roll ?? 0);
+    }
+
+    // normalize yaw into [-180,180]
+    yaw = ((((yaw + 180) % 360) + 360) % 360) - 180;
+
+    const buf = sensorBufferRef.current;
+    buf.push({ yaw, pitch, roll });
+    if (buf.length > BUFFER_SIZE) buf.shift();
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    let lastMapUpdate = 0;
+
+    function step() {
+      const now = performance.now();
+      const buf = sensorBufferRef.current;
+      if (buf.length > 0) {
+        // median filter on buffer
+        const yaws = buf.map((s) => s.yaw);
+        const pitches = buf.map((s) => s.pitch);
+        const rolls = buf.map((s) => s.roll);
+
+        const medYaw = median(yaws);
+        const medPitch = median(pitches);
+        const medRoll = median(rolls);
+
+        // EMA smoothing
+        const s = sensorSmoothedRef.current;
+        s.alpha += (medYaw - s.alpha) * EMA_ALPHA;
+        s.beta += (medPitch - s.beta) * EMA_ALPHA;
+        s.gamma += (medRoll - s.gamma) * EMA_ALPHA;
+
+        // only update map at throttled rate
+        if (now - lastMapUpdate >= MAP_UPDATE_MS && mapRef.current) {
+          lastMapUpdate = now;
+
+          // map euler -> lat/lng
+          const alphaRad = (s.alpha * Math.PI) / 180;
+          const latitude = Math.max(
+            -85,
+            Math.min(
+              85,
+              s.beta * Math.cos(alphaRad) - s.gamma * Math.sin(alphaRad)
+            )
+          );
+          let longitude = ((s.alpha + 180) % 360) - 180;
+
+          // clamp large jumps (helps reject spikes)
+          const center = mapRef.current.getCenter();
+          const clampedLat =
+            Math.abs(center.lat - latitude) > MAX_DELTA_PER_UPDATE
+              ? center.lat +
+                Math.sign(latitude - center.lat) * MAX_DELTA_PER_UPDATE
+              : latitude;
+          const clampedLng =
+            Math.abs(center.lng - longitude) > MAX_DELTA_PER_UPDATE
+              ? center.lng +
+                Math.sign(longitude - center.lng) * MAX_DELTA_PER_UPDATE
+              : longitude;
+
+          // finally update map with short easing
+          mapRef.current.easeTo({
+            center: [clampedLng, clampedLat],
+            duration: Math.max(40, MAP_UPDATE_MS * 0.9),
+            easing: (t) => t,
+          });
+        }
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [MAP_UPDATE_MS, mapRef]);
+  // ...existing code...
+  const toggleMode = useCallback((mode: string) => {
+    setInputMode(mode);
+  }, []);
+
   return (
     <div
       style={{ height: "100svh", width: "100svw" }}
@@ -334,10 +493,10 @@ export default function GaiasensesMap({
         <NotificationDialog></NotificationDialog>
       </div>
       <div>
-        <ReceiverDialog></ReceiverDialog>
+        <InfoButton></InfoButton>
       </div>
       <div>
-        <InfoButton></InfoButton>
+        <div className=""></div>
       </div>
       <div>
         <AnimatePresence>
@@ -380,12 +539,17 @@ export default function GaiasensesMap({
       >
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
-        <OrientationControl
+        {/* <OrientationControl
           onMoveEnd={onOrientationMoveEnd}
           onConnected={toggleInputMode}
           onMoveEndLong={onMoveEndLong}
           onMove={onOrientationMoveEnd}
-        ></OrientationControl>
+        ></OrientationControl> */}
+        <BLEControl
+          onSensor={handleOnSensor}
+          onConnect={toggleMode}
+          onDisconnect={toggleMode}
+        ></BLEControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
           latitude={latlng[0]}

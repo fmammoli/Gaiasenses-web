@@ -17,7 +17,37 @@ export default async function PopupWeatherInfo({
   lon: string | number;
   lang: string;
 }>) {
-  const weatherData = await getWeather(lat, lon, { lang: lang });
+  //const weatherData = await getWeather(lat, lon, { lang: lang });
+
+  const weatherData = {
+    city: "Open Weather API",
+    clouds: 30,
+    lat: 0,
+    lon: 0,
+    main: {
+      feels_like: 24,
+      humidity: 30,
+      pressure: 20,
+      temp: 24,
+      grnd_level: 0,
+    },
+    rain: {},
+    state: "Open weather API",
+
+    visibility: 100,
+    weather: [
+      {
+        description: "indisponível",
+        icon: "indisponível",
+        main: "indisponível",
+      },
+    ],
+    wind: {
+      deg: 90,
+      gust: 40,
+      speed: 30,
+    },
+  };
 
   return (
     <div className="mt-2 ">
