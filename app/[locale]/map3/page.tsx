@@ -115,46 +115,43 @@ export default async function Page({ params, searchParams }: PageProps) {
     }
   }
 
-  const weatherData = {
-    city: "Open Weather API",
-    clouds: 30,
-    lat: 0,
-    lon: 0,
-    main: {
-      feels_like: 24,
-      humidity: 30,
-      pressure: 20,
-      temp: 24,
-      grnd_level: 0,
-    },
-    rain: {},
-    state: "Open weather API",
+  //Stubs
+  // const weatherData = {
+  //   city: "Open Weather API",
+  //   clouds: 30,
+  //   lat: 0,
+  //   lon: 0,
+  //   main: {
+  //     feels_like: 24,
+  //     humidity: 30,
+  //     pressure: 20,
+  //     temp: 24,
+  //     grnd_level: 0,
+  //   },
+  //   rain: {},
+  //   state: "Open weather API",
 
-    visibility: 100,
-    weather: [
-      {
-        description: "indisponível",
-        icon: "indisponível",
-        main: "indisponível",
-      },
-    ],
-    wind: {
-      deg: 90,
-      gust: 40,
-      speed: 30,
-    },
-  };
-  const lightningData = { count: 0 };
-  const fireSpotsData = { count: 0 };
-  // const [weatherData, lightningData, fireSpotsData] = await Promise.all([
-  //   getWeather(lat, lng),
-  //   getLightning(lat.toString(), lng.toString(), 100),
-  //   getFireSpots(lat.toString(), lng.toString(), 100),
-  // ]);
-
-  //const weatherData = await getWeather(lat, lng);
-  // const lightningData = await getLightning(lat.toString(), lng.toString(), 100);
-  // const fireSpotsData = await getFireSpots(lat.toString(), lng.toString(), 100);
+  //   visibility: 100,
+  //   weather: [
+  //     {
+  //       description: "indisponível",
+  //       icon: "indisponível",
+  //       main: "indisponível",
+  //     },
+  //   ],
+  //   wind: {
+  //     deg: 90,
+  //     gust: 40,
+  //     speed: 30,
+  //   },
+  // };
+  // const lightningData = { count: 0 };
+  // const fireSpotsData = { count: 0 };
+  const [weatherData, lightningData, fireSpotsData] = await Promise.all([
+    getWeather(lat, lng),
+    getLightning(lat.toString(), lng.toString(), 100),
+    getFireSpots(lat.toString(), lng.toString(), 100),
+  ]);
 
   const temp = weatherData.main.temp;
   const speed = weatherData.wind.speed;
