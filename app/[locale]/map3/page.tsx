@@ -228,7 +228,7 @@ export default async function Page({ params, searchParams }: PageProps) {
 
           <div>
             <p className="font-bold">{t("sound")}</p>
-            <p>Gabriel D´Incao</p> <p>Laureana Stelmastchuk</p>
+            <p>Gabriel D&apos;Incao</p> <p>Laureana Stelmastchuk</p>
           </div>
 
           <div>
