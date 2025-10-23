@@ -132,6 +132,7 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: ChaosTree,
     endpoints: [""],
     thumb: "chaos-tree.png",
+    author: "Pedro Trama",
   },
   cloudBubble: {
     name: "cloudBubble",
@@ -262,6 +263,8 @@ const CompositionsInfo: CompositionsInfoType = {
     Component: RiverLines,
     endpoints: [],
     thumb: "river-lines.png",
+    openProcessingLink: "https://openprocessing.org/sketch/1198771",
+    author: "Richard Bourne",
   },
   attractor: { 
     name: "attractor", 
