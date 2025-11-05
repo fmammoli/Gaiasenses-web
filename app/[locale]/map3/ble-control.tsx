@@ -157,7 +157,7 @@ export default function BLEControl({
 
   return (
     <>
-      <div className="absolute top-[255px] right-0 z-10">
+      <div className="absolute top-[295px] right-0 z-10">
         <div className="mr-[10px] mt-[10px]">
           {!isConnected ? (
             <button

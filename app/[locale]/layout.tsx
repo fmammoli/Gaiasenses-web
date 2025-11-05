@@ -47,9 +47,7 @@ export default function LocaleLayout({
         </ThemeProvider> */}
         <NextIntlClientProvider locale={locale} messages={msg}>
           <RegisterPd4WebSW></RegisterPd4WebSW>
-          <WebRTCProvider>
-            <AudioContextProvider>{children}</AudioContextProvider>
-          </WebRTCProvider>
+          <AudioContextProvider>{children}</AudioContextProvider>
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

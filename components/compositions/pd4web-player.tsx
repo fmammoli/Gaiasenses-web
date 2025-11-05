@@ -131,6 +131,11 @@ export default function Pd4WebPlayer({
       //should come back to this later
       //pd4webRef.current.suspendAudio(); This does not work for some reaseon
       (globalThis as GlobalThis).Pd4WebAudioWorkletNode?.disconnect();
+      if (pd4webAudioWorkletNodeRef.current) {
+        pd4webAudioWorkletNodeRef.current.disconnect(
+          pd4webAudioWorkletNodeRef.current.context.destination
+        );
+      }
       initializedRef.current = false;
     }
   };

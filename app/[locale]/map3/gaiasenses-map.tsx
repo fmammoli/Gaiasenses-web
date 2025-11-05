@@ -26,6 +26,7 @@ import NotificationDialog from "./notifications-dialog";
 
 import OrientationControl from "./orientation-control";
 import BLEControl, { espResponse } from "./ble-control";
+import AutoMove from "./auto-move";
 
 type location = {
   name: string;
@@ -247,23 +248,28 @@ export default function GaiasensesMap({
   const mouseIdleTimer = useRef<NodeJS.Timeout | null>(null);
   const MOUSE_IDLE_DELAY = 120000; // 20 seconds
 
+  // This clear the timers of the automover if the user moves the mouse
   function handleMouseMove() {
-    if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
-    if (timeout1.current) clearTimeout(timeout1.current);
-    if (timeout2.current) clearTimeout(timeout2.current);
-    if (timeout3.current) clearTimeout(timeout3.current);
-
-    setAutoActive(false);
-    mouseIdleTimer.current = setTimeout(() => {
-      setAutoActive(true);
-    }, MOUSE_IDLE_DELAY);
+    // if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
+    // if (timeout1.current) clearTimeout(timeout1.current);
+    // if (timeout2.current) clearTimeout(timeout2.current);
+    // if (timeout3.current) clearTimeout(timeout3.current);
+    //setAutoActive(false);
+    // mouseIdleTimer.current = setTimeout(() => {
+    //   setAutoActive(true);
+    // }, MOUSE_IDLE_DELAY);
   }
 
-  useEffect(() => {
-    return () => {
-      if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     if (mouseIdleTimer.current) clearTimeout(mouseIdleTimer.current);
+  //   };
+  // }, []);
+
+  const onAutoActivateToggle = (state: boolean) => {
+    console.log(`Setting automode: ${state}`);
+    setAutoActive(state);
+  };
 
   const timeout1 = useRef<NodeJS.Timeout | null>(null);
   const TIMEOUT_1_PAUSE = 5000; // 10 seconds
@@ -279,7 +285,7 @@ export default function GaiasensesMap({
   function onMoveEndAuto(e: ViewStateChangeEvent) {
     const [lng, lat] = locations[autoLocationIndex].coords;
     //setLatlng([lat, lng]);
-
+    console.log("Auto move end, ", autoActive);
     timeout1.current = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("lat", lat.toString());
@@ -305,7 +311,7 @@ export default function GaiasensesMap({
           });
         }, TIMEOUT_3_PAUSE);
       }, TIMEOUT_2_PAUSE);
-    }, 7000);
+    }, TIMEOUT_1_PAUSE);
   }
 
   useEffect(() => {
@@ -539,12 +545,11 @@ export default function GaiasensesMap({
       >
         <FullscreenControl containerId="total-container"></FullscreenControl>
         <NavigationControl></NavigationControl>
-        {/* <OrientationControl
-          onMoveEnd={onOrientationMoveEnd}
-          onConnected={toggleInputMode}
-          onMoveEndLong={onMoveEndLong}
-          onMove={onOrientationMoveEnd}
-        ></OrientationControl> */}
+        <AutoMove
+          isActive={autoActive}
+          onActivate={onAutoActivateToggle}
+          onDeactivate={onAutoActivateToggle}
+        ></AutoMove>
         <BLEControl
           onSensor={handleOnSensor}
           onConnect={toggleMode}
