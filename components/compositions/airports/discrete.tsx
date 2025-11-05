@@ -4,8 +4,9 @@
 //https://teropa.info/blog/2016/07/28/javascript-systems-music.html#putting-it-together-launching-the-loops
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import * as Tone from "tone";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import type Tone from "tone";
 import { RecursivePartial } from "tone/build/esm/core/util/Interface";
 import TogglePlayButton from "../toggle-play-button";
 
@@ -15,8 +16,14 @@ export default function Discrete({ play }: { play: boolean }) {
   const router = useRouter();
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const toneRef = useRef<any>(null);
+
   async function buildDiscreteMusic() {
-    await Tone.start();
+    const Tone = await import("tone");
+
+    toneRef.current = Tone;
+
+    await toneRef.current.start();
     function makeSynth() {
       const envelope: RecursivePartial<Omit<Tone.EnvelopeOptions, "context">> =
         {
@@ -33,7 +40,7 @@ export default function Discrete({ play }: { play: boolean }) {
         decay: 0,
         release: 1000,
       };
-      const synth = new Tone.DuoSynth({
+      const synth = new toneRef.current.DuoSynth({
         harmonicity: 1,
         volume: -20,
         voice0: {
@@ -54,15 +61,15 @@ export default function Discrete({ play }: { play: boolean }) {
     const leftSynth = makeSynth();
     const rightSynth = makeSynth();
 
-    const leftPanner = new Tone.Panner(-0.5);
-    const rightPanner = new Tone.Panner(0.5);
+    const leftPanner = new toneRef.current.Panner(-0.5);
+    const rightPanner = new toneRef.current.Panner(0.5);
 
     const EQUALIZER_CENTER_FREQUENCIES = [
       100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000,
       2500, 3150, 4000, 5000, 6300, 8000, 10000,
     ];
     const equalizer = EQUALIZER_CENTER_FREQUENCIES.map((frequency) => {
-      const filter = Tone.getContext().createBiquadFilter();
+      const filter = toneRef.current.getContext().createBiquadFilter();
       filter.type = "peaking";
       filter.frequency.value = frequency;
       filter.Q.value = 4.31;
@@ -70,11 +77,11 @@ export default function Discrete({ play }: { play: boolean }) {
       return filter;
     });
 
-    const echo = new Tone.FeedbackDelay("16n", 0.2);
+    const echo = new toneRef.current.FeedbackDelay("16n", 0.2);
 
-    const delay = Tone.getContext().createDelay(6.0);
+    const delay = toneRef.current.getContext().createDelay(6.0);
 
-    const delayFade = Tone.getContext().createGain();
+    const delayFade = toneRef.current.getContext().createGain();
 
     delay.delayTime.value = 6.0;
     delayFade.gain.value = 0.75;
@@ -91,16 +98,16 @@ export default function Discrete({ play }: { play: boolean }) {
       } else {
         // This is the last band, connect it to the echo
         //a static helper to connect web audio notes to Tonejs nodes
-        Tone.connect(equalizerBand, echo);
+        toneRef.current.connect(equalizerBand, echo);
       }
     });
     echo.connect(delay);
 
-    delay.connect(Tone.getContext().rawContext.destination);
+    delay.connect(toneRef.current.getContext().rawContext.destination);
     delay.connect(delayFade);
     delayFade.connect(delay);
 
-    new Tone.Loop((time) => {
+    new toneRef.current.Loop((time: number) => {
       leftSynth.triggerAttackRelease("C5", "1:2", time);
       leftSynth.setNote("D5", "+0:2");
 
@@ -118,7 +125,7 @@ export default function Discrete({ play }: { play: boolean }) {
       leftSynth.setNote("G5", "+19:4:2");
     }, "34m").start(0);
 
-    new Tone.Loop((time) => {
+    new toneRef.current.Loop((time: number) => {
       // Trigger D4 after 5 measures and hold for 1 full measure + two 1/4 notes
       rightSynth.triggerAttackRelease("D4", "1:2", "+5:0");
       // Switch to E4 after one more measure
@@ -134,7 +141,7 @@ export default function Discrete({ play }: { play: boolean }) {
     }, "37m").start(0);
 
     //Tone.getTransport().bpm.value = 240;
-    Tone.getTransport().start();
+    toneRef.current.getTransport().start();
 
     setIsPlaying(true);
     console.log("play");
@@ -149,8 +156,8 @@ export default function Discrete({ play }: { play: boolean }) {
   }, []);
 
   async function stop() {
-    Tone.getTransport().pause();
-    Tone.getContext().rawContext.suspend(0);
+    toneRef.current.getTransport().pause();
+    toneRef.current.getContext().rawContext.suspend(0);
     setIsPlaying(false);
 
     const newParams = new URLSearchParams(searchParams.toString());
