@@ -269,6 +269,11 @@ export default function GaiasensesMap({
   const onAutoActivateToggle = (state: boolean) => {
     console.log(`Setting automode: ${state}`);
     setAutoActive(state);
+    if (state === false) {
+      if (timeout1.current) clearTimeout(timeout1.current);
+      if (timeout2.current) clearTimeout(timeout2.current);
+      if (timeout3.current) clearTimeout(timeout3.current);
+    }
   };
 
   const timeout1 = useRef<NodeJS.Timeout | null>(null);
