@@ -1,5 +1,7 @@
 "use client";
+//@ts-ignore this is generating require calls, should look into that
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import p5 from "p5";
 import { useMemo } from "react";
@@ -32,7 +34,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
   function initializeObjects() {
     objs = [];
     palette = getDynamicPalette(temperature);
-    const count = Math.max(0, Math.floor(humidity)); 
+    const count = Math.max(0, Math.floor(humidity));
     for (let i = 0; i < count; i++) {
       objs.push(new Obj(i));
     }
@@ -157,13 +159,25 @@ export default function RiverLinesSketch(initialProps: RiverLinesSketchProps) {
   );
 
   const temperature = useMemo(
-    () => (urlTemperature !== null ? Number(urlTemperature) : initialProps.temperature),
+    () =>
+      urlTemperature !== null
+        ? Number(urlTemperature)
+        : initialProps.temperature,
     [urlTemperature, initialProps.temperature]
   );
 
   const play =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+    urlPlay !== null
+      ? urlPlay === "true" || urlPlay === "1"
+      : initialProps.play;
 
   // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
-  return <NextReactP5Wrapper sketch={sketch} humidity={humidity} temperature={temperature} play={play} />;
+  return (
+    <NextReactP5Wrapper
+      sketch={sketch}
+      humidity={humidity}
+      temperature={temperature}
+      play={play}
+    />
+  );
 }

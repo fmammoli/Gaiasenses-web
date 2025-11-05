@@ -1,5 +1,7 @@
 "use client";
+//@ts-ignore this is generating require calls, should look into that
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -25,9 +27,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   };
 
   p5.updateWithProps = (props: any) => {
-    const count = Number.isNaN(props.fireCount)
-      ? fireCount
-      : props.fireCount;
+    const count = Number.isNaN(props.fireCount) ? fireCount : props.fireCount;
     play = props.play;
     fireCount = count;
   };
@@ -73,7 +73,9 @@ function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   };
 }
 
-export default function BurningTreesSketch(initialProps: BurningTreesSketchProps) {
+export default function BurningTreesSketch(
+  initialProps: BurningTreesSketchProps
+) {
   const searchParams = useSearchParams();
 
   // ler params e converter para número quando existirem
@@ -81,13 +83,18 @@ export default function BurningTreesSketch(initialProps: BurningTreesSketchProps
   const urlPlay = searchParams?.get("play");
 
   const fireCount = useMemo(
-    () => (urlFireCount !== null ? Number(urlFireCount) : initialProps.fireCount),
+    () =>
+      urlFireCount !== null ? Number(urlFireCount) : initialProps.fireCount,
     [urlFireCount, initialProps.fireCount]
   );
 
   const play =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+    urlPlay !== null
+      ? urlPlay === "true" || urlPlay === "1"
+      : initialProps.play;
 
   // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
-  return <NextReactP5Wrapper sketch={sketch} fireCount={fireCount} play={play} />;
+  return (
+    <NextReactP5Wrapper sketch={sketch} fireCount={fireCount} play={play} />
+  );
 }

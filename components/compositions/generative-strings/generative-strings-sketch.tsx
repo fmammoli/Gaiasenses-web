@@ -147,7 +147,9 @@ const sketch: P5jsSketch = (p, parentRef, temp) => {
           //@ts-ignore
           this.osc = new p5.constructor.TriOsc();
         }
+        //@ts-expect-error not sure why this has changed
         this.osc.freq(p5.midiToFreq(this.midi + pan));
+        //@ts-expect-error not sure why this has changed
         this.useFreq = p5.midiToFreq(this.midi + pan);
       } else {
         //@ts-ignore
@@ -163,7 +165,9 @@ const sketch: P5jsSketch = (p, parentRef, temp) => {
     update() {
       this.trTime++;
       if (p5.random() < 0.05 && this.trTime > 5) {
+        //@ts-expect-error not sure why this has changed
         this.osc.freq(p5.midiToFreq(this.midi + pan));
+        //@ts-expect-error not sure why this has changed
         this.useFreq = p5.midiToFreq(this.midi + pan);
       }
 
@@ -204,6 +208,7 @@ const sketch: P5jsSketch = (p, parentRef, temp) => {
     }
     play() {
       var midiValue = this.midi;
+      //@ts-expect-error not sure why this has changed
       var freqValue = p5.midiToFreq(midiValue);
       this.trTime = 0;
 
@@ -299,7 +304,7 @@ const sketch: P5jsSketch = (p, parentRef, temp) => {
     p5.textSize(14);
     p5.textSize(10);
     p5.fill(255, 255, 255, 100);
-    
+
     p5.pop();
 
     p5.noFill();
@@ -381,6 +386,7 @@ export const P5jsContainer: P5jsContainer = ({ sketch, temp }) => {
         if (!(window as any).p5) {
           (window as any).p5 = p5;
         }
+        //@ts-expect-error not sure why this has changed
         await import("p5/lib/addons/p5.sound");
         new p5((p) => {
           //@ts-ignore
@@ -405,7 +411,9 @@ export const P5jsContainer: P5jsContainer = ({ sketch, temp }) => {
   return <div ref={parentRef} className="absolute top-0 left-0"></div>;
 };
 
-export default function GenerativeStringsSketch(initialProps: GenerativeStringsSketchProps) {
+export default function GenerativeStringsSketch(
+  initialProps: GenerativeStringsSketchProps
+) {
   const searchParams = useSearchParams();
 
   // ler params e converter para número quando existirem
@@ -418,12 +426,12 @@ export default function GenerativeStringsSketch(initialProps: GenerativeStringsS
   );
 
   const play =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+    urlPlay !== null
+      ? urlPlay === "true" || urlPlay === "1"
+      : initialProps.play;
 
   // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
-  return (
-    <P5jsContainer sketch={sketch} temp={Math.abs(temp)}></P5jsContainer>
-  );
+  return <P5jsContainer sketch={sketch} temp={Math.abs(temp)}></P5jsContainer>;
 }
 
 /*export default function NameSketch(initialProps: NameSketchProps) {

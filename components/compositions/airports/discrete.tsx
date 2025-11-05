@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type Tone from "tone";
-import { RecursivePartial } from "tone/build/esm/core/util/Interface";
 import TogglePlayButton from "../toggle-play-button";
 
 export default function Discrete({ play }: { play: boolean }) {
@@ -25,13 +23,16 @@ export default function Discrete({ play }: { play: boolean }) {
 
     await toneRef.current.start();
     function makeSynth() {
+      //@ts-expect-error not managing to make this type work with dynamic imports
       const envelope: RecursivePartial<Omit<Tone.EnvelopeOptions, "context">> =
         {
           attack: 0.1,
           release: 4,
           releaseCurve: "linear",
         };
+      //@ts-expect-error not managing to make this type work with dynamic imports
       const filterEnvelope: RecursivePartial<
+        //@ts-expect-error not managing to make this type work with dynamic imports
         Omit<Tone.FrequencyEnvelopeOptions, "context">
       > = {
         baseFrequency: 200,

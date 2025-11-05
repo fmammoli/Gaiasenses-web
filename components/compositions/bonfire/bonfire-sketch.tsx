@@ -1,5 +1,7 @@
 "use client";
+//@ts-ignore this is generating require calls, should look into that
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -113,10 +115,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & BonfireSketchProps>) {
   };
 }
 
-export default function BonfireSketch({
-  fireCount,
-  play,
-}: BonfireSketchProps) {
+export default function BonfireSketch({ fireCount, play }: BonfireSketchProps) {
   const searchParams = useSearchParams();
 
   // Lê os parâmetros da URL
@@ -130,7 +129,7 @@ export default function BonfireSketch({
   );
 
   const playValue =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : play;
+    urlPlay !== null ? urlPlay === "true" || urlPlay === "1" : play;
 
   return (
     <NextReactP5Wrapper

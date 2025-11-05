@@ -1,5 +1,7 @@
 "use client";
+//@ts-ignore this is generating require calls, should look into that
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
@@ -88,7 +90,9 @@ export default function LluviaSketch(initialProps: LluviaSketchProps) {
   );
 
   const play =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+    urlPlay !== null
+      ? urlPlay === "true" || urlPlay === "1"
+      : initialProps.play;
 
   // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
   return <NextReactP5Wrapper sketch={sketch} rain={rain} play={play} />;

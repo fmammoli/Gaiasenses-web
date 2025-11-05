@@ -1,5 +1,7 @@
 "use client";
+//@ts-ignore this is generating require calls, should look into that
 import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
 
 export type WeatherTreeSketchProps = {

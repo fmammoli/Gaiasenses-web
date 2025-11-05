@@ -1,7 +1,9 @@
 "use client";
-import type {  P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
+import type { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
-import type {Color, Vector } from "p5";
+import type { Color, Vector } from "p5";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -23,9 +25,9 @@ export type MudFlatScatterSketchProps = {
 };
 
 function sketch(p5: P5CanvasInstance<SketchProps>) {
-  let stroker:  Color;
+  let stroker: Color;
   let beach: Sand[] = [];
-  let stones: { pos:  Vector, r:number }[] = [];
+  let stones: { pos: Vector; r: number }[] = [];
   let play = false;
 
   let [w, h] = [p5.windowWidth, p5.windowHeight];
@@ -56,7 +58,6 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
     }
   };
 
-
   p5.updateWithProps = (props: any) => {
     if (props.play) {
       p5.loop();
@@ -80,9 +81,9 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
   };
 
   class Sand {
-    pos: Vector
-    acc: Vector
-    vel: Vector
+    pos: Vector;
+    acc: Vector;
+    vel: Vector;
     constructor(x: number, y: number) {
       this.pos = p5.createVector(x, y);
       this.acc = p5.createVector(p5.random(0.002, 0.005), 0);
@@ -92,7 +93,7 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
     move() {
       for (const element of stones) {
         let d = this.pos.dist(element.pos);
-        this.pos.dist(stones[1].pos)
+        this.pos.dist(stones[1].pos);
         if (d <= element.r) {
           let yvOff = (this.pos.y - element.pos.y) * -2;
           this.acc.add(0, yvOff);
@@ -112,7 +113,7 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
 
     show() {
       p5.stroke(stroker);
-      
+
       p5.point(this.pos.x, this.pos.y);
     }
 
@@ -129,7 +130,9 @@ function sketch(p5: P5CanvasInstance<SketchProps>) {
   }
 }
 
-export default function MudFlatScatterSketch(initialProps: MudFlatScatterSketchProps) {
+export default function MudFlatScatterSketch(
+  initialProps: MudFlatScatterSketchProps
+) {
   const searchParams = useSearchParams();
 
   // ler params e converter para número quando existirem
@@ -148,14 +151,25 @@ export default function MudFlatScatterSketch(initialProps: MudFlatScatterSketchP
     [urlWindDeg, initialProps.windDeg]
   );
 
-    const windSpeed = useMemo(
-    () => (urlWindSpeed !== null ? Number(urlWindSpeed) : initialProps.windSpeed),
+  const windSpeed = useMemo(
+    () =>
+      urlWindSpeed !== null ? Number(urlWindSpeed) : initialProps.windSpeed,
     [urlWindSpeed, initialProps.windSpeed]
   );
 
   const play =
-    urlPlay !== null ? (urlPlay === "true" || urlPlay === "1") : initialProps.play;
+    urlPlay !== null
+      ? urlPlay === "true" || urlPlay === "1"
+      : initialProps.play;
 
   // passa os valores numéricos ao wrapper p5 — NextReactP5Wrapper chamará updateWithProps internamente
-  return <NextReactP5Wrapper sketch={sketch} temperature={temperature} windDeg={windDeg} windSpeed={windSpeed} play={play} />;
+  return (
+    <NextReactP5Wrapper
+      sketch={sketch}
+      temperature={temperature}
+      windDeg={windDeg}
+      windSpeed={windSpeed}
+      play={play}
+    />
+  );
 }
