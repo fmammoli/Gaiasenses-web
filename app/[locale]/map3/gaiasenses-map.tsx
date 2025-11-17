@@ -559,6 +559,7 @@ export default function GaiasensesMap({
           onSensor={handleOnSensor}
           onConnect={toggleMode}
           onDisconnect={toggleMode}
+          onCo2Sensor={(data) => console.log(data)}
         ></BLEControl>
         <GeolocateControl onGeolocate={onGeolocate}></GeolocateControl>
         <Marker
