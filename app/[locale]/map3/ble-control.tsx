@@ -1,12 +1,12 @@
 "use client";
 import { Gamepad } from "lucide-react";
-import { decode } from "punycode";
 import { useState, useCallback, useRef } from "react";
 
 interface BLEDevice {
   device: BluetoothDevice | null;
   server: BluetoothRemoteGATTServer | null;
   characteristic: BluetoothRemoteGATTCharacteristic | null;
+  co2Characteristic: BluetoothRemoteGATTCharacteristic | null;
 }
 
 export type espResponse = {
@@ -23,19 +23,26 @@ export type espResponse = {
   };
 };
 
+export type espCo2Response = {
+  co2: { ppm: number };
+};
+
 const deviceName = "Bolota Senses";
 const bleService = "19b10000-e8f2-537e-4f6c-d104768a1214";
 const ledCharacteristic = "19b10002-e8f2-537e-4f6c-d104768a1214";
 const sensorCharacteristic = "19b10001-e8f2-537e-4f6c-d104768a1214";
+const co2CharacteristicIUD = "19b10003-e8f2-537e-4f6c-d104768a1214";
 
 type BLEControlProps = {
   onSensor: (data: espResponse) => void;
+  onCo2Sensor: (data: espCo2Response) => void;
   onConnect: (mode: string) => void;
   onDisconnect: (mode: string) => void;
 };
 
 export default function BLEControl({
   onSensor,
+  onCo2Sensor,
   onConnect,
   onDisconnect,
 }: BLEControlProps) {
@@ -43,10 +50,13 @@ export default function BLEControl({
     device: null,
     server: null,
     characteristic: null,
+    co2Characteristic: null,
   });
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [receivedData, setReceivedData] = useState<espResponse | null>(null);
+
+  const [co2value, setCo2Value] = useState<number | null>(null);
 
   const handleCharacteristicValueChanged = useCallback(
     (event: Event) => {
@@ -64,7 +74,23 @@ export default function BLEControl({
     [onSensor]
   );
 
-  const connectBLE = useCallback(async () => {
+  const handleCo2CharacteristicValueChanged = useCallback(
+    (event: Event) => {
+      const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+      const value = characteristic.value;
+      if (value) {
+        // Convert the DataView to a string or number depending on your needs
+        const decoder = new TextDecoder("utf-8");
+        const decodedData = decoder.decode(value);
+        const parsedData: espCo2Response = JSON.parse(decodedData);
+        onCo2Sensor(parsedData);
+        setCo2Value(parsedData.co2.ppm);
+      }
+    },
+    [onCo2Sensor, setCo2Value]
+  );
+
+  const connectBLE = async () => {
     try {
       const device = await navigator.bluetooth.requestDevice({
         filters: [
@@ -97,8 +123,14 @@ export default function BLEControl({
         sensorCharacteristic
       ); // Replace with your characteristic UUID
 
+      // Get the characteristic
+      const co2Characteristic = await service.getCharacteristic(
+        co2CharacteristicIUD
+      ); // Replace with your characteristic UUID
+
       // Start notifications if the characteristic supports it
       if (characteristic.properties.notify) {
+        console.log("Aloooo");
         await characteristic.startNotifications();
         characteristic.addEventListener(
           "characteristicvaluechanged",
@@ -106,22 +138,36 @@ export default function BLEControl({
         );
       }
 
-      setBleDevice({ device, server, characteristic });
+      if (co2Characteristic.properties.notify) {
+        console.log("Starting CO2 notifications");
+        await co2Characteristic.startNotifications();
+        co2Characteristic.addEventListener(
+          "characteristicvaluechanged",
+          handleCo2CharacteristicValueChanged
+        );
+      }
+
+      setBleDevice({ device, server, characteristic, co2Characteristic });
       setIsConnected(true);
       setError(null);
+      console.log(onConnect);
+      onConnect("controller");
     } catch (err) {
       console.error("Bluetooth Error:", err);
       setError(err instanceof Error ? err.message : "Failed to connect");
     }
-    if (onConnect) onConnect("controller");
-  }, [handleCharacteristicValueChanged, onConnect]);
+  };
 
-  const disconnectBLE = useCallback(() => {
+  const disconnectBLE = () => {
     if (bleDevice.characteristic?.properties.notify) {
       bleDevice.characteristic.stopNotifications();
       bleDevice.characteristic.removeEventListener(
         "characteristicvaluechanged",
         handleCharacteristicValueChanged
+      );
+      bleDevice.characteristic.removeEventListener(
+        "co2characteristicvaluechanged",
+        handleCo2CharacteristicValueChanged
       );
     }
 
@@ -129,11 +175,16 @@ export default function BLEControl({
       bleDevice.device.gatt.disconnect();
     }
 
-    setBleDevice({ device: null, server: null, characteristic: null });
+    setBleDevice({
+      device: null,
+      server: null,
+      characteristic: null,
+      co2Characteristic: null,
+    });
     setIsConnected(false);
     setReceivedData(null);
-    if (onDisconnect) onDisconnect("mouse");
-  }, [bleDevice, handleCharacteristicValueChanged, onDisconnect]);
+    onDisconnect("mouse");
+  };
 
   // Function to manually read the characteristic value
   const readValue = useCallback(async () => {
@@ -157,7 +208,7 @@ export default function BLEControl({
 
   return (
     <>
-      <div className="absolute top-[295px] right-0 z-10">
+      <div className="absolute top-[295px] right-0 z-90">
         <div className="mr-[10px] mt-[10px]">
           {!isConnected ? (
             <button
@@ -185,6 +236,7 @@ export default function BLEControl({
                 <p>roll:{receivedData?.euler.roll}</p>
                 <p>pitch:{receivedData?.euler.pitch}</p>
                 <p>yaw:{receivedData?.euler.yaw}</p>
+                <p>Co2:{co2value}</p>
               </>
             }
           </div>

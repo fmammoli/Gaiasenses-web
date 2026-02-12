@@ -18,6 +18,7 @@ import {
 } from "@/components/getData";
 import { cookies } from "next/headers";
 import DataSender from "@/components/dataSender";
+import { Suspense } from "react";
 
 function stringToBoolean(value: string | undefined): boolean {
   if (value === undefined) {
@@ -176,18 +177,26 @@ export default async function Page({ params, searchParams }: PageProps) {
           initialLng={lng}
           InfoButtonText={t("infoButtonText")}
         >
-          <PopupContent lat={lat} lng={lng} lang={params.locale}>
-            <div className="flex gap-1">
-              <Link href={{ query: newQuery }} className="w-full">
-                <Button className="w-full capitalize" variant={"outline"}>
-                  {composition}
-                </Button>
-              </Link>
-              <CompositionDropdown
-                searchParams={searchParams}
-              ></CompositionDropdown>
-            </div>
-          </PopupContent>
+          <Suspense
+            fallback={
+              <div>
+                <p>Loading...</p>
+              </div>
+            }
+          >
+            <PopupContent lat={lat} lng={lng} lang={params.locale}>
+              <div className="flex gap-1">
+                <Link href={{ query: newQuery }} className="w-full">
+                  <Button className="w-full capitalize" variant={"outline"}>
+                    {composition}
+                  </Button>
+                </Link>
+                <CompositionDropdown
+                  searchParams={searchParams}
+                ></CompositionDropdown>
+              </div>
+            </PopupContent>
+          </Suspense>
         </GaiasensesMap>
       </div>
       <div className="col-start-1 row-start-1">
