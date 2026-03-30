@@ -178,7 +178,7 @@ export default function Discrete({ play }: { play: boolean }) {
       <div className="absolute bottom-0 right-0">
         <div className="bg-white p-2">
           <div>
-            <p>Discrete Music form Brian Eno - 1975</p>
+            <p>Discrete Music from Brian Eno - 1975</p>
           </div>
 
           {/* <div>
