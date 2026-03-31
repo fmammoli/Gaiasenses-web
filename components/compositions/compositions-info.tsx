@@ -20,6 +20,7 @@ import BurningTrees from "./burning-trees/burning-trees";
 import Airports from "./airports/airports";
 import RiverLines from "./river-lines/river-lines";
 import Attractor from "./attractor/attractor";
+import Pump from "./pump/pump";
 
 export type AvailableCompositionNames =
   | "lluvia"
@@ -43,7 +44,8 @@ export type AvailableCompositionNames =
   | "burningTrees"
   | "airports"
   | "riverLines"
-  | "attractor";
+  | "attractor"
+  | "pump";
 
 export type AvailableCompositionComponents =
   | typeof Lluvia
@@ -64,7 +66,8 @@ export type AvailableCompositionComponents =
   | typeof BurningTrees
   | typeof Airports
   | typeof RiverLines
-  | typeof Attractor;
+  | typeof Attractor
+  | typeof Pump;
 
 export type CompositionInfo = {
   name: string;
@@ -257,8 +260,8 @@ const CompositionsInfo: CompositionsInfoType = {
     thumb: "",
     author: "Felipe Mammoli",
   },
-  riverLines: { 
-    name: "riverLines", 
+  riverLines: {
+    name: "riverLines",
     attributes: ["humidity", "temperature"],
     Component: RiverLines,
     endpoints: [],
@@ -266,14 +269,24 @@ const CompositionsInfo: CompositionsInfoType = {
     openProcessingLink: "https://openprocessing.org/sketch/1198771",
     author: "Richard Bourne",
   },
-  attractor: { 
-    name: "attractor", 
+  attractor: {
+    name: "attractor",
     attributes: ["lightningCount"],
     Component: Attractor,
     endpoints: [],
     thumb: "attractor.png",
     openProcessingLink: "https://openprocessing.org/sketch/394718",
-    author:"Masaki Yamabe",
+    author: "Masaki Yamabe",
+  },
+  pump: {
+    name: "pump",
+    attributes: ["temperature", "windspeed", "windDeg"],
+    Component: Pump,
+    endpoints: [],
+    thumb: "todo",
+    openProcessingLink: "https://openprocessing.org/sketch/2711609",
+    author:
+      "Roots Blower + GaiaSenses (temperatura + vento) Baseado no sketch de Metamere",
   },
 };
 

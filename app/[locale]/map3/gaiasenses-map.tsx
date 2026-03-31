@@ -88,7 +88,8 @@ const comps = Object.entries(CompositionsInfo).filter((item) => {
     item[0] === "lightnigBolts" ||
     item[0] === "burningTrees" ||
     item[0] === "riverLines" ||
-    item[0] === "attractor"
+    item[0] === "attractor" ||
+    item[0] === "pump"
   ) {
     return item;
   }
@@ -378,11 +379,11 @@ export default function GaiasensesMap({
         //Debounced popup logic
         newSearchParams.set(
           "lat",
-          mapRef.current?.getCenter().lat.toString() || initialLat.toString()
+          mapRef.current?.getCenter().lat.toString() || initialLat.toString(),
         );
         newSearchParams.set(
           "lng",
-          mapRef.current?.getCenter().lng.toString() || initialLat.toString()
+          mapRef.current?.getCenter().lng.toString() || initialLat.toString(),
         );
 
         let randomComposition = shuffled.next().value;
@@ -411,7 +412,7 @@ export default function GaiasensesMap({
 
         newSearchParams.set(
           "composition",
-          searchParams.get("composition") || "windLines"
+          searchParams.get("composition") || "windLines",
         );
         newSearchParams.set("mode", "map");
 
