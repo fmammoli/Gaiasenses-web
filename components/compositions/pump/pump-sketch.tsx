@@ -1,6 +1,7 @@
 "use client";
-
+//@ts-ignore this is generating require calls, should look into that
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+//@ts-ignore this is generating require calls, should look into that
 import { P5CanvasInstance, SketchProps } from "@p5-wrapper/react";
 import p5 from "p5";
 
