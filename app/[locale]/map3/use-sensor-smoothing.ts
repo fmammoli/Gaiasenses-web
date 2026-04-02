@@ -1,14 +1,69 @@
 import { useSearchParams } from "next/navigation";
-import { useRef, useCallback, useEffect, use } from "react";
-import { MapRef } from "react-map-gl";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { MapRef } from "react-map-gl";
 
-const BUFFER_SIZE = 5;
-const EMA_ALPHA = 0.08;
-const MAP_UPDATE_HZ = 20;
-const MAP_UPDATE_MS = 1000 / MAP_UPDATE_HZ;
-const MAX_DELTA_PER_UPDATE = 2.5;
-const MOTION_STOP_THRESHOLD = 0.3; // degrees - velocity threshold to detect stop
-const MOTION_STOP_DURATION = 300; // ms - how long velocity must be below threshold
+type Quaternion = {
+  w: number;
+  x: number;
+  y: number;
+  z: number;
+};
+
+type EulerAngles = {
+  yaw: number;
+  pitch: number;
+  roll: number;
+};
+
+type MotionPhase = "calibrating" | "idle" | "moving" | "settling" | "stopped";
+
+export type MotionDiagnostics = {
+  phase: MotionPhase;
+  motionMagnitude: number;
+  popupLocked: boolean;
+  popupLockRemainingMs: number;
+  calibrated: boolean;
+};
+
+export type MotionTuningSettings = {
+  bufferSize: number;
+  calibrationSampleCount: number;
+  emaAlpha: number;
+  mapUpdateHz: number;
+  maxDeltaPerUpdate: number;
+  motionStartThreshold: number;
+  motionStopThreshold: number;
+  motionSettleDuration: number;
+  motionStopDuration: number;
+  popupHardLockDuration: number;
+  popupUnlockThreshold: number;
+};
+
+export const DEFAULT_MOTION_TUNING_SETTINGS: MotionTuningSettings = {
+  bufferSize: 5,
+  calibrationSampleCount: 6,
+  emaAlpha: 0.24,
+  mapUpdateHz: 30,
+  maxDeltaPerUpdate: 3,
+  motionStartThreshold: 0.45,
+  motionStopThreshold: 0.12,
+  motionSettleDuration: 160,
+  motionStopDuration: 420,
+  popupHardLockDuration: 850,
+  popupUnlockThreshold: 0.85,
+};
+
+const DEFAULT_MOTION_DIAGNOSTICS: MotionDiagnostics = {
+  phase: "calibrating",
+  motionMagnitude: 0,
+  popupLocked: false,
+  popupLockRemainingMs: 0,
+  calibrated: false,
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
 
 function median(values: number[]) {
   const arr = [...values].sort((a, b) => a - b);
@@ -16,7 +71,29 @@ function median(values: number[]) {
   return arr.length % 2 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
 }
 
-function quatToEuler(q: { w: number; x: number; y: number; z: number }) {
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function normalizeAngle(value: number) {
+  return ((((value + 180) % 360) + 360) % 360) - 180;
+}
+
+function shortestAngleDelta(target: number, current: number) {
+  return normalizeAngle(target - current);
+}
+
+function unwrapAngle(nextAngle: number, previousAngle: number | null) {
+  if (previousAngle === null) {
+    return nextAngle;
+  }
+
+  return (
+    previousAngle + shortestAngleDelta(nextAngle, normalizeAngle(previousAngle))
+  );
+}
+
+function quatToEuler(q: Quaternion): EulerAngles {
   const { w, x, y, z } = q;
   const ysqr = y * y;
 
@@ -24,8 +101,7 @@ function quatToEuler(q: { w: number; x: number; y: number; z: number }) {
   const t1 = 1 - 2 * (x * x + ysqr);
   const roll = Math.atan2(t0, t1) * (180 / Math.PI);
 
-  let t2 = 2 * (w * y - z * x);
-  t2 = Math.max(-1, Math.min(1, t2));
+  const t2 = clamp(2 * (w * y - z * x), -1, 1);
   const pitch = Math.asin(t2) * (180 / Math.PI);
 
   const t3 = 2 * (w * z + x * y);
@@ -35,14 +111,151 @@ function quatToEuler(q: { w: number; x: number; y: number; z: number }) {
   return { yaw, pitch, roll };
 }
 
+function normalizeQuaternion(q: Quaternion): Quaternion {
+  const length = Math.hypot(q.w, q.x, q.y, q.z) || 1;
+  return {
+    w: q.w / length,
+    x: q.x / length,
+    y: q.y / length,
+    z: q.z / length,
+  };
+}
+
+function dotQuaternion(a: Quaternion, b: Quaternion) {
+  return a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+function multiplyQuaternion(a: Quaternion, b: Quaternion): Quaternion {
+  return {
+    w: a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
+    x: a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
+    y: a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,
+    z: a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w,
+  };
+}
+
+function invertQuaternion(q: Quaternion): Quaternion {
+  return { w: q.w, x: -q.x, y: -q.y, z: -q.z };
+}
+
+function averageQuaternions(samples: Quaternion[]) {
+  if (samples.length === 0) {
+    return null;
+  }
+
+  const reference = samples[0];
+  let sum = { w: 0, x: 0, y: 0, z: 0 };
+
+  for (const sample of samples) {
+    const aligned =
+      dotQuaternion(reference, sample) < 0
+        ? {
+            w: -sample.w,
+            x: -sample.x,
+            y: -sample.y,
+            z: -sample.z,
+          }
+        : sample;
+
+    sum = {
+      w: sum.w + aligned.w,
+      x: sum.x + aligned.x,
+      y: sum.y + aligned.y,
+      z: sum.z + aligned.z,
+    };
+  }
+
+  return normalizeQuaternion(sum);
+}
+
+function readSensorSample(data: any): {
+  quaternion: Quaternion | null;
+  euler: EulerAngles | null;
+} {
+  const quat = data?.quat;
+  const quaternion =
+    quat &&
+    isFiniteNumber(quat.quat_w) &&
+    isFiniteNumber(quat.quat_x) &&
+    isFiniteNumber(quat.quat_y) &&
+    isFiniteNumber(quat.quat_z)
+      ? normalizeQuaternion({
+          w: quat.quat_w,
+          x: quat.quat_x,
+          y: quat.quat_y,
+          z: quat.quat_z,
+        })
+      : null;
+
+  const rawYaw = Number(data?.euler?.yaw);
+  const rawPitch = Number(data?.euler?.pitch);
+  const rawRoll = Number(data?.euler?.roll);
+  const euler =
+    Number.isFinite(rawYaw) &&
+    Number.isFinite(rawPitch) &&
+    Number.isFinite(rawRoll)
+      ? {
+          yaw: normalizeAngle(rawYaw),
+          pitch: rawPitch,
+          roll: rawRoll,
+        }
+      : quaternion
+        ? quatToEuler(quaternion)
+        : null;
+
+  return { quaternion, euler };
+}
+
+function getRelativeEuler(
+  quaternion: Quaternion | null,
+  baselineQuaternion: Quaternion | null,
+  euler: EulerAngles | null,
+  baselineEuler: EulerAngles | null,
+  previousAngles: EulerAngles | null,
+): EulerAngles | null {
+  if (quaternion && baselineQuaternion) {
+    const delta = multiplyQuaternion(
+      invertQuaternion(baselineQuaternion),
+      quaternion,
+    );
+    const relative = quatToEuler(normalizeQuaternion(delta));
+
+    return {
+      yaw: unwrapAngle(
+        normalizeAngle(relative.yaw),
+        previousAngles?.yaw ?? null,
+      ),
+      pitch: relative.pitch,
+      roll: relative.roll,
+    };
+  }
+
+  if (euler && baselineEuler) {
+    return {
+      yaw: unwrapAngle(
+        normalizeAngle(euler.yaw - baselineEuler.yaw),
+        previousAngles?.yaw ?? null,
+      ),
+      pitch: euler.pitch - baselineEuler.pitch,
+      roll: euler.roll - baselineEuler.roll,
+    };
+  }
+
+  return null;
+}
+
 export function useSensorSmoothing(
   mapRef: React.RefObject<MapRef>,
-  onMotionStop?: () => void
+  onMotionStop?: () => void,
+  tuning: MotionTuningSettings = DEFAULT_MOTION_TUNING_SETTINGS,
 ) {
   const searchParams = useSearchParams();
-  const sensorBufferRef = useRef<
-    Array<{ yaw: number; pitch: number; roll: number }>
-  >([]);
+  const tuningRef = useRef(tuning);
+  const [diagnostics, setDiagnostics] = useState<MotionDiagnostics>(
+    DEFAULT_MOTION_DIAGNOSTICS,
+  );
+  const sensorBufferRef = useRef<EulerAngles[]>([]);
+  const calibrationBufferRef = useRef<Quaternion[]>([]);
   const sensorSmoothedRef = useRef<{
     alpha: number;
     beta: number;
@@ -52,87 +265,194 @@ export function useSensorSmoothing(
     beta: 0,
     gamma: 0,
   });
-  const lastSensorValuesRef = useRef<{
-    yaw: number;
-    pitch: number;
-    roll: number;
-  } | null>(null);
-  const motionStoppedRef = useRef<boolean>(false);
-  const lowVelocityStartTimeRef = useRef<number | null>(null);
-  const callbackFiredRef = useRef<boolean>(false);
+  const baselineQuaternionRef = useRef<Quaternion | null>(null);
+  const baselineEulerRef = useRef<EulerAngles | null>(null);
+  const lastRelativeAnglesRef = useRef<EulerAngles | null>(null);
+  const motionPhaseRef = useRef<MotionPhase>("calibrating");
+  const lowMotionStartTimeRef = useRef<number | null>(null);
+  const popupLockUntilRef = useRef(0);
+  const hasMovedSinceCalibrationRef = useRef(false);
+  const callbackFiredRef = useRef(false);
+  const requiresStrongUnlockRef = useRef(false);
+  const lastMotionMagnitudeRef = useRef(0);
+
+  useEffect(() => {
+    tuningRef.current = tuning;
+    sensorBufferRef.current = sensorBufferRef.current.slice(-tuning.bufferSize);
+    calibrationBufferRef.current = calibrationBufferRef.current.slice(
+      -tuning.calibrationSampleCount,
+    );
+  }, [tuning]);
+
+  const syncDiagnostics = useCallback((now: number, motionMagnitude = 0) => {
+    lastMotionMagnitudeRef.current = motionMagnitude;
+    const popupLockRemainingMs = Math.max(0, popupLockUntilRef.current - now);
+    setDiagnostics((current) => {
+      const next: MotionDiagnostics = {
+        phase: motionPhaseRef.current,
+        motionMagnitude,
+        popupLocked: popupLockRemainingMs > 0,
+        popupLockRemainingMs,
+        calibrated: Boolean(
+          baselineQuaternionRef.current || baselineEulerRef.current,
+        ),
+      };
+
+      if (
+        current.phase === next.phase &&
+        Math.abs(current.motionMagnitude - next.motionMagnitude) < 0.001 &&
+        current.popupLocked === next.popupLocked &&
+        Math.abs(current.popupLockRemainingMs - next.popupLockRemainingMs) <
+          16 &&
+        current.calibrated === next.calibrated
+      ) {
+        return current;
+      }
+
+      return next;
+    });
+  }, []);
+
+  const resetCalibration = useCallback(() => {
+    sensorBufferRef.current = [];
+    calibrationBufferRef.current = [];
+    sensorSmoothedRef.current = { alpha: 0, beta: 0, gamma: 0 };
+    baselineQuaternionRef.current = null;
+    baselineEulerRef.current = null;
+    lastRelativeAnglesRef.current = null;
+    motionPhaseRef.current = "calibrating";
+    lowMotionStartTimeRef.current = null;
+    popupLockUntilRef.current = 0;
+    hasMovedSinceCalibrationRef.current = false;
+    callbackFiredRef.current = false;
+    requiresStrongUnlockRef.current = false;
+    lastMotionMagnitudeRef.current = 0;
+    setDiagnostics(DEFAULT_MOTION_DIAGNOSTICS);
+  }, []);
 
   const handleOnSensor = useCallback(
     (data: any) => {
-      if (!data) return;
-
-      let yaw = 0,
-        pitch = 0,
-        roll = 0;
-      data.q = {
-        w: data.quat.quat_w,
-        x: data.quat.quat_x,
-        y: data.quat.quat_y,
-        z: data.quat.quat_z,
-      };
-      if (data.q && typeof data.q === "object") {
-        const q = data.q as {
-          w: number;
-          x: number;
-          y: number;
-          z: number;
-        };
-        const e = quatToEuler(q);
-        yaw = e.yaw;
-        pitch = e.pitch;
-        roll = e.roll;
-      } else {
-        yaw = Number(data.euler?.yaw ?? 0);
-        pitch = Number(data.euler?.pitch ?? 0);
-        roll = Number(data.euler?.roll ?? 0);
+      if (!data) {
+        return;
       }
 
-      yaw = ((((yaw + 180) % 360) + 360) % 360) - 180;
+      const now = performance.now();
+      const currentTuning = tuningRef.current;
+      const { quaternion, euler } = readSensorSample(data);
+      if (!quaternion && !euler) {
+        return;
+      }
 
-      // Check velocity (change in sensor values)
-      if (lastSensorValuesRef.current) {
-        const deltaYaw = Math.abs(yaw - lastSensorValuesRef.current.yaw);
-        const deltaPitch = Math.abs(pitch - lastSensorValuesRef.current.pitch);
-        const deltaRoll = Math.abs(roll - lastSensorValuesRef.current.roll);
-
-        const velocity = Math.max(deltaYaw, deltaPitch, deltaRoll);
-
-        if (velocity < MOTION_STOP_THRESHOLD) {
-          // Low velocity detected
-          if (lowVelocityStartTimeRef.current === null) {
-            lowVelocityStartTimeRef.current = performance.now();
+      if (!baselineQuaternionRef.current && !baselineEulerRef.current) {
+        if (quaternion) {
+          const calibrationBuffer = calibrationBufferRef.current;
+          calibrationBuffer.push(quaternion);
+          if (calibrationBuffer.length < currentTuning.calibrationSampleCount) {
+            return;
           }
-          const lowVelocityDuration =
-            performance.now() - lowVelocityStartTimeRef.current;
-          if (lowVelocityDuration > MOTION_STOP_DURATION) {
-            if (!motionStoppedRef.current) {
-              motionStoppedRef.current = true;
-              // Call the callback only once when motion stops
-              if (!callbackFiredRef.current) {
-                callbackFiredRef.current = true;
-                onMotionStop?.();
-              }
-            }
-          }
-        } else {
-          // Motion detected
-          motionStoppedRef.current = false;
-          lowVelocityStartTimeRef.current = null;
-          callbackFiredRef.current = false; // Reset for next motion stop
+
+          baselineQuaternionRef.current = averageQuaternions(calibrationBuffer);
+          calibrationBufferRef.current = [];
+        } else if (euler) {
+          baselineEulerRef.current = euler;
         }
+
+        motionPhaseRef.current = "idle";
+        syncDiagnostics(now, 0);
+        return;
       }
 
-      lastSensorValuesRef.current = { yaw, pitch, roll };
+      const relative = getRelativeEuler(
+        quaternion,
+        baselineQuaternionRef.current,
+        euler,
+        baselineEulerRef.current,
+        lastRelativeAnglesRef.current,
+      );
+      if (!relative) {
+        return;
+      }
 
-      const buf = sensorBufferRef.current;
-      buf.push({ yaw, pitch, roll });
-      if (buf.length > BUFFER_SIZE) buf.shift();
+      const previous = lastRelativeAnglesRef.current;
+      lastRelativeAnglesRef.current = relative;
+
+      const buffer = sensorBufferRef.current;
+      buffer.push(relative);
+      if (buffer.length > currentTuning.bufferSize) {
+        buffer.shift();
+      }
+
+      if (!previous) {
+        syncDiagnostics(now, 0);
+        return;
+      }
+
+      const deltaYaw = Math.abs(relative.yaw - previous.yaw);
+      const deltaPitch = Math.abs(relative.pitch - previous.pitch);
+      const deltaRoll = Math.abs(relative.roll - previous.roll);
+      const motionMagnitude = Math.max(deltaYaw, deltaPitch, deltaRoll);
+      const isPopupLocked = now < popupLockUntilRef.current;
+
+      if (
+        motionPhaseRef.current === "idle" ||
+        motionPhaseRef.current === "stopped"
+      ) {
+        const unlockThreshold = requiresStrongUnlockRef.current
+          ? currentTuning.popupUnlockThreshold
+          : currentTuning.motionStartThreshold;
+
+        if (!isPopupLocked && motionMagnitude >= unlockThreshold) {
+          motionPhaseRef.current = "moving";
+          lowMotionStartTimeRef.current = null;
+          callbackFiredRef.current = false;
+          requiresStrongUnlockRef.current = false;
+          hasMovedSinceCalibrationRef.current = true;
+        }
+
+        syncDiagnostics(now, motionMagnitude);
+        return;
+      }
+
+      if (motionMagnitude >= currentTuning.motionStartThreshold) {
+        motionPhaseRef.current = "moving";
+        lowMotionStartTimeRef.current = null;
+        callbackFiredRef.current = false;
+        hasMovedSinceCalibrationRef.current = true;
+        syncDiagnostics(now, motionMagnitude);
+        return;
+      }
+
+      if (motionMagnitude <= currentTuning.motionStopThreshold) {
+        if (lowMotionStartTimeRef.current === null) {
+          lowMotionStartTimeRef.current = now;
+        }
+
+        const lowMotionDuration = now - lowMotionStartTimeRef.current;
+        if (lowMotionDuration >= currentTuning.motionSettleDuration) {
+          motionPhaseRef.current = "settling";
+        }
+
+        if (
+          lowMotionDuration >= currentTuning.motionStopDuration &&
+          hasMovedSinceCalibrationRef.current &&
+          !callbackFiredRef.current
+        ) {
+          motionPhaseRef.current = "stopped";
+          popupLockUntilRef.current = now + currentTuning.popupHardLockDuration;
+          callbackFiredRef.current = true;
+          requiresStrongUnlockRef.current = true;
+          onMotionStop?.();
+        }
+
+        syncDiagnostics(now, motionMagnitude);
+        return;
+      }
+
+      motionPhaseRef.current = "moving";
+      lowMotionStartTimeRef.current = null;
+      syncDiagnostics(now, motionMagnitude);
     },
-    [onMotionStop]
+    [onMotionStop, syncDiagnostics],
   );
 
   useEffect(() => {
@@ -141,50 +461,61 @@ export function useSensorSmoothing(
 
     function step() {
       const now = performance.now();
-      const buf = sensorBufferRef.current;
+      const sensorBuffer = sensorBufferRef.current;
+      const currentTuning = tuningRef.current;
+      const mapUpdateMs = 1000 / Math.max(currentTuning.mapUpdateHz, 1);
 
-      if (buf.length > 0 && !motionStoppedRef.current) {
-        const yaws = buf.map((s) => s.yaw);
-        const pitches = buf.map((s) => s.pitch);
-        const rolls = buf.map((s) => s.roll);
+      syncDiagnostics(now, lastMotionMagnitudeRef.current);
 
-        const medYaw = median(yaws);
-        const medPitch = median(pitches);
-        const medRoll = median(rolls);
+      if (
+        sensorBuffer.length > 0 &&
+        motionPhaseRef.current === "moving" &&
+        searchParams.get("mode") === "map" &&
+        mapRef.current
+      ) {
+        const medYaw = median(sensorBuffer.map((sample) => sample.yaw));
+        const medPitch = median(sensorBuffer.map((sample) => sample.pitch));
+        const medRoll = median(sensorBuffer.map((sample) => sample.roll));
 
-        const s = sensorSmoothedRef.current;
-        s.alpha += (medYaw - s.alpha) * EMA_ALPHA;
-        s.beta += (medPitch - s.beta) * EMA_ALPHA;
-        s.gamma += (medRoll - s.gamma) * EMA_ALPHA;
+        const smoothed = sensorSmoothedRef.current;
+        smoothed.alpha += (medYaw - smoothed.alpha) * currentTuning.emaAlpha;
+        smoothed.beta += (medPitch - smoothed.beta) * currentTuning.emaAlpha;
+        smoothed.gamma += (medRoll - smoothed.gamma) * currentTuning.emaAlpha;
 
-        if (now - lastMapUpdate >= MAP_UPDATE_MS && mapRef.current) {
+        if (now - lastMapUpdate >= mapUpdateMs) {
           lastMapUpdate = now;
 
-          const alphaRad = (s.alpha * Math.PI) / 180;
-          const latitude = Math.max(
+          const yawRad = (smoothed.alpha * Math.PI) / 180;
+          const latitude = clamp(
+            -(
+              smoothed.beta * Math.cos(yawRad) -
+              smoothed.gamma * Math.sin(yawRad)
+            ),
             -85,
-            Math.min(
-              85,
-              s.beta * Math.cos(alphaRad) - s.gamma * Math.sin(alphaRad)
-            )
+            85,
           );
-          let longitude = ((s.alpha + 180) % 360) - 180;
-
+          const targetLongitude = normalizeAngle(-smoothed.alpha);
           const center = mapRef.current.getCenter();
+          const latitudeDelta = latitude - center.lat;
+          const longitudeDelta = shortestAngleDelta(
+            targetLongitude,
+            center.lng,
+          );
+
           const clampedLat =
-            Math.abs(center.lat - latitude) > MAX_DELTA_PER_UPDATE
+            Math.abs(latitudeDelta) > currentTuning.maxDeltaPerUpdate
               ? center.lat +
-                Math.sign(latitude - center.lat) * MAX_DELTA_PER_UPDATE
+                Math.sign(latitudeDelta) * currentTuning.maxDeltaPerUpdate
               : latitude;
           const clampedLng =
-            Math.abs(center.lng - longitude) > MAX_DELTA_PER_UPDATE
+            Math.abs(longitudeDelta) > currentTuning.maxDeltaPerUpdate
               ? center.lng +
-                Math.sign(longitude - center.lng) * MAX_DELTA_PER_UPDATE
-              : longitude;
+                Math.sign(longitudeDelta) * currentTuning.maxDeltaPerUpdate
+              : center.lng + longitudeDelta;
 
           mapRef.current.easeTo({
             center: [clampedLng, clampedLat],
-            duration: Math.max(40, MAP_UPDATE_MS * 0.9),
+            duration: Math.max(40, mapUpdateMs * 0.9),
             easing: (t) => t,
           });
         }
@@ -192,12 +523,10 @@ export function useSensorSmoothing(
 
       raf = requestAnimationFrame(step);
     }
-    if (searchParams.get("mode") === "map") {
-      raf = requestAnimationFrame(step);
-    }
 
+    raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [mapRef, searchParams]);
+  }, [mapRef, searchParams, syncDiagnostics]);
 
-  return { handleOnSensor };
+  return { handleOnSensor, resetCalibration, diagnostics };
 }
