@@ -1,12 +1,9 @@
 import "../globals.css";
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import { AudioContextProvider } from "@/hooks/webpd-context";
 import RegisterPd4WebSW from "@/components/register-pd4web-sw";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { OrientationProvider } from "@/hooks/orientation-context";
-import { WebRTCProvider } from "@/hooks/webrtc-context";
 import { NextIntlClientProvider, useMessages } from "next-intl";
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -24,8 +21,6 @@ export const metadata: Metadata = {
   title: "GaiaSenses Web",
   description: "Web version of GaiaSensesApp",
 };
-
-//The AudioContextProvider here at the root layout may not be a very good idea.
 
 export default function LocaleLayout({
   children,
@@ -46,8 +41,8 @@ export default function LocaleLayout({
         >
         </ThemeProvider> */}
         <NextIntlClientProvider locale={locale} messages={msg}>
-          <RegisterPd4WebSW></RegisterPd4WebSW>
-          <AudioContextProvider>{children}</AudioContextProvider>
+          <RegisterPd4WebSW />
+          {children}
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

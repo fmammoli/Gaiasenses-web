@@ -22,6 +22,7 @@ import BLEControl from "./ble-control";
 import AutoMove from "./auto-move";
 import CoordinateDisplay from "./coordinate-display";
 import MotionTuningPanel from "./motion-tuning-panel";
+import Pd4WebMapAudioManager from "./pd4web-map-audio-manager";
 import { useCompositionQueue } from "./use-composition-queue";
 import { useMapInteractions } from "./use-map-interactions";
 import { useAutoMode } from "./use-auto-mode";
@@ -125,6 +126,7 @@ export default function GaiasensesMap({
         onReset={() => setMotionTuning(DEFAULT_MOTION_TUNING_SETTINGS)}
         onRecalibrate={recalibrateSensor}
       />
+      <Pd4WebMapAudioManager mapRef={mapRef} />
       <div>
         <AnimatePresence>
           {false && (
