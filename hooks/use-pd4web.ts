@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
 
+import { primePd4WebRuntime } from "@/lib/pd4web-runtime";
+
 // This is for adding Pd4Web to the global this type
 declare global {
   var Pd4Web: InstanceType<Pd4WebModuleType["Pd4Web"]> | undefined;
@@ -21,7 +23,7 @@ export default function usePd4Web({
   packageName = "/thunder4/pd4web.data",
 }: Pd4WebPlayerProps) {
   const pdWebRef = useRef<InstanceType<Pd4WebModuleType["Pd4Web"]> | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -34,7 +36,9 @@ export default function usePd4Web({
         | undefined;
       if (Pd4WebModule) {
         Pd4WebModule({ packageName }).then((Pd4WebModulePromise) => {
-          globalThis.Pd4Web = new Pd4WebModulePromise.Pd4Web();
+          globalThis.Pd4Web = primePd4WebRuntime(
+            new Pd4WebModulePromise.Pd4Web(),
+          );
           pdWebRef.current = globalThis.Pd4Web;
         });
       }

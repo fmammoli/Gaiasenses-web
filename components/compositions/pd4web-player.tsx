@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
+
+import { primePd4WebRuntime } from "@/lib/pd4web-runtime";
 import TogglePlayButton from "./toggle-play-button";
 
 // Extend globalThis to include Pd4WebAudioWorkletNode
@@ -59,7 +61,7 @@ export default function Pd4WebPlayer({
   play = true,
 }: Pd4WebPlayerProps) {
   const pd4webRef = useRef<InstanceType<Pd4WebModuleType["Pd4Web"]> | null>(
-    null
+    null,
   );
   const pd4webAudioWorkletNodeRef = useRef<AudioWorkletNode | null>(null);
   const initializedRef = useRef(false);
@@ -78,7 +80,9 @@ export default function Pd4WebPlayer({
           | undefined;
         if (Pd4WebModule) {
           Pd4WebModule({ packageName }).then((Pd4WebModulePromise) => {
-            globalThis.Pd4Web = new Pd4WebModulePromise.Pd4Web();
+            globalThis.Pd4Web = primePd4WebRuntime(
+              new Pd4WebModulePromise.Pd4Web(),
+            );
             //TODO
             // For some reasing the globalThis.Pd4WebAudioWorkletNode is not available at this moment
             //pd4webAudioWorkletNodeRef.current = globalThis.Pd4WebAudioWorkletNode(
@@ -107,7 +111,7 @@ export default function Pd4WebPlayer({
         pd4webRef.current = null;
         if (pd4webAudioWorkletNodeRef.current) {
           pd4webAudioWorkletNodeRef.current.disconnect(
-            pd4webAudioWorkletNodeRef.current.context.destination
+            pd4webAudioWorkletNodeRef.current.context.destination,
           );
         }
       };
@@ -133,7 +137,7 @@ export default function Pd4WebPlayer({
       (globalThis as GlobalThis).Pd4WebAudioWorkletNode?.disconnect();
       if (pd4webAudioWorkletNodeRef.current) {
         pd4webAudioWorkletNodeRef.current.disconnect(
-          pd4webAudioWorkletNodeRef.current.context.destination
+          pd4webAudioWorkletNodeRef.current.context.destination,
         );
       }
       initializedRef.current = false;

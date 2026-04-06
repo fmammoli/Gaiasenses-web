@@ -1,5 +1,6 @@
 import { getWeather } from "@/components/getData";
 import {
+  CloudRain,
   Cloudy,
   Compass,
   Droplet,
@@ -18,6 +19,9 @@ export default async function PopupWeatherInfo({
   lang: string;
 }>) {
   const weatherData = await getWeather(lat, lon, { lang: lang });
+  const rain = weatherData.rain as { "1h"?: number };
+  const rainAmount = rain["1h"] ?? 0;
+  const hasRain = rainAmount > 0;
   //Stub
   // const weatherData = {
   //   city: "Open Weather API",
@@ -83,6 +87,12 @@ export default async function PopupWeatherInfo({
           <p>{weatherData.wind.gust ?? "indisponível"}m/s</p>
         </div>
       </div>
+      {hasRain && (
+        <div className="flex items-end gap-1 mt-2">
+          <CloudRain size={20} />
+          <p>{rainAmount.toFixed(1)} mm/h</p>
+        </div>
+      )}
     </div>
   );
 }
