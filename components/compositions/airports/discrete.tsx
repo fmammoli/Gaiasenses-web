@@ -15,8 +15,22 @@ export default function Discrete({ play }: { play: boolean }) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const toneRef = useRef<any>(null);
+  const initializedRef = useRef(false);
 
   async function buildDiscreteMusic() {
+    if (initializedRef.current && toneRef.current) {
+      // Already set up — just resume the audio context and restart the transport
+      await toneRef.current.start();
+      toneRef.current.getTransport().start();
+      setIsPlaying(true);
+      return;
+    }
+    if (initializedRef.current) {
+      // First call is still in-flight (async import not yet resolved); skip
+      return;
+    }
+    initializedRef.current = true;
+
     const Tone = await import("tone");
 
     toneRef.current = Tone;
@@ -148,13 +162,14 @@ export default function Discrete({ play }: { play: boolean }) {
     console.log("play");
   }
 
+  useEffect(() => {
+    buildDiscreteMusic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function playMusic() {
     buildDiscreteMusic();
   }
-
-  useEffect(() => {
-    buildDiscreteMusic();
-  }, []);
 
   async function stop() {
     toneRef.current.getTransport().pause();
