@@ -15,9 +15,9 @@ export default function SatSketch({ lat, lon }: SatSketch) {
   useLayoutEffect(() => {
     if (ref.current) {
       const { width, height } = ref.current.getBoundingClientRect();
-      const w = width > 1280 ? 1280 : width;
-      const h = height > 1280 ? 1280 : height;
-      setSize({ width: w, height: h });
+      const w = width > 1280 ? 1280 : 1280;
+      const h = height > 1280 ? 1280 : 1280;
+      //setSize({ width: w, height: h });
       setUrl(
         `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${lon},${lat},14,0/${w}x${h}@2x?access_token=${ACCESS_TOKEN}`,
       );
@@ -25,14 +25,15 @@ export default function SatSketch({ lat, lon }: SatSketch) {
   }, [lat, lon, ACCESS_TOKEN]);
 
   return (
-    <div className="h-full flex justify-center bg-black" ref={ref}>
+    <div className="relative h-full flex justify-center bg-black" ref={ref}>
       {url && (
         <Image
           src={url}
           alt={""}
-          width={size.width}
-          height={size.height}
-          className={"animate-my-rotate-hue"}
+          // width={size.width}
+          // height={size.height}
+          fill
+          className={"relative animate-my-rotate-hue"}
         ></Image>
       )}
     </div>
