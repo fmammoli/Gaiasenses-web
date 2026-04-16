@@ -1,6 +1,11 @@
 "use client";
 import { Gamepad, Loader2 } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
+import type {
+  BluetoothDevice,
+  BluetoothRemoteGATTServer,
+  BluetoothRemoteGATTCharacteristic,
+} from "web-bluetooth";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY_MS = 1500;
@@ -23,6 +28,11 @@ export type espResponse = {
     roll: number | null;
     pitch: number | null;
     yaw: number | null;
+  };
+  acc?: {
+    x: number | null;
+    y: number | null;
+    z: number | null;
   };
 };
 

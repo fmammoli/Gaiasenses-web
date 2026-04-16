@@ -56,6 +56,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { MapRef } from "react-map-gl";
 
+import type { espResponse } from "./ble-control";
+
 import { primePd4WebRuntime } from "@/lib/pd4web-runtime";
 import { Button } from "@/components/ui/button";
 import {
@@ -117,6 +119,7 @@ declare global {
 type Pd4WebMapAudioProps = {
   patch: Map3Pd4WebPatch;
   mapRef: React.RefObject<MapRef>;
+  sensorDataRef: React.MutableRefObject<espResponse | null>;
   preferredPlaying: boolean;
   onPreferredPlayingChange: (nextPlaying: boolean) => void;
 };
@@ -124,6 +127,7 @@ type Pd4WebMapAudioProps = {
 export default function Pd4WebMapAudio({
   patch,
   mapRef,
+  sensorDataRef,
   preferredPlaying,
   onPreferredPlayingChange,
 }: Pd4WebMapAudioProps) {
@@ -294,10 +298,11 @@ export default function Pd4WebMapAudio({
   }, [bundleBasePath, scriptId, scriptSrc]);
 
   // ---------------------------------------------------------------------------
-  // Effect #2 — Map center → pd receivers (position polling)
+  // Effect #2 — Map center + BLE sensor → pd receivers (position polling)
   //
   // Starts an interval that reads the live Mapbox map center and forwards it
-  // to the patch as float messages. Only runs for "map-center" bindings.
+  // to the patch as float messages. BLE acceleration values are also forwarded
+  // whenever present. Only runs for "map-center" bindings.
   // Re-runs if isReady changes (patch re-instantiated) or if patch.binding
   // changes (different patch selected).
   // ---------------------------------------------------------------------------
@@ -331,20 +336,33 @@ export default function Pd4WebMapAudio({
       const lastPosition = lastPositionRef.current;
       const now = performance.now();
 
-      // Skip dispatch if the map hasn't moved enough — avoids flooding the
-      // patch with redundant messages while the globe is stationary.
-      if (
-        lastPosition &&
-        Math.abs(lastPosition.lat - nextPosition.lat) < positionEpsilon &&
-        Math.abs(lastPosition.lng - nextPosition.lng) < positionEpsilon
-      ) {
-        return;
+      const hasPositionChanged =
+        !lastPosition ||
+        Math.abs(lastPosition.lat - nextPosition.lat) >= positionEpsilon ||
+        Math.abs(lastPosition.lng - nextPosition.lng) >= positionEpsilon;
+
+      if (hasPositionChanged) {
+        binding.longitudeReceiver &&
+          pd.sendFloat(binding.longitudeReceiver, nextPosition.lng);
+        binding.latitudeReceiver &&
+          pd.sendFloat(binding.latitudeReceiver, nextPosition.lat);
       }
 
-      pd.sendFloat(binding.longitudeReceiver, nextPosition.lng);
-      pd.sendFloat(binding.latitudeReceiver, nextPosition.lat);
+      const acc = sensorDataRef.current?.acc;
+      if (binding.accXReceiver && typeof acc?.x === "number") {
+        console.log(performance.now());
+        console.log("Sending acc.x to patch:", acc.x);
+        pd.sendFloat(binding.accXReceiver, acc.x);
+      }
+      if (binding.accYReceiver && typeof acc?.y === "number") {
+        pd.sendFloat(binding.accYReceiver, acc.y);
+      }
+      if (binding.accZReceiver && typeof acc?.z === "number") {
+        pd.sendFloat(binding.accZReceiver, acc.z);
+      }
 
       if (
+        hasPositionChanged &&
         binding.speedReceiver &&
         lastPosition &&
         lastPositionTimeRef.current !== null
@@ -361,8 +379,10 @@ export default function Pd4WebMapAudio({
         }
       }
 
-      lastPositionRef.current = nextPosition;
-      lastPositionTimeRef.current = now;
+      if (hasPositionChanged) {
+        lastPositionRef.current = nextPosition;
+        lastPositionTimeRef.current = now;
+      }
     };
 
     syncPosition();
@@ -374,7 +394,7 @@ export default function Pd4WebMapAudio({
         positionTimerRef.current = null;
       }
     };
-  }, [isReady, mapRef, patch.binding]);
+  }, [isReady, mapRef, patch.binding, sensorDataRef]);
 
   // ---------------------------------------------------------------------------
   // Effect #3 — Auto-resume playback

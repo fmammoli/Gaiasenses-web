@@ -16,6 +16,8 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+import type { espResponse } from "./ble-control";
+
 import InfoButton from "./info-button";
 import NotificationDialog from "./notifications-dialog";
 import BLEControl from "./ble-control";
@@ -48,6 +50,7 @@ export default function GaiasensesMap({
   InfoButtonText,
 }: GaiasensesMapProps) {
   const mapRef = useRef<MapRef>(null);
+  const latestSensorDataRef = useRef<espResponse | null>(null);
   const [motionTuning, setMotionTuning] = useState<MotionTuningSettings>(
     DEFAULT_MOTION_TUNING_SETTINGS,
   );
@@ -126,7 +129,10 @@ export default function GaiasensesMap({
         onReset={() => setMotionTuning(DEFAULT_MOTION_TUNING_SETTINGS)}
         onRecalibrate={recalibrateSensor}
       />
-      <Pd4WebMapAudioManager mapRef={mapRef} />
+      <Pd4WebMapAudioManager
+        mapRef={mapRef}
+        sensorDataRef={latestSensorDataRef}
+      />
       <div>
         <AnimatePresence>
           {false && (
@@ -170,7 +176,10 @@ export default function GaiasensesMap({
           onDeactivate={onAutoActivateToggle}
         />
         <BLEControl
-          onSensor={handleOnSensor}
+          onSensor={(data) => {
+            latestSensorDataRef.current = data;
+            handleOnSensor(data);
+          }}
           onConnect={handleControllerConnect}
           onDisconnect={handleControllerDisconnect}
           onCo2Sensor={handleOnCO2Sensor}

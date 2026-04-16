@@ -50,9 +50,12 @@ export type Map3Pd4WebBinding =
   | {
       type: "map-center";
       /** Name of the [receive] object in the .pd patch that accepts longitude (−180 … 180). */
-      longitudeReceiver: string;
+      longitudeReceiver?: string;
       /** Name of the [receive] object in the .pd patch that accepts latitude (−90 … 90). */
-      latitudeReceiver: string;
+      latitudeReceiver?: string;
+      accXReceiver?: string;
+      accYReceiver?: string;
+      accZReceiver?: string;
       /**
        * Optional receiver name for globe rotation speed in degrees/second.
        * The value is a cos-corrected angular speed computed from successive map
@@ -122,27 +125,58 @@ const DEFAULT_POSITION_EPSILON = 0.0001;
  * Add new patches here following the Map3Pd4WebPatch shape described above.
  */
 export const MAP3_PD4WEB_PATCHES: readonly Map3Pd4WebPatch[] = [
+  // {
+  //   // "gabriel" is the ambient map soundscape patch, active whenever the globe
+  //   // is in view. It receives the current map center so the sound can respond
+  //   // to geographic position.
+  //   id: "gabriel",
+  //   label: "Map sound",
+  //   // Built output lives at /public/gabriel-pd4web/
+  //   bundleFolder: "gabriel-pd4web",
+  //   activation: {
+  //     // Active only in the map view, not inside the composition player.
+  //     moments: ["map"],
+  //   },
+  //   binding: {
+  //     type: "map-center",
+  //     // These receiver names must match [receive x1] and [receive y1] in the .pd file.
+  //     longitudeReceiver: "x1",
+  //     latitudeReceiver: "y1",
+  //     pollMs: DEFAULT_POSITION_POLL_MS,
+  //     epsilon: DEFAULT_POSITION_EPSILON,
+  //     // Uncomment and add a matching [receive speed] in the patch to enable speed input:
+  //     // speedReceiver: "speed",
+  //   },
+  // },
+  // {
+  //   id: "gabriel2",
+  //   label: "Map sound 2",
+  //   bundleFolder: "gabriel2-map",
+  //   activation: {
+  //     moments: ["map"],
+  //   },
+  //   binding: {
+  //     type: "map-center",
+  //     accXReceiver: "aX",
+
+  //     pollMs: DEFAULT_POSITION_POLL_MS,
+  //     epsilon: DEFAULT_POSITION_EPSILON,
+  //   },
+  // },
   {
-    // "gabriel" is the ambient map soundscape patch, active whenever the globe
-    // is in view. It receives the current map center so the sound can respond
-    // to geographic position.
-    id: "gabriel",
-    label: "Map sound",
-    // Built output lives at /public/gabriel-pd4web/
-    bundleFolder: "gabriel-pd4web",
+    id: "gabriel-paraisoGaia8",
+    label: "Map sound 3",
+    bundleFolder: "gabriel-paraisoGaia8",
     activation: {
-      // Active only in the map view, not inside the composition player.
       moments: ["map"],
     },
     binding: {
       type: "map-center",
-      // These receiver names must match [receive x1] and [receive y1] in the .pd file.
-      longitudeReceiver: "x1",
-      latitudeReceiver: "y1",
+      latitudeReceiver: "x1",
+      longitudeReceiver: "y1",
+
       pollMs: DEFAULT_POSITION_POLL_MS,
       epsilon: DEFAULT_POSITION_EPSILON,
-      // Uncomment and add a matching [receive speed] in the patch to enable speed input:
-      // speedReceiver: "speed",
     },
   },
 ] as const;

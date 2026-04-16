@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { comps, shuffle } from "./map-constants";
+import { getWeather } from "@/components/getData";
 
 export function useCompositionQueue() {
   const [shuffled, setShuffled] = useState<Generator<any>>(() =>
