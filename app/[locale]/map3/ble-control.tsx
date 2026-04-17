@@ -1,11 +1,6 @@
 "use client";
 import { Gamepad, Loader2 } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
-import type {
-  BluetoothDevice,
-  BluetoothRemoteGATTServer,
-  BluetoothRemoteGATTCharacteristic,
-} from "web-bluetooth";
 
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY_MS = 1500;
@@ -51,6 +46,11 @@ type BLEControlProps = {
   onCo2Sensor: (data: espCo2Response) => void;
   onConnect: (mode: string) => void;
   onDisconnect: (mode: string) => void;
+  containerClassName?: string;
+  buttonClassName?: string;
+  errorClassName?: string;
+  infoCardClassName?: string;
+  showButtonLabel?: boolean;
 };
 
 export default function BLEControl({
@@ -58,6 +58,11 @@ export default function BLEControl({
   onCo2Sensor,
   onConnect,
   onDisconnect,
+  containerClassName,
+  buttonClassName,
+  errorClassName,
+  infoCardClassName,
+  showButtonLabel = false,
 }: BLEControlProps) {
   const [bleDevice, setBleDevice] = useState<BLEDevice>({
     device: null,
@@ -278,46 +283,71 @@ export default function BLEControl({
     }
   }, [bleDevice.characteristic, onSensor]);
 
+  const buttonTitle = isConnecting
+    ? "Connecting…"
+    : isConnected
+      ? "Disconnect"
+      : "Connect device";
+
   return (
-    <div className="absolute top-[295px] right-0 z-90">
+    <div
+      className={`absolute top-[295px] right-0 z-90 ${containerClassName ?? ""}`}
+    >
       <div className="mr-[10px] mt-[10px]">
         <button
           onClick={isConnected ? disconnectBLE : connectBLE}
           disabled={isConnecting}
-          className="bg-white w-[29px] h-[29px] rounded-sm flex justify-center items-center hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          title={
-            isConnecting
-              ? "Connecting…"
-              : isConnected
-                ? "Disconnect"
-                : "Connect device"
-          }
+          className={`flex items-center justify-center rounded-sm bg-white hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 ${
+            showButtonLabel
+              ? "h-12 min-w-[220px] gap-3 px-5 text-sm font-semibold shadow-lg"
+              : "h-[29px] w-[29px]"
+          } ${buttonClassName ?? ""}`}
+          title={buttonTitle}
         >
           {isConnecting ? (
             <Loader2
               width={18}
               height={18}
-              className="animate-spin text-gray-500"
+              className={`animate-spin ${showButtonLabel ? "text-current" : "text-gray-500"}`}
             />
           ) : (
             <Gamepad
-              width={22}
-              height={22}
+              width={showButtonLabel ? 20 : 22}
+              height={showButtonLabel ? 20 : 22}
               strokeWidth={2.5}
-              className={isConnected ? "text-green-600" : "text-gray-700"}
+              className={
+                showButtonLabel
+                  ? "text-current"
+                  : isConnected
+                    ? "text-green-600"
+                    : "text-gray-700"
+              }
             />
           )}
+          {showButtonLabel ? (
+            <span>
+              {isConnecting
+                ? "Connecting sensor…"
+                : isConnected
+                  ? "Disconnect BLE sensor"
+                  : "Connect BLE sensor"}
+            </span>
+          ) : null}
         </button>
       </div>
 
       {error && (
-        <div className="mr-[10px] mt-1 bg-white text-red-500 text-xs p-2 rounded shadow-md max-w-[160px]">
+        <div
+          className={`mr-[10px] mt-1 max-w-[160px] rounded bg-white p-2 text-xs text-red-500 shadow-md ${errorClassName ?? ""}`}
+        >
           {error}
         </div>
       )}
 
       {isConnected && bleDevice.device && (
-        <div className="text-sm space-y-2 bg-white p-2 rounded shadow-md mt-12 w-48 min-h-52 mr-[10px]">
+        <div
+          className={`mt-12 mr-[10px] min-h-52 w-48 space-y-2 rounded bg-white p-2 text-sm shadow-md ${infoCardClassName ?? ""}`}
+        >
           <p className="font-medium">
             {bleDevice.device.name ?? "Unknown Device"}
           </p>

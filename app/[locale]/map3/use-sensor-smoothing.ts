@@ -15,6 +15,21 @@ type EulerAngles = {
   roll: number;
 };
 
+export type SensorDebugSnapshot = {
+  rawEuler: EulerAngles | null;
+  relativeEuler: EulerAngles | null;
+  smoothedEuler: {
+    alpha: number;
+    beta: number;
+    gamma: number;
+  };
+  acceleration: {
+    x: number | null;
+    y: number | null;
+    z: number | null;
+  } | null;
+};
+
 type MotionPhase = "calibrating" | "idle" | "moving" | "settling" | "stopped";
 
 export type MotionDiagnostics = {
@@ -59,6 +74,17 @@ const DEFAULT_MOTION_DIAGNOSTICS: MotionDiagnostics = {
   popupLocked: false,
   popupLockRemainingMs: 0,
   calibrated: false,
+};
+
+const DEFAULT_SENSOR_DEBUG_SNAPSHOT: SensorDebugSnapshot = {
+  rawEuler: null,
+  relativeEuler: null,
+  smoothedEuler: {
+    alpha: 0,
+    beta: 0,
+    gamma: 0,
+  },
+  acceleration: null,
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -254,6 +280,9 @@ export function useSensorSmoothing(
   const [diagnostics, setDiagnostics] = useState<MotionDiagnostics>(
     DEFAULT_MOTION_DIAGNOSTICS,
   );
+  const [sensorDebug, setSensorDebug] = useState<SensorDebugSnapshot>(
+    DEFAULT_SENSOR_DEBUG_SNAPSHOT,
+  );
   const sensorBufferRef = useRef<EulerAngles[]>([]);
   const calibrationBufferRef = useRef<Quaternion[]>([]);
   const sensorSmoothedRef = useRef<{
@@ -328,6 +357,7 @@ export function useSensorSmoothing(
     requiresStrongUnlockRef.current = false;
     lastMotionMagnitudeRef.current = 0;
     setDiagnostics(DEFAULT_MOTION_DIAGNOSTICS);
+    setSensorDebug(DEFAULT_SENSOR_DEBUG_SNAPSHOT);
   }, []);
 
   const handleOnSensor = useCallback(
@@ -339,6 +369,11 @@ export function useSensorSmoothing(
       const now = performance.now();
       const currentTuning = tuningRef.current;
       const { quaternion, euler } = readSensorSample(data);
+      const acceleration = {
+        x: isFiniteNumber(data?.acc?.x) ? data.acc.x : null,
+        y: isFiniteNumber(data?.acc?.y) ? data.acc.y : null,
+        z: isFiniteNumber(data?.acc?.z) ? data.acc.z : null,
+      };
       if (!quaternion && !euler) {
         return;
       }
@@ -358,6 +393,12 @@ export function useSensorSmoothing(
         }
 
         motionPhaseRef.current = "idle";
+        setSensorDebug({
+          rawEuler: euler,
+          relativeEuler: null,
+          smoothedEuler: { ...sensorSmoothedRef.current },
+          acceleration,
+        });
         syncDiagnostics(now, 0);
         return;
       }
@@ -381,6 +422,21 @@ export function useSensorSmoothing(
       if (buffer.length > currentTuning.bufferSize) {
         buffer.shift();
       }
+
+      const medYaw = median(buffer.map((sample) => sample.yaw));
+      const medPitch = median(buffer.map((sample) => sample.pitch));
+      const medRoll = median(buffer.map((sample) => sample.roll));
+      const smoothed = sensorSmoothedRef.current;
+      smoothed.alpha += (medYaw - smoothed.alpha) * currentTuning.emaAlpha;
+      smoothed.beta += (medPitch - smoothed.beta) * currentTuning.emaAlpha;
+      smoothed.gamma += (medRoll - smoothed.gamma) * currentTuning.emaAlpha;
+
+      setSensorDebug({
+        rawEuler: euler,
+        relativeEuler: relative,
+        smoothedEuler: { ...smoothed },
+        acceleration,
+      });
 
       if (!previous) {
         syncDiagnostics(now, 0);
@@ -473,14 +529,7 @@ export function useSensorSmoothing(
         searchParams.get("mode") === "map" &&
         mapRef.current
       ) {
-        const medYaw = median(sensorBuffer.map((sample) => sample.yaw));
-        const medPitch = median(sensorBuffer.map((sample) => sample.pitch));
-        const medRoll = median(sensorBuffer.map((sample) => sample.roll));
-
         const smoothed = sensorSmoothedRef.current;
-        smoothed.alpha += (medYaw - smoothed.alpha) * currentTuning.emaAlpha;
-        smoothed.beta += (medPitch - smoothed.beta) * currentTuning.emaAlpha;
-        smoothed.gamma += (medRoll - smoothed.gamma) * currentTuning.emaAlpha;
 
         if (now - lastMapUpdate >= mapUpdateMs) {
           lastMapUpdate = now;
@@ -528,5 +577,5 @@ export function useSensorSmoothing(
     return () => cancelAnimationFrame(raf);
   }, [mapRef, searchParams, syncDiagnostics]);
 
-  return { handleOnSensor, resetCalibration, diagnostics };
+  return { handleOnSensor, resetCalibration, diagnostics, sensorDebug };
 }

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "normalize:pd4web": "node scripts/normalize-pd4web-bundle.mjs"
+    "normalize:pd4web": "node scripts/normalize-pd4web-bundle.mjs",
+    "sensor:ws": "node scripts/sensor-websocket-server.mjs"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
@@ -57,7 +58,8 @@
     "tailwindcss-animated": "^1.0.1",
     "tone": "^15.0.4",
     "use-debounce": "^9.0.4",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.15",
