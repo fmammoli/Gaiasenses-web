@@ -351,10 +351,10 @@ export default function BLEControl({
           <p className="font-medium">
             {bleDevice.device.name ?? "Unknown Device"}
           </p>
-          <p>roll: {receivedData?.euler.roll}</p>
-          <p>pitch: {receivedData?.euler.pitch}</p>
-          <p>yaw: {receivedData?.euler.yaw}</p>
-          <p>CO₂: {co2value} ppm</p>
+          <p>roll: {receivedData?.euler.roll?.toFixed(3)}</p>
+          <p>pitch: {receivedData?.euler.pitch?.toFixed(3)}</p>
+          <p>yaw: {receivedData?.euler.yaw?.toFixed(3)}</p>
+          <p>CO₂: {co2value?.toFixed(3)} ppm</p>
         </div>
       )}
     </div>

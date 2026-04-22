@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import useInterval from "@/hooks/use-interval";
 import type { MapRef } from "react-map-gl";
 
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ function MetricRow({ label, value }: { label: string; value: string }) {
 }
 
 function SensorMonitorPageContent() {
+  // ...existing code...
   const mapRef = useRef<MapRef>(null);
   const [rawSensorData, setRawSensorData] = useState<espResponse | null>(null);
   const [co2Data, setCo2Data] = useState<espCo2Response | null>(null);
@@ -60,6 +62,27 @@ function SensorMonitorPageContent() {
     DEFAULT_MOTION_TUNING_SETTINGS,
   );
   const [lastPublishedAt, setLastPublishedAt] = useState<string | null>(null);
+  // Frequency state (Hz)
+  const DEFAULT_FREQ = 60;
+  const MIN_FREQ = 1;
+  const MAX_FREQ = 120;
+  const FREQ_STORAGE_KEY = "gaiaball-ws-freq";
+  const [frequency, setFrequency] = useState<number>(DEFAULT_FREQ);
+  // Load frequency from localStorage
+  useEffect(() => {
+    const saved = window.localStorage.getItem(FREQ_STORAGE_KEY);
+    if (saved) {
+      const parsed = parseInt(saved, 10);
+      if (!isNaN(parsed) && parsed >= MIN_FREQ && parsed <= MAX_FREQ) {
+        setFrequency(parsed);
+      }
+    }
+  }, []);
+
+  // Persist frequency to localStorage
+  useEffect(() => {
+    window.localStorage.setItem(FREQ_STORAGE_KEY, String(frequency));
+  }, [frequency]);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimerRef = useRef<number | null>(null);
   const latestPayloadRef = useRef<Record<string, unknown> | null>(null);
@@ -168,6 +191,10 @@ function SensorMonitorPageContent() {
       lastPublishedAt,
     ],
   );
+
+  // Send payload at selected frequency
+  const intervalMs = Math.round(1000 / frequency);
+  useInterval(publishLatestPayload, intervalMs);
 
   const pdMessageExamples = useMemo(
     () => [
@@ -301,6 +328,28 @@ function SensorMonitorPageContent() {
 
   return (
     <div className="relative min-h-screen bg-slate-100 text-slate-900">
+      <div className="fixed top-4 right-4 z-50 bg-white rounded shadow p-4 flex flex-col gap-2 w-64">
+        <label
+          htmlFor="ws-frequency"
+          className="text-xs font-medium text-slate-700 flex justify-between"
+        >
+          WebSocket update rate
+          <span className="font-mono">{frequency} Hz</span>
+        </label>
+        <input
+          id="ws-frequency"
+          type="range"
+          min={MIN_FREQ}
+          max={MAX_FREQ}
+          step={1}
+          value={frequency}
+          onChange={(e) => setFrequency(Number(e.target.value))}
+        />
+        <div className="flex justify-between text-xs text-slate-400">
+          <span>{MIN_FREQ} Hz</span>
+          <span>{MAX_FREQ} Hz</span>
+        </div>
+      </div>
       <div className="absolute top-[-264px] h-16 w-16 left-1/2">
         <BLEControl
           onSensor={(data) => {
