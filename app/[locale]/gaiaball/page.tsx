@@ -192,9 +192,7 @@ function SensorMonitorPageContent() {
     ],
   );
 
-  // Send payload at selected frequency
-  const intervalMs = Math.round(1000 / frequency);
-  useInterval(publishLatestPayload, intervalMs);
+  const [isRandomSending, setIsRandomSending] = useState(false);
 
   const pdMessageExamples = useMemo(
     () => [
@@ -255,10 +253,20 @@ function SensorMonitorPageContent() {
     );
   }, []);
 
+  // Send payload at selected frequency — use random data when toggled on
+  const intervalMs = Math.round(1000 / frequency);
+  const intervalCallback = useCallback(() => {
+    if (isRandomSending) {
+      sendRandomTestMessage();
+    } else {
+      publishLatestPayload();
+    }
+  }, [isRandomSending, sendRandomTestMessage, publishLatestPayload]);
+  useInterval(intervalCallback, intervalMs);
+
   useEffect(() => {
     latestPayloadRef.current = streamedPayload;
-    publishLatestPayload();
-  }, [streamedPayload, publishLatestPayload]);
+  }, [streamedPayload]);
 
   useEffect(() => {
     if (!pdWsUrl || typeof window === "undefined") {
@@ -479,11 +487,15 @@ function SensorMonitorPageContent() {
               <Button
                 type="button"
                 variant="default"
-                onClick={sendRandomTestMessage}
+                onClick={() => setIsRandomSending((v) => !v)}
                 disabled={wsStatus !== "open"}
-                className="bg-violet-600 text-white shadow-sm transition-all hover:bg-violet-500 hover:shadow-md active:scale-[0.98] active:bg-violet-700 disabled:opacity-50"
+                className={`shadow-sm transition-all hover:shadow-md active:scale-[0.98] disabled:opacity-50 ${
+                  isRandomSending
+                    ? "bg-rose-600 text-white hover:bg-rose-500 active:bg-rose-700"
+                    : "bg-violet-600 text-white hover:bg-violet-500 active:bg-violet-700"
+                }`}
               >
-                Send random test message to Pd
+                {isRandomSending ? "Stop random data" : "Start random data"}
               </Button>
             </div>
           </CardContent>
