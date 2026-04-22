@@ -124,16 +124,16 @@ function SensorMonitorPageContent() {
     }
 
     const values = [
-      payload.smoothed?.smoothedEuler?.alpha,
-      payload.smoothed?.smoothedEuler?.beta,
-      payload.smoothed?.smoothedEuler?.gamma,
-      payload.raw?.euler?.yaw,
-      payload.raw?.euler?.pitch,
-      payload.raw?.euler?.roll,
-      payload.raw?.acc?.x,
-      payload.raw?.acc?.y,
-      payload.raw?.acc?.z,
-      co2Data?.co2.ppm,
+      payload.smoothed?.smoothedEuler?.alpha.toFixed(3),
+      payload.smoothed?.smoothedEuler?.beta.toFixed(3),
+      payload.smoothed?.smoothedEuler?.gamma.toFixed(3),
+      payload.raw?.euler?.yaw?.toFixed(3),
+      payload.raw?.euler?.pitch?.toFixed(3),
+      payload.raw?.euler?.roll?.toFixed(3),
+      payload.raw?.acc?.x?.toFixed(3),
+      payload.raw?.acc?.y?.toFixed(3),
+      payload.raw?.acc?.z?.toFixed(3),
+      co2Data?.co2.ppm?.toFixed(3),
     ];
 
     socket.send(
