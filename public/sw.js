@@ -28,5 +28,5 @@ self.addEventListener('notificationclick', function (event) {
 	console.log('Notification click received.');
 	event.notification.close();
 	event.waitUntil(clients.openWindow('https://gaiasenses-web.vercel.app/'));
-	//event.waitUntil(clients.openWindow('https://gaiasenses-web.vercel.app/pt/map3?lat=-22.8305&lng=-43.2192&mode=map&composition=stormEye&play=false&initial=false'));
+	//event.waitUntil(clients.openWindow('https://gaiasenses-web.vercel.app/pt/map3?lat=-20.34752258739995&lng=-53.45621807721801&mode=player&composition=stormEye&play=true'));
 })

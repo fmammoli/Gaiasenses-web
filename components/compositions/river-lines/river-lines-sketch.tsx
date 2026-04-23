@@ -15,6 +15,7 @@ export type RiverLinesSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & RiverLinesSketchProps>) {
   //inspired by https://openprocessing.org/sketch/1198771
+  //configured by Lucas Mielle 
   let objs: Obj[] = [];
   let humidity = 0;
   let temperature = 0;

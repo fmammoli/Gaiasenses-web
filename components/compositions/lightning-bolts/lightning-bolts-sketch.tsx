@@ -14,6 +14,7 @@ export type LightningBoltsSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & LightningBoltsSketchProps>) {
   //inspired by https://openprocessing.org/sketch/639075
+  //configured by Lucas Mielle 
   let bolts: ChaoticLine[] = [];
   let boltTimer = 0;
   let lightningCount = 0;

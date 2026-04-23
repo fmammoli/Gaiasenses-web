@@ -15,8 +15,9 @@ export type NightRainSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
   //inspired by https://openprocessing.org/sketch/2318784
+  //configured by Lucas Mielle 
   let particles = [];
-  let rain = 0;
+  let rain = 0; //Precipitation, mm / 1h.
   let temperature = 0;
   let play = false;
 
@@ -48,7 +49,8 @@ function sketch(p5: P5CanvasInstance<SketchProps & NightRainSketchProps>) {
   p5.draw = () => {
     p5.background(0, 30);
 
-    if (particles.length < 3 * rain) particles.push(new Particle());
+    if (particles.length < 14 * rain) particles.push(new Particle());
+    //if (particles.length < 3 * rain) particles.push(new Particle());
 
     for (let i = 0; i < particles.length; i++) {
       particles[i].update();

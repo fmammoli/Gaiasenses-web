@@ -33,6 +33,7 @@ import {
   DEFAULT_MOTION_TUNING_SETTINGS,
   type MotionTuningSettings,
 } from "./use-sensor-smoothing";
+import { ClimaData } from "./use-composition-queue";
 
 const MOTION_TUNING_STORAGE_KEY = "map3-motion-tuning-settings";
 
@@ -41,6 +42,7 @@ type GaiasensesMapProps = {
   initialLat: number;
   initialLng: number;
   InfoButtonText: string;
+  clima: ClimaData;
 };
 
 export default function GaiasensesMap({
@@ -48,6 +50,7 @@ export default function GaiasensesMap({
   initialLat,
   initialLng,
   InfoButtonText,
+  clima,
 }: GaiasensesMapProps) {
   const mapRef = useRef<MapRef>(null);
   const latestSensorDataRef = useRef<espResponse | null>(null);
@@ -76,7 +79,7 @@ export default function GaiasensesMap({
     );
   }, [motionTuning]);
 
-  const { getNextComposition } = useCompositionQueue();
+  const { getNextComposition } = useCompositionQueue(clima);
 
   const {
     latlng,

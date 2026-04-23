@@ -83,6 +83,7 @@ function sketch(p5: P5CanvasInstance<SketchProps & WindLinesRESketchProps>) {
 
 function sketch(p5: P5CanvasInstance<SketchProps & WindLinesRESketchProps>) {
   //inspired by https://openprocessing.org/sketch/894918
+  //configured by Lucas Mielle 
   let n = 3100;
   let ps: Vector[] = [];
 

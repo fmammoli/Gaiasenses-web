@@ -13,6 +13,7 @@ export type BurningTreesSketchProps = {
 
 function sketch(p5: P5CanvasInstance<SketchProps & BurningTreesSketchProps>) {
   //inspired by https://openprocessing.org/sketch/1749652
+  //configured by Lucas Mielle  
   let t = 0;
   let fireCount = 0;
   let W: number;

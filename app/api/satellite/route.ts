@@ -63,6 +63,9 @@ export async function GET(req: Request){
             pressure: weather.main?.pressure ?? null,
             pressure_grnd_level: weather.main?.grnd_level ?? null,
             visibility: weather?.visibility ?? null,
+            cloud: weather.clouds ?? null,
+            lat: weather.lat ?? null,
+            lon: weather.lon ?? null
             //description: weather.weather?.[0]?.description ?? null, //por enquanto não funciona
         };
         return NextResponse.json(data);
