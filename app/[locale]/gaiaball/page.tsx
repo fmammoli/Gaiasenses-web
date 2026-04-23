@@ -175,12 +175,14 @@ function SensorMonitorPageContent() {
       payload.raw?.acc?.x?.toFixed(3),
       payload.raw?.acc?.y?.toFixed(3),
       payload.raw?.acc?.z?.toFixed(3),
-      co2PpmRef.current?.toFixed(3),
+      co2PpmRef.current,
     ];
-
-    const message = values
+    const message = `list ${values
       .map((value) => (typeof value === "string" ? value : "0"))
-      .join(" ");
+      .join(" ")};`;
+    // const message = values
+    //   .map((value) => (typeof value === "string" ? value : "0"))
+    //   .join(" ");
 
     socket.send(message);
     appendWsEvent(`sensor payload sent: ${message}`);
