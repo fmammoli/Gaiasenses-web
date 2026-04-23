@@ -175,14 +175,15 @@ function SensorMonitorPageContent() {
       payload.raw?.acc?.x?.toFixed(3),
       payload.raw?.acc?.y?.toFixed(3),
       payload.raw?.acc?.z?.toFixed(3),
-      co2PpmRef.current,
+      co2PpmRef.current?.toFixed(3) ?? 0,
     ];
-    const message = `list ${values
-      .map((value) => (typeof value === "string" ? value : "0"))
-      .join(" ")};`;
-    // const message = values
-    //   .map((value) => (typeof value === "string" ? value : "0"))
-    //   .join(" ");
+    // const message = `list ${values
+    //   .map((value) => (value ? value : "0"))
+    //   .join(" ")};`;
+
+    const message = values
+      //.map((value) => (typeof value === "string" ? value : "0"))
+      .join(" ");
 
     socket.send(message);
     appendWsEvent(`sensor payload sent: ${message}`);
@@ -256,20 +257,19 @@ function SensorMonitorPageContent() {
       },
     };
 
-    socket.send(
-      [
-        randomPayload.smoothed.smoothedEuler.alpha,
-        randomPayload.smoothed.smoothedEuler.beta,
-        randomPayload.smoothed.smoothedEuler.gamma,
-        randomPayload.raw.euler.yaw,
-        randomPayload.raw.euler.pitch,
-        randomPayload.raw.euler.roll,
-        randomPayload.raw.acc.x,
-        randomPayload.raw.acc.y,
-        randomPayload.raw.acc.z,
-        0,
-      ].join(" "),
-    );
+    const message = [
+      randomPayload.smoothed.smoothedEuler.alpha,
+      randomPayload.smoothed.smoothedEuler.beta,
+      randomPayload.smoothed.smoothedEuler.gamma,
+      randomPayload.raw.euler.yaw,
+      randomPayload.raw.euler.pitch,
+      randomPayload.raw.euler.roll,
+      randomPayload.raw.acc.x,
+      randomPayload.raw.acc.y,
+      randomPayload.raw.acc.z,
+      0,
+    ].join(" ");
+    socket.send(message);
     appendWsEvent("random payload sent");
   }, [appendWsEvent]);
 
