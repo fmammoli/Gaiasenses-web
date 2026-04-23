@@ -56,6 +56,7 @@ function SensorMonitorPageContent() {
   const [co2Data, setCo2Data] = useState<espCo2Response | null>(null);
   const [inputMode, setInputMode] = useState("mouse");
   const [wsStatus, setWsStatus] = useState<WebSocketStatus>("connecting");
+  const [wsEvents, setWsEvents] = useState<string[]>([]);
   const [pdWsUrl, setPdWsUrl] = useState(DEFAULT_PD_WS_URL);
   const [pdWsUrlInput, setPdWsUrlInput] = useState(DEFAULT_PD_WS_URL);
   const [motionTuning, setMotionTuning] = useState<MotionTuningSettings>(
@@ -86,6 +87,7 @@ function SensorMonitorPageContent() {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimerRef = useRef<number | null>(null);
   const latestPayloadRef = useRef<Record<string, unknown> | null>(null);
+  const co2PpmRef = useRef<number | null>(null);
   const lastSentPayloadRef = useRef("");
 
   useEffect(() => {
@@ -122,6 +124,23 @@ function SensorMonitorPageContent() {
   const { handleOnSensor, resetCalibration, diagnostics, sensorDebug } =
     useSensorSmoothing(mapRef, undefined, motionTuning);
 
+  const appendWsEvent = useCallback((message: string) => {
+    const timestamp = new Date().toLocaleTimeString("en-GB", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    setWsEvents((current) =>
+      [`[${timestamp}] ${message}`, ...current].slice(0, 50),
+    );
+  }, []);
+
+  useEffect(() => {
+    co2PpmRef.current = co2Data?.co2.ppm ?? null;
+  }, [co2Data?.co2.ppm]);
+
   const publishLatestPayload = useCallback(() => {
     const socket = wsRef.current;
     const payload = latestPayloadRef.current as {
@@ -156,21 +175,18 @@ function SensorMonitorPageContent() {
       payload.raw?.acc?.x?.toFixed(3),
       payload.raw?.acc?.y?.toFixed(3),
       payload.raw?.acc?.z?.toFixed(3),
-      co2Data?.co2.ppm?.toFixed(3),
+      co2PpmRef.current?.toFixed(3),
     ];
 
-    socket.send(
-      values
-        .map((value) =>
-          typeof value === "number" && Number.isFinite(value)
-            ? String(value)
-            : "0",
-        )
-        .join(" "),
-    );
+    const message = values
+      .map((value) => (typeof value === "string" ? value : "0"))
+      .join(" ");
+
+    socket.send(message);
+    appendWsEvent(`sensor payload sent: ${message}`);
 
     lastSentPayloadRef.current = messageKey;
-  }, [co2Data?.co2.ppm]);
+  }, [appendWsEvent]);
 
   const streamedPayload = useMemo(
     () => ({
@@ -206,6 +222,7 @@ function SensorMonitorPageContent() {
     const socket = wsRef.current;
     if (!socket || socket.readyState !== WebSocket.OPEN) {
       setWsStatus("error");
+      appendWsEvent("cannot send random payload: socket not open");
       return;
     }
 
@@ -251,7 +268,8 @@ function SensorMonitorPageContent() {
         0,
       ].join(" "),
     );
-  }, []);
+    appendWsEvent("random payload sent");
+  }, [appendWsEvent]);
 
   // Send payload at selected frequency — use random data when toggled on
   const intervalMs = Math.round(1000 / frequency);
@@ -284,6 +302,8 @@ function SensorMonitorPageContent() {
         return;
       }
 
+      appendWsEvent(`connecting to ${pdWsUrl}`);
+
       socket = new WebSocket(pdWsUrl);
       wsRef.current = socket;
 
@@ -293,20 +313,25 @@ function SensorMonitorPageContent() {
         }
 
         setWsStatus("open");
+        appendWsEvent("socket open");
         lastSentPayloadRef.current = "";
         publishLatestPayload();
       });
 
-      socket.addEventListener("close", () => {
+      socket.addEventListener("close", (event) => {
         if (cancelled) {
           return;
         }
 
         setWsStatus("closed");
+        appendWsEvent(
+          `socket closed (code=${event.code}${event.reason ? ` reason=${event.reason}` : ""})`,
+        );
         if (wsRef.current === socket) {
           wsRef.current = null;
         }
 
+        appendWsEvent("reconnect scheduled in 2s");
         reconnectTimerRef.current = window.setTimeout(connect, 2000);
       });
 
@@ -316,6 +341,7 @@ function SensorMonitorPageContent() {
         }
 
         setWsStatus("error");
+        appendWsEvent("socket error");
       });
     };
 
@@ -328,11 +354,12 @@ function SensorMonitorPageContent() {
         reconnectTimerRef.current = null;
       }
       socket?.close();
+      appendWsEvent("connection cleanup");
       if (wsRef.current === socket) {
         wsRef.current = null;
       }
     };
-  }, [pdWsUrl, publishLatestPayload]);
+  }, [appendWsEvent, pdWsUrl, publishLatestPayload]);
 
   return (
     <div className="relative min-h-screen bg-slate-100 text-slate-900">
@@ -466,9 +493,10 @@ function SensorMonitorPageContent() {
               />
               <Button
                 type="button"
-                onClick={() =>
-                  setPdWsUrl(pdWsUrlInput.trim() || DEFAULT_PD_WS_URL)
-                }
+                onClick={() => {
+                  appendWsEvent("manual reconnect requested");
+                  setPdWsUrl(pdWsUrlInput.trim() || DEFAULT_PD_WS_URL);
+                }}
               >
                 Reconnect Pd socket
               </Button>
@@ -497,6 +525,32 @@ function SensorMonitorPageContent() {
               >
                 {isRandomSending ? "Stop random data" : "Start random data"}
               </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle>WebSocket event log</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>Newest events first. Keeps last 50 entries.</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setWsEvents([])}
+              >
+                Clear log
+              </Button>
+            </div>
+            <div className="max-h-56 overflow-auto rounded border bg-slate-950 p-3 text-xs text-slate-100">
+              <pre className="whitespace-pre-wrap break-words">
+                {wsEvents.length > 0
+                  ? wsEvents.join("\n")
+                  : "No websocket events yet."}
+              </pre>
             </div>
           </CardContent>
         </Card>
