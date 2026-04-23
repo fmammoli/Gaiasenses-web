@@ -32,6 +32,42 @@ const DEFAULT_PD_WS_URL =
 
 type WebSocketStatus = "connecting" | "open" | "closed" | "error";
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function normalizeAngle(value: number) {
+  return ((((value + 180) % 360) + 360) % 360) - 180;
+}
+
+function getDerivedCoordinates(
+  alpha: number | null | undefined,
+  beta: number | null | undefined,
+  gamma: number | null | undefined,
+) {
+  if (
+    typeof alpha !== "number" ||
+    !Number.isFinite(alpha) ||
+    typeof beta !== "number" ||
+    !Number.isFinite(beta) ||
+    typeof gamma !== "number" ||
+    !Number.isFinite(gamma)
+  ) {
+    return { latitude: 0, longitude: 0, valid: false };
+  }
+
+  const yawRad = (alpha * Math.PI) / 180;
+  return {
+    latitude: clamp(
+      -(beta * Math.cos(yawRad) - gamma * Math.sin(yawRad)),
+      -85,
+      85,
+    ),
+    longitude: normalizeAngle(-alpha),
+    valid: true,
+  };
+}
+
 function formatValue(value: number | null | undefined, digits = 3) {
   return typeof value === "number" && Number.isFinite(value)
     ? value.toFixed(digits)
@@ -141,6 +177,20 @@ function SensorMonitorPageContent() {
     co2PpmRef.current = co2Data?.co2.ppm ?? null;
   }, [co2Data?.co2.ppm]);
 
+  const derivedCoordinates = useMemo(
+    () =>
+      getDerivedCoordinates(
+        sensorDebug.smoothedEuler.alpha,
+        sensorDebug.smoothedEuler.beta,
+        sensorDebug.smoothedEuler.gamma,
+      ),
+    [
+      sensorDebug.smoothedEuler.alpha,
+      sensorDebug.smoothedEuler.beta,
+      sensorDebug.smoothedEuler.gamma,
+    ],
+  );
+
   const publishLatestPayload = useCallback(() => {
     const socket = wsRef.current;
     const payload = latestPayloadRef.current as {
@@ -165,10 +215,18 @@ function SensorMonitorPageContent() {
       return;
     }
 
+    const smoothAlpha = payload.smoothed?.smoothedEuler?.alpha;
+    const smoothBeta = payload.smoothed?.smoothedEuler?.beta;
+    const smoothGamma = payload.smoothed?.smoothedEuler?.gamma;
+    const { latitude: derivedLatitude, longitude: derivedLongitude } =
+      getDerivedCoordinates(smoothAlpha, smoothBeta, smoothGamma);
+
     const values = [
-      payload.smoothed?.smoothedEuler?.alpha.toFixed(3),
-      payload.smoothed?.smoothedEuler?.beta.toFixed(3),
-      payload.smoothed?.smoothedEuler?.gamma.toFixed(3),
+      derivedLatitude.toFixed(6),
+      derivedLongitude.toFixed(6),
+      smoothAlpha?.toFixed(3),
+      smoothBeta?.toFixed(3),
+      smoothGamma?.toFixed(3),
       payload.raw?.euler?.yaw?.toFixed(3),
       payload.raw?.euler?.pitch?.toFixed(3),
       payload.raw?.euler?.roll?.toFixed(3),
@@ -215,10 +273,10 @@ function SensorMonitorPageContent() {
 
   const pdMessageExamples = useMemo(
     () => [
-      `${formatValue(sensorDebug.smoothedEuler.alpha)} ${formatValue(sensorDebug.smoothedEuler.beta)} ${formatValue(sensorDebug.smoothedEuler.gamma)} ${formatValue(rawSensorData?.euler?.yaw)} ${formatValue(rawSensorData?.euler?.pitch)} ${formatValue(rawSensorData?.euler?.roll)} ${formatValue(rawSensorData?.acc?.x, 0)} ${formatValue(rawSensorData?.acc?.y, 0)} ${formatValue(rawSensorData?.acc?.z, 0)} ${co2Data?.co2.ppm ?? 0}`,
-      `order: smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_accY raw_accZ co2`,
+      `${formatValue(derivedCoordinates.latitude, 6)} ${formatValue(derivedCoordinates.longitude, 6)} ${formatValue(sensorDebug.smoothedEuler.alpha)} ${formatValue(sensorDebug.smoothedEuler.beta)} ${formatValue(sensorDebug.smoothedEuler.gamma)} ${formatValue(rawSensorData?.euler?.yaw)} ${formatValue(rawSensorData?.euler?.pitch)} ${formatValue(rawSensorData?.euler?.roll)} ${formatValue(rawSensorData?.acc?.x, 0)} ${formatValue(rawSensorData?.acc?.y, 0)} ${formatValue(rawSensorData?.acc?.z, 0)} ${co2Data?.co2.ppm ?? 0}`,
+      `order: latitude longitude smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_accY raw_accZ co2`,
     ],
-    [rawSensorData, sensorDebug, co2Data],
+    [rawSensorData, sensorDebug, co2Data, derivedCoordinates],
   );
 
   const sendRandomTestMessage = useCallback(() => {
@@ -257,7 +315,15 @@ function SensorMonitorPageContent() {
       },
     };
 
+    const randomCoordinates = getDerivedCoordinates(
+      randomPayload.smoothed.smoothedEuler.alpha,
+      randomPayload.smoothed.smoothedEuler.beta,
+      randomPayload.smoothed.smoothedEuler.gamma,
+    );
+
     const message = [
+      randomCoordinates.latitude.toFixed(6),
+      randomCoordinates.longitude.toFixed(6),
       randomPayload.smoothed.smoothedEuler.alpha,
       randomPayload.smoothed.smoothedEuler.beta,
       randomPayload.smoothed.smoothedEuler.gamma,
@@ -580,10 +646,10 @@ function SensorMonitorPageContent() {
 |
 [list trim]
 |
-[unpack f f f f f f f f f f]
+[unpack f f f f f f f f f f f f]
 
 order:
-smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_accY raw_accZ co2`}
+latitude longitude smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_accY raw_accZ co2`}
               </pre>
             </div>
           </CardContent>
@@ -637,6 +703,14 @@ smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_ac
             </CardHeader>
             <CardContent className="space-y-3">
               <MetricRow
+                label="Payload latitude"
+                value={formatValue(derivedCoordinates.latitude, 6)}
+              />
+              <MetricRow
+                label="Payload longitude"
+                value={formatValue(derivedCoordinates.longitude, 6)}
+              />
+              <MetricRow
                 label="Relative yaw"
                 value={formatValue(sensorDebug.relativeEuler?.yaw)}
               />
@@ -679,9 +753,9 @@ smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll raw_accX raw_ac
               values live and watch how the filtered readings respond.
             </p>
             <p className="mt-2 text-sm text-slate-600">
-              The page sends only the raw numeric list in this order:
-              smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch raw_roll
-              raw_accX raw_accY raw_accZ co2.
+              The page sends only the raw numeric list in this order: latitude
+              longitude smooth_alpha smooth_beta smooth_gamma raw_yaw raw_pitch
+              raw_roll raw_accX raw_accY raw_accZ co2.
             </p>
           </CardContent>
         </Card>
