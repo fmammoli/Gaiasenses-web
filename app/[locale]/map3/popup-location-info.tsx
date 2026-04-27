@@ -19,8 +19,8 @@ export default async function PopupLocationInfo({
     type: "region",
   });
   return (
-    <div className="max-w-56  sm:max-w-10">
-      <p className="text-lg ">
+    <div className="">
+      <p className="text-lg max-w-52 md:max-w-6xl">
         {reverseGeocodeData?.name},{" "}
         <span className="font-normal">{reverseGeocodeData?.state}</span>
       </p>
