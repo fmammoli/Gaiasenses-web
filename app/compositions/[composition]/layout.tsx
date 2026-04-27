@@ -4,7 +4,7 @@ import { H1 } from "@/components/ui/h1";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export const metadata: Metadata = {
-  title: "GaiaSenses Web",
+  title: "GaiaSenses",
   description: "Web version of GaiaSensesApp",
 };
 

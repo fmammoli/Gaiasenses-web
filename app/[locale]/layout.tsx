@@ -18,7 +18,7 @@ const montserrat = Montserrat({
 // });
 
 export const metadata: Metadata = {
-  title: "GaiaSenses Web",
+  title: "GaiaSenses",
   description: "Web version of GaiaSensesApp",
 };
 
