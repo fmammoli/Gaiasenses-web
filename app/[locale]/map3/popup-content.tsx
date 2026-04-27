@@ -2,6 +2,7 @@ import { ReactNode, Suspense } from "react";
 import PopupLocationInfo from "./popup-location-info";
 import PopupWeatherInfo from "./popup-weather-info";
 import PopupFireInfo from "./popup-fire-info";
+import PopupLightningInfo from "./popup-lightning-info";
 
 type DataPopupProps = {
   lat: number;
@@ -27,6 +28,9 @@ export default async function PopupContent({
       </Suspense>
       <Suspense fallback={null}>
         <PopupFireInfo lat={lat} lon={lng} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <PopupLightningInfo lat={lat} lon={lng} />
       </Suspense>
       <div className="mt-4">{children}</div>
     </div>
