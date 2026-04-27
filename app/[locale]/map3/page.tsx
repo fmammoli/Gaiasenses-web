@@ -176,6 +176,14 @@ export default async function Page({ params, searchParams }: PageProps) {
           initialLat={lat}
           initialLng={lng}
           InfoButtonText={t("infoButtonText")}
+          clima={{
+            windSpeed: speed,
+            humidity,
+            clouds: weatherData.clouds,
+            temperature: temp,
+            lightnings: lightningcount,
+            fireSpots: firecount,
+          }}
         >
           <Suspense
             fallback={
