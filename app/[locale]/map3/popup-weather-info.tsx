@@ -66,12 +66,14 @@ export default async function PopupWeatherInfo({
 
         <div className="flex items-end gap-1">
           <Droplet size={20}></Droplet>
-          <p className="">{weatherData.main.humidity ?? "indisponível"}%</p>
+          <p className="">
+            {weatherData.main.humidity.toFixed(0) ?? "indisponível"}%
+          </p>
         </div>
 
         <div className="flex items-end gap-1">
           <Cloudy size={20}></Cloudy>
-          <p>{weatherData.clouds ?? "indisponível"}%</p>
+          <p>{weatherData.clouds.toFixed(0) ?? "indisponível"}%</p>
         </div>
 
         <div className="flex items-end gap-1">
