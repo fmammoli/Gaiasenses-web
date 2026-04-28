@@ -34,6 +34,7 @@ import {
   type MotionTuningSettings,
 } from "./use-sensor-smoothing";
 import { ClimaData } from "./use-composition-queue";
+import { enabledCompositionKeys } from "./map-constants";
 
 const MOTION_TUNING_STORAGE_KEY = "map3-motion-tuning-settings";
 
@@ -93,8 +94,13 @@ export default function GaiasensesMap({
     handleMouseMove,
   } = useMapInteractions({ initialLat, initialLng, getNextComposition });
 
-  const { autoActive, onAutoActivateToggle, onMoveEndAuto } =
-    useAutoMode(mapRef);
+  const {
+    autoActive,
+    autoLocations,
+    onAutoActivateToggle,
+    onMoveEndAuto,
+    saveAutoLocations,
+  } = useAutoMode(mapRef);
 
   const {
     handleOnSensor,
@@ -175,6 +181,9 @@ export default function GaiasensesMap({
         <NavigationControl />
         <AutoMove
           isActive={autoActive}
+          locations={autoLocations}
+          compositionOptions={enabledCompositionKeys}
+          onSaveLocations={saveAutoLocations}
           onActivate={onAutoActivateToggle}
           onDeactivate={onAutoActivateToggle}
         />

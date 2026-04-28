@@ -50,16 +50,21 @@ const ENABLED_COMPOSITIONS = new Set([
   "colorFlower",
   "stormEye",
   "curves",
+  "chaosTree",
   "cloudBubble",
   "bonfire",
   "digitalOrganism",
+  "rectangles",
+  "lightningTrees",
+  "weatherTree",
   "mudflatScatter",
   "paintBrush",
   "generativeStrings",
   "nightRain",
   "windLines",
-  "lightnigBolts",
+  "lightningBolts",
   "burningTrees",
+  "airports",
   "riverLines",
   "attractor",
   "pump",
@@ -68,6 +73,8 @@ const ENABLED_COMPOSITIONS = new Set([
 export const comps = Object.entries(CompositionsInfo).filter(([key]) =>
   ENABLED_COMPOSITIONS.has(key),
 );
+
+export const enabledCompositionKeys = comps.map(([key]) => key);
 
 export const CO2_LEVEL_THRESHOLD = 3000;
 
