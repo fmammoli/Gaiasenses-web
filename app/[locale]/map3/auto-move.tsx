@@ -23,6 +23,7 @@ export default function AutoMove({
 }: AutoMoveProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [draftRows, setDraftRows] = useState<MapLocation[]>(locations);
+  const [csvFeedback, setCsvFeedback] = useState<string | null>(null);
   const [startCountdown, setStartCountdown] = useState<number | null>(null);
   const startTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -120,6 +121,82 @@ export default function AutoMove({
     setDraftRows((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function importCsvRows(csvText: string) {
+    const parsedRows = csvText
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.split(";").map((value) => value.trim()));
+
+    if (parsedRows.length === 0) {
+      setCsvFeedback("Paste at least one row before importing.");
+      return;
+    }
+
+    const importedLocations: MapLocation[] = [];
+
+    for (const [index, row] of parsedRows.entries()) {
+      if (row.length < 4) {
+        setCsvFeedback(
+          `Row ${index + 1} must have name;latitude;longitude;composition.`,
+        );
+        return;
+      }
+
+      const [name, latitudeText, longitudeText, compositionRaw] = row;
+      const latitude = Number(latitudeText);
+      const longitude = Number(longitudeText);
+      const normalizedComposition = compositionRaw.toLowerCase();
+      const matchedComposition = compositionOptions.find(
+        (option) => option.toLowerCase() === normalizedComposition,
+      );
+
+      if (!name) {
+        setCsvFeedback(`Row ${index + 1} is missing a name.`);
+        return;
+      }
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        setCsvFeedback(
+          `Row ${index + 1} must include valid latitude and longitude values.`,
+        );
+        return;
+      }
+
+      if (!matchedComposition) {
+        setCsvFeedback(
+          `Row ${index + 1} uses an unknown composition: ${compositionRaw}.`,
+        );
+        return;
+      }
+
+      importedLocations.push({
+        name,
+        coords: [longitude, latitude],
+        composition: matchedComposition,
+      });
+    }
+
+    setDraftRows(importedLocations);
+    setCsvFeedback(`Imported ${importedLocations.length} row(s).`);
+  }
+
+  async function pasteCsvFromClipboard() {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      setCsvFeedback("Clipboard paste is not available in this browser.");
+      return;
+    }
+
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      importCsvRows(clipboardText);
+    } catch {
+      setCsvFeedback(
+        "Could not read clipboard. Please allow clipboard access.",
+      );
+    }
+  }
+
   function saveRows() {
     const sanitized = draftRows
       .filter((item) => item.name.trim().length > 0)
@@ -133,6 +210,7 @@ export default function AutoMove({
     }
 
     onSaveLocations(sanitized);
+    setCsvFeedback(null);
     setIsPanelOpen(false);
   }
 
@@ -149,6 +227,7 @@ export default function AutoMove({
     }
 
     onSaveLocations(sanitized);
+    setCsvFeedback(null);
     setIsPanelOpen(false);
 
     if (startTimeoutRef.current) {
@@ -213,7 +292,7 @@ export default function AutoMove({
       </div>
 
       {isPanelOpen && (
-        <div className="absolute right-[50px] top-[255px] z-20 w-[min(92vw,560px)] rounded-md border bg-white shadow-lg">
+        <div className="absolute left-0 bottom-0 z-20 w-[min(100vw,560px)] md:w-[min(92vw,560px)] rounded-md border bg-white shadow-lg">
           <div className="flex items-center justify-between border-b px-3 py-2">
             <p className="text-sm font-semibold">Auto mode trajectory</p>
             <button
@@ -225,6 +304,23 @@ export default function AutoMove({
           </div>
 
           <div className="max-h-[280px] overflow-auto p-2">
+            <div className="mb-3 rounded border bg-gray-50 p-2 ">
+              <p className="mb-1 block text-xs">
+                Rows format: name;latitude;longitude;composition
+              </p>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <button
+                  className="rounded bg-slate-700 px-3 py-1 text-xs text-white hover:bg-slate-800"
+                  onClick={pasteCsvFromClipboard}
+                >
+                  Paste CSV from clipboard
+                </button>
+                {csvFeedback && (
+                  <p className="text-xs text-gray-600">{csvFeedback}</p>
+                )}
+              </div>
+            </div>
+
             <table className="w-full border-collapse text-xs">
               <thead>
                 <tr className="bg-gray-50 text-left">
